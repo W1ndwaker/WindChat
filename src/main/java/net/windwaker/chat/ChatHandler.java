@@ -21,11 +21,14 @@
  */
 package net.windwaker.chat;
 
+import org.spout.api.data.ValueHolder;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
 import org.spout.api.event.Order;
 import org.spout.api.event.player.PlayerChatEvent;
 import org.spout.api.player.Player;
+
+import java.util.regex.Matcher;
 
 /**
  * Handles formatting of messages from players.
@@ -37,23 +40,24 @@ public class ChatHandler implements Listener {
 	public void formatMessage(PlayerChatEvent event) {
 		// Get the configured chat format
 		Player player = event.getPlayer();
-		String format = player.getData("chat-format").getString();
-		if (format == null) {
+		ValueHolder data = player.getData("chat-format");
+		if (data == null || data.getString() == null) {
 			return;
 		}
-		
+
 		// Replace all the tags and variables.
-		format = format.replaceAll("%name%", "%1$s").replaceAll("%message%", "%2$s");
+		String format =  data.getString().replaceAll("%name%", Matcher.quoteReplacement("%1$s")).replaceAll("%message%", Matcher.quoteReplacement("%2$s"));
 		for (String variable : format.split("%")) {
-			String value = player.getData(variable).getString();
-			if (value == null) {
+			ValueHolder value = player.getData(variable);
+			if (value == null || value.getString() == null) {
 				continue;
 			}
 			
-			format = format.replaceAll("%" + variable + "%", value);
+			format = format.replaceAll("%" + variable + "%", value.getString());
 		}
-		
+
 		// Set the format of the message to be sent
+		format = format.replaceAll("&", "§");
 		event.setFormat(format);
 	}
 }

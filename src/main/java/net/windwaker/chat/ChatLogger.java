@@ -29,11 +29,11 @@ import org.spout.api.Spout;
  * Logger for WindChat plugin
  * @author Windwaker
  */
-public class ChatLogger extends Logger {
+public class ChatLogger {
 	private static final ChatLogger instance = new ChatLogger();
 	
-	protected ChatLogger() {
-		super("ChatLogger", "WindChat");
+	private ChatLogger() {
+
 	}
 	
 	public static ChatLogger getInstance() {
