@@ -26,11 +26,12 @@ import org.spout.api.plugin.CommonPlugin;
 
 /**
  * Chat plugin for the Spout voxel software.
+ *
  * @author Windwaker
  */
 public class WindChatPlugin extends CommonPlugin {
 	private final ChatLogger logger = ChatLogger.getInstance();
-	
+
 	@Override
 	public void onEnable() {
 		Spout.getEventManager().registerEvents(new ChatHandler(), this);

@@ -28,14 +28,15 @@ import org.spout.api.event.Order;
 import org.spout.api.event.player.PlayerChatEvent;
 import org.spout.api.player.Player;
 
-import java.util.regex.Matcher;
+import static java.util.regex.Matcher.quoteReplacement;
 
 /**
  * Handles formatting of messages from players.
+ *
  * @author Windwaker
  */
 public class ChatHandler implements Listener {
-	
+
 	@EventHandler(order = Order.LATEST)
 	public void formatMessage(PlayerChatEvent event) {
 		// Get the configured chat format
@@ -46,13 +47,13 @@ public class ChatHandler implements Listener {
 		}
 
 		// Replace all the tags and variables.
-		String format =  data.getString().replaceAll("%name%", Matcher.quoteReplacement("%1$s")).replaceAll("%message%", Matcher.quoteReplacement("%2$s"));
+		String format = data.getString().replaceAll("%name%", quoteReplacement("%1$s")).replaceAll("%message%", quoteReplacement("%2$s"));
 		for (String variable : format.split("%")) {
 			ValueHolder value = player.getData(variable);
 			if (value == null || value.getString() == null) {
 				continue;
 			}
-			
+
 			format = format.replaceAll("%" + variable + "%", value.getString());
 		}
 

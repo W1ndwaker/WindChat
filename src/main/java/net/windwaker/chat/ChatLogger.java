@@ -21,37 +21,38 @@
  */
 package net.windwaker.chat;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.spout.api.Spout;
+
+import java.util.logging.Level;
 
 /**
  * Logger for WindChat plugin
+ *
  * @author Windwaker
  */
 public class ChatLogger {
 	private static final ChatLogger instance = new ChatLogger();
-	
+
 	private ChatLogger() {
 
 	}
-	
+
 	public static ChatLogger getInstance() {
 		return instance;
 	}
-	
+
 	public void log(Level level, Object obj) {
 		Spout.getLogger().log(level, "[WindChat] " + obj);
 	}
-	
+
 	public void info(Object obj) {
 		log(Level.INFO, obj);
 	}
-	
+
 	public void warn(Object obj) {
 		log(Level.WARNING, obj);
 	}
-	
+
 	public void severe(Object obj) {
 		log(Level.SEVERE, obj);
 	}
