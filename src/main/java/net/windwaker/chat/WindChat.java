@@ -21,44 +21,40 @@
  */
 package net.windwaker.chat;
 
-import org.spout.api.data.ValueHolder;
-import org.spout.api.event.EventHandler;
-import org.spout.api.event.Listener;
-import org.spout.api.event.Order;
-import org.spout.api.event.player.PlayerChatEvent;
-import org.spout.api.player.Player;
+import org.spout.api.Spout;
+import org.spout.api.plugin.CommonPlugin;
 
-import static java.util.regex.Matcher.quoteReplacement;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Handles formatting of messages from players.
+ * Chat plugin for the Spout voxel software.
  *
  * @author Windwaker
  */
-public class ChatHandler implements Listener {
+public class WindChat extends CommonPlugin {
+	private final ChatLogger logger = ChatLogger.getInstance();
+	private static final Chat chat = new Chat();
 
-	@EventHandler(order = Order.LATEST)
-	public void formatMessage(PlayerChatEvent event) {
-		// Get the configured chat format
-		Player player = event.getPlayer();
-		ValueHolder data = player.getData("chat-format");
-		if (data == null || data.getString() == null) {
-			return;
-		}
+	@Override
+	public void onEnable() {
 
-		// Replace all the tags and variables.
-		String format = data.getString().replaceAll("%name%", quoteReplacement("%1$s")).replaceAll("%message%", quoteReplacement("%2$s"));
-		for (String variable : format.split("%")) {
-			ValueHolder value = player.getData(variable);
-			if (value == null || value.getString() == null) {
-				continue;
-			}
+		// Register events
+		Spout.getEventManager().registerEvents(new EventListener(), this);
 
-			format = format.replaceAll("%" + variable + "%", value.getString());
-		}
+		// Load chat
+		chat.initialize();
 
-		// Set the format of the message to be sent
-		format = format.replaceAll("&", "§");
-		event.setFormat(format);
+		// Hello world!
+		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
+	}
+
+	@Override
+	public void onDisable() {
+		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
+	}
+
+	public static Chat getChat() {
+		return chat;
 	}
 }

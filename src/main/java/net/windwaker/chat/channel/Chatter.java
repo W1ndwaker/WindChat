@@ -19,27 +19,54 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat;
+package net.windwaker.chat.channel;
 
 import org.spout.api.Spout;
-import org.spout.api.plugin.CommonPlugin;
+import org.spout.api.player.Player;
 
-/**
- * Chat plugin for the Spout voxel software.
- *
- * @author Windwaker
- */
-public class WindChatPlugin extends CommonPlugin {
-	private final ChatLogger logger = ChatLogger.getInstance();
+import static java.util.regex.Matcher.quoteReplacement;
 
-	@Override
-	public void onEnable() {
-		Spout.getEventManager().registerEvents(new ChatHandler(), this);
-		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
+public class Chatter {
+	private final String name;
+	private Channel channel;
+	private String format;
+
+	public Chatter(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setFormat(String format) {
+		this.format = format;
 	}
 
-	@Override
-	public void onDisable() {
-		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
+	public boolean setChannel(Channel channel) {
+		this.channel = channel;
+		return channel.addChatter(this);
+	}
+	
+	public void chat(String message) {
+		channel.broadcast(format(format, name, message));
+	}
+	
+	public void send(String message) {
+		Player player = Spout.getEngine().getPlayer(name, true);
+		if (player == null) {
+			return;
+		}
+
+		player.sendMessage(message);
+	}
+
+	public static String format(String format, String name, String message) {
+		format = format.replaceAll("%chatter%", quoteReplacement("%1$s")).replaceAll("%message%", quoteReplacement("%2$s").replaceAll("&", "§"));
+		try {
+			return String.format(format, name, message);
+		} catch (Throwable t) {
+			return null;
+		}
 	}
 }
