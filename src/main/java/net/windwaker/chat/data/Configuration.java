@@ -19,54 +19,18 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.channel;
+package net.windwaker.chat.data;
 
-import org.spout.api.Spout;
-import org.spout.api.player.Player;
+import org.spout.api.util.config.ConfigurationHolder;
+import org.spout.api.util.config.ConfigurationHolderConfiguration;
+import org.spout.api.util.config.yaml.YamlConfiguration;
 
-import static java.util.regex.Matcher.quoteReplacement;
+import java.io.File;
 
-public class Chatter {
-	private final String name;
-	private Channel channel;
-	private String format;
+public class Configuration extends ConfigurationHolderConfiguration {
+	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("global", "default-channel");
 
-	public Chatter(String name) {
-		this.name = name;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setFormat(String format) {
-		this.format = format;
-	}
-
-	public boolean setChannel(Channel channel) {
-		this.channel = channel;
-		return channel.addChatter(this);
-	}
-	
-	public void chat(String message) {
-		channel.broadcast(format(format, name, message));
-	}
-	
-	public void send(String message) {
-		Player player = Spout.getEngine().getPlayer(name, true);
-		if (player == null) {
-			return;
-		}
-
-		player.sendMessage(message);
-	}
-
-	public static String format(String format, String name, String message) {
-		format = format.replaceAll("%chatter%", quoteReplacement("%1$s")).replaceAll("%message%", quoteReplacement("%2$s").replaceAll("&", "§"));
-		try {
-			return String.format(format, name, message);
-		} catch (Throwable t) {
-			return null;
-		}
+	public Configuration() {
+		super(new YamlConfiguration(new File("plugins/WindChat/config.yml")));
 	}
 }

@@ -22,6 +22,7 @@
 package net.windwaker.chat.channel;
 
 import net.windwaker.chat.ChatLogger;
+import org.spout.api.player.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +31,7 @@ import static java.util.regex.Matcher.quoteReplacement;
 
 public class Channel {
 	private final String name;
-	private final Set<Chatter> chatters = new HashSet<Chatter>();
+	private final Set<Player> chatters = new HashSet<Player>();
 	private final ChatLogger logger = ChatLogger.getInstance();
 	private String format;
 
@@ -46,14 +47,14 @@ public class Channel {
 		this.format = format;
 	}
 	
-	public boolean addChatter(Chatter chatter) {
+	public boolean addChatter(Player chatter) {
 		return chatters.add(chatter);
 	}
 	
 	public void broadcast(String message) {
 		String formattedMessage = format(format, name, message);
-		for (Chatter chatter : chatters) {
-			chatter.send(formattedMessage);
+		for (Player chatter : chatters) {
+			chatter.sendMessage(formattedMessage);
 		}
 
 		logger.info(formattedMessage);

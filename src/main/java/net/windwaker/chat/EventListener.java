@@ -21,7 +21,6 @@
  */
 package net.windwaker.chat;
 
-import net.windwaker.chat.channel.Chatter;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
 import org.spout.api.event.Order;
@@ -37,28 +36,11 @@ public class EventListener implements Listener {
 
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
-
-		// Cancel all chat events and handle them through the channels.
 		event.setCancelled(true);
-		Chatter chatter = WindChat.getChat().getChatter(event.getPlayer().getName());
-		if (chatter != null) {
-			chatter.chat(event.getMessage());
-		}
 	}
-	
+
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
-
-		Chat chat = WindChat.getChat();
-		String name = event.getPlayer().getName();
-		Chatter chatter = chat.getChatter(name);
-
-		// Player is not new here.
-		if (chatter != null) {
-			return;
-		}
-
-		// Player joined for the first time
-		chat.addChatter(new Chatter(name));
+		WindChat.getChat().login(event.getPlayer());
 	}
 }

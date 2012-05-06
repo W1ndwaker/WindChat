@@ -21,7 +21,9 @@
  */
 package net.windwaker.chat;
 
+import net.windwaker.chat.data.Configuration;
 import org.spout.api.Spout;
+import org.spout.api.exception.ConfigurationException;
 import org.spout.api.plugin.CommonPlugin;
 
 import java.util.HashSet;
@@ -34,11 +36,19 @@ import java.util.Set;
  */
 public class WindChat extends CommonPlugin {
 	private final ChatLogger logger = ChatLogger.getInstance();
+	private final Configuration config = new Configuration();
 	private static final Chat chat = new Chat();
 
 	@Override
 	public void onEnable() {
 
+		// Load config
+		try {
+			config.load();
+		} catch (ConfigurationException e) {
+			logger.severe("Failed to load configuration: " + e.getMessage());
+		}
+		
 		// Register events
 		Spout.getEventManager().registerEvents(new EventListener(), this);
 

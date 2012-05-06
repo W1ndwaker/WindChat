@@ -21,64 +21,35 @@
  */
 package net.windwaker.chat.data;
 
+import net.windwaker.chat.Chat;
 import net.windwaker.chat.ChatLogger;
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.channel.Chatter;
 import org.spout.api.exception.ConfigurationException;
+import org.spout.api.player.Player;
 import org.spout.api.util.config.yaml.YamlConfiguration;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Chatters {
-	private final YamlConfiguration data = new YamlConfiguration(new File("plugins/WindChat/users.yml"));
+	private final YamlConfiguration data = new YamlConfiguration(new File("plugins/WindChat/chatters.yml"));
 	private final ChatLogger logger = ChatLogger.getInstance();
-	private final Set<Chatter> chatters = new HashSet<Chatter>();
 	
 	public void load() {
 		try {
 			data.load();
-			loadChatters();
 		} catch (ConfigurationException e) {
 			logger.severe("Failed to load chatter data: " + e.getMessage());
 		}
 	}
 	
-	private void loadChatters() {
-		for (String name : data.getNode("chatters").getKeys(false)) {
-			Chatter chatter = new Chatter(name);
-			String path = "chatters." + name;
-			Channel channel = WindChat.getChat().getChannel(data.getNode(path + ".channel").getString());
-			if (channel != null) {
-				chatter.setChannel(channel);
-			}
-			
-			chatter.setFormat(data.getNode(path + ".format").getString());
-			chatters.add(chatter);
-		}
-	}
-	
-	public void add(Chatter chatter) {
-		try {
-			chatters.add(chatter);
-			String path = "chatters." + chatter.getName();
-			data.getNode(path + ".channel").setValue("global"); // TODO: Default channels
-			data.getNode(path + ".format").setValue("%chatter%: %message%");
-			data.save();
-		} catch (ConfigurationException e) {
-			logger.severe("Failed to add chatters: " + e.getMessage());
-		}
-	}
-	
-	public Chatter getChatter(String name) {
-		for (Chatter chatter : chatters) {
-			if (chatter.getName().equals(name)) {
-				return chatter;
-			}
+	public void login(Player player) {
+		Chat chat = WindChat.getChat();
+		Channel channel = chat.getChannel(data.getNode("chatters." + player.getName() + ".channel").getString());
+		if (channel == null) {
+			channel = chat.getChannel(Configuration.DEFAULT_CHANNEL.getString());
 		}
 
-		return null;
+		channel.addChatter(player);
 	}
 }

@@ -22,25 +22,21 @@
 package net.windwaker.chat;
 
 import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.data.Channels;
 import net.windwaker.chat.data.Chatters;
+import org.spout.api.player.Player;
 
 public class Chat {
-	private final Chatters chatters = new Chatters();
 	private final Channels channels = new Channels();
+	private final Chatters chatters = new Chatters();
 
 	public void initialize() {
 		channels.load();
 		chatters.load();
 	}
 	
-	public void addChatter(Chatter chatter) {
-		chatters.add(chatter);
-	}
-
-	public Chatter getChatter(String name) {
-		return chatters.getChatter(name);
+	public void login(Player player) {
+		chatters.login(player);
 	}
 	
 	public Channel getChannel(String name) {
