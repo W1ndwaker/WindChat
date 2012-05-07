@@ -45,12 +45,20 @@ public class Chatter {
 	
 	public void join(Channel channel) {
 		channels.add(channel);
-		channel.addChatter(this);
+		channel.addListener(this);
 		activeChannel = channel;
+		send(channel.getJoinMessage());
 	}
 	
 	public void leave(Channel channel) {
+		if (channel.equals(activeChannel)) {
+			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
+		}
+
+		channel.removeListener(this);
 		channels.remove(channel);
+		send(channel.getLeaveMessage());
+
 	}
 	
 	public void setActiveChannel(Channel activeChannel) {
@@ -59,5 +67,9 @@ public class Chatter {
 	
 	public Channel getActiveChannel() {
 		return activeChannel;
+	}
+	
+	public boolean isIn(Channel channel) {
+		return channels.contains(channel);
 	}
 }                                    

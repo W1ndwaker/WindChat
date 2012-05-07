@@ -21,13 +21,14 @@
  */
 package net.windwaker.chat;
 
+import net.windwaker.chat.command.ChannelCommand;
 import net.windwaker.chat.data.Configuration;
 import org.spout.api.Spout;
-import org.spout.api.exception.ConfigurationException;
+import org.spout.api.command.CommandRegistrationsFactory;
+import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
+import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
+import org.spout.api.command.annotated.SimpleInjector;
 import org.spout.api.plugin.CommonPlugin;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Chat plugin for the Spout voxel software.
@@ -47,6 +48,10 @@ public class WindChat extends CommonPlugin {
 
 		// Register events
 		Spout.getEventManager().registerEvents(new EventListener(), this);
+
+		// Register commands
+		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
+		getGame().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 
 		// Load chat
 		chat.initialize();

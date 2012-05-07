@@ -51,6 +51,8 @@ public class Channels {
 	private void addDefaults() {
 		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "format"}, "[%channel%] %message%"));
 		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "password"}, "spout"));
+		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "join-message"}, "&cYou have joined global!"));
+		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "leave-message"}, "&4You have left global."));
 	}
 	
 	private void loadChannels() {
@@ -59,6 +61,8 @@ public class Channels {
 			String path = "channels." + name;
 			channel.setFormat(data.getNode(path + ".format").getString());
 			channel.setPassword(data.getNode(path + ".password").getString());
+			channel.setJoinMessage(data.getNode(path + ".join-message").getString().replaceAll("&", "§"));
+			channel.setLeaveMessage(data.getNode(path + ".leave-message").getString().replaceAll("&", "§"));
 			channels.add(channel);
 		}
 	}

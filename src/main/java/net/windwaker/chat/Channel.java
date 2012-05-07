@@ -21,19 +21,17 @@
  */
 package net.windwaker.chat;
 
-import org.spout.api.player.Player;
-
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.util.regex.Matcher.quoteReplacement;
-
 public class Channel {
 	private final String name;
-	private final Set<Chatter> chatters = new HashSet<Chatter>();
+	private final Set<String> listeners = new HashSet<String>();
 	private final ChatLogger logger = ChatLogger.getInstance();
 	private String format = "[%channel%] %message%";
 	private String password;
+	private String joinMessage;
+	private String leaveMessage;
 
 	public Channel(String name) {
 		this.name = name;
@@ -41,6 +39,22 @@ public class Channel {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public String getJoinMessage() {
+		return joinMessage;
+	}
+	
+	public void setJoinMessage(String joinMessage) {
+		this.joinMessage = joinMessage;
+	}
+	
+	public String getLeaveMessage() {
+		return leaveMessage;
+	}
+	
+	public void setLeaveMessage(String leaveMessage) {
+		this.leaveMessage = leaveMessage;
 	}
 	
 	public String getPassword() {
@@ -63,18 +77,21 @@ public class Channel {
 		this.format = format;
 	}
 	
-	public boolean addChatter(Chatter chatter) {
-		return chatters.add(chatter);
+	public boolean addListener(Chatter chatter) {
+		return listeners.add(chatter.getName());
 	}
 	
-	public boolean removeChatter(Player chatter) {
-		return chatters.remove(chatter);
+	public boolean removeListener(Chatter chatter) {
+		return listeners.remove(chatter);
 	}
 	
 	public void broadcast(String message) {
 		message = format(format, name, message);
-		for (Chatter chatter : chatters) {
-			chatter.send(message);
+		for (String name : listeners) {
+			Chatter chatter = WindChat.getChat().getChatter(name);
+			if (chatter != null) {
+				chatter.send(message);
+			}
 		}
 
 		logger.info(message);
