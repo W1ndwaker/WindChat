@@ -21,6 +21,8 @@
  */
 package net.windwaker.chat.data;
 
+import net.windwaker.chat.ChatLogger;
+import org.spout.api.exception.ConfigurationException;
 import org.spout.api.util.config.ConfigurationHolder;
 import org.spout.api.util.config.ConfigurationHolderConfiguration;
 import org.spout.api.util.config.yaml.YamlConfiguration;
@@ -29,8 +31,18 @@ import java.io.File;
 
 public class Configuration extends ConfigurationHolderConfiguration {
 	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("global", "default-channel");
+	private final ChatLogger logger = ChatLogger.getInstance();
 
 	public Configuration() {
 		super(new YamlConfiguration(new File("plugins/WindChat/config.yml")));
+	}
+
+	public void load() {
+		try {
+			super.load();
+			super.save();
+		} catch (ConfigurationException e) {
+			logger.severe("Failed to load configuration: " + e.getMessage());
+		}
 	}
 }

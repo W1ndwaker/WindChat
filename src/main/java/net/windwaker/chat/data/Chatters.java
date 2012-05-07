@@ -21,10 +21,10 @@
  */
 package net.windwaker.chat.data;
 
+import net.windwaker.chat.Channel;
 import net.windwaker.chat.Chat;
 import net.windwaker.chat.ChatLogger;
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.channel.Channel;
 import org.spout.api.exception.ConfigurationException;
 import org.spout.api.player.Player;
 import org.spout.api.util.config.yaml.YamlConfiguration;
@@ -50,6 +50,7 @@ public class Chatters {
 			channel = chat.getChannel(Configuration.DEFAULT_CHANNEL.getString());
 		}
 
+		chat.setChannel(player, channel);
 		channel.addChatter(player);
 	}
 }

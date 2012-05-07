@@ -21,7 +21,7 @@
  */
 package net.windwaker.chat.data;
 
-import net.windwaker.chat.channel.Channel;
+import net.windwaker.chat.Channel;
 import net.windwaker.chat.ChatLogger;
 import org.spout.api.exception.ConfigurationException;
 import org.spout.api.util.config.ConfigurationNode;
@@ -50,6 +50,7 @@ public class Channels {
 
 	private void addDefaults() {
 		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "format"}, "[%channel%] %message%"));
+		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "password"}, "spout"));
 	}
 	
 	private void loadChannels() {
@@ -57,6 +58,7 @@ public class Channels {
 			Channel channel = new Channel(name);
 			String path = "channels." + name;
 			channel.setFormat(data.getNode(path + ".format").getString());
+			channel.setPassword(data.getNode(path + ".password").getString());
 			channels.add(channel);
 		}
 	}

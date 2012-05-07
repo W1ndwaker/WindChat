@@ -19,9 +19,8 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.channel;
+package net.windwaker.chat;
 
-import net.windwaker.chat.ChatLogger;
 import org.spout.api.player.Player;
 
 import java.util.HashSet;
@@ -33,7 +32,8 @@ public class Channel {
 	private final String name;
 	private final Set<Player> chatters = new HashSet<Player>();
 	private final ChatLogger logger = ChatLogger.getInstance();
-	private String format;
+	private String format = "[%channel%] %message%";
+	private String password;
 
 	public Channel(String name) {
 		this.name = name;
@@ -41,6 +41,22 @@ public class Channel {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public boolean hasPassword() {
+		return password != null;
+	}
+	
+	public String getFormat() {
+		return format;
 	}
 	
 	public void setFormat(String format) {
@@ -51,21 +67,21 @@ public class Channel {
 		return chatters.add(chatter);
 	}
 	
-	public void broadcast(String message) {
-		String formattedMessage = format(format, name, message);
-		for (Player chatter : chatters) {
-			chatter.sendMessage(formattedMessage);
-		}
-
-		logger.info(formattedMessage);
+	public boolean removeChatter(Player chatter) {
+		return chatters.remove(chatter);
 	}
 	
-	public static String format(String format, String name, String message) {
-		format = format.replaceAll("%channel%", quoteReplacement("%1$s")).replaceAll("%message%", quoteReplacement("%2$s")).replaceAll("&", "§");
-		try {
-			return String.format(format, name, message);
-		} catch (Throwable t) {
-			return null;
+	public void broadcast(String message) {
+		message = format(format, name, message);
+		for (Player chatter : chatters) {
+			chatter.sendMessage(message);
 		}
+
+		logger.info(message);
+	}
+	
+	// TODO: Extra variables
+	public static String format(String format, String channelName, String message) {
+		return format.replaceAll("%channel%", channelName).replaceAll("%message%", message).replaceAll("&", "§");
 	}
 }

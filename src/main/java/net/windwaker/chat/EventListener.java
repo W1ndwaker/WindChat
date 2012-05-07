@@ -21,11 +21,13 @@
  */
 package net.windwaker.chat;
 
+import org.spout.api.data.ValueHolder;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
 import org.spout.api.event.Order;
 import org.spout.api.event.player.PlayerChatEvent;
 import org.spout.api.event.player.PlayerJoinEvent;
+import org.spout.api.player.Player;
 
 /**
  * Handles formatting of messages from players.
@@ -36,7 +38,35 @@ public class EventListener implements Listener {
 
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
-		event.setCancelled(true);
+		System.out.println("Player chat");
+		event.setCancelled(true);                 
+		Player player = event.getPlayer();
+		Channel channel = WindChat.getChat().getChannel(player);
+		if (channel == null) {
+			return;
+		}
+
+		System.out.println("Channel not null");
+		// Get the format to format the message
+		String message = "%player%: %message%";
+		ValueHolder data = player.getData("chat-format");
+		if (data != null && data.getString() != null) {
+			message = data.getString();
+		}
+
+		// Format the message
+		message = message.replaceAll("%player%", player.getDisplayName()).replaceAll("%message%", event.getMessage()).replaceAll("&", "§");
+		for (String variable : message.split("%")) {
+			ValueHolder value = player.getData(variable);
+			if (value == null || value.getString() == null) {
+				continue;
+			}
+
+			message = message.replaceAll("%" + variable + "%", value.getString());
+		}
+
+		// Broadcast the message through the channel
+		channel.broadcast(message);
 	}
 
 	@EventHandler

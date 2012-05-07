@@ -43,12 +43,8 @@ public class WindChat extends CommonPlugin {
 	public void onEnable() {
 
 		// Load config
-		try {
-			config.load();
-		} catch (ConfigurationException e) {
-			logger.severe("Failed to load configuration: " + e.getMessage());
-		}
-		
+		config.load();
+
 		// Register events
 		Spout.getEventManager().registerEvents(new EventListener(), this);
 
