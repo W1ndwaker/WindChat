@@ -19,49 +19,45 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.data;
+package net.windwaker.chat;
 
-import net.windwaker.chat.*;
-import org.spout.api.exception.ConfigurationException;
 import org.spout.api.player.Player;
-import org.spout.api.util.config.yaml.YamlConfiguration;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Chatters {
-	private final YamlConfiguration data = new YamlConfiguration(new File("plugins/WindChat/chatters.yml"));
-	private final ChatLogger logger = ChatLogger.getInstance();
-	private final Set<Chatter> chatters = new HashSet<Chatter>();
+public class Chatter {
+	private final Player parent;
+	private final Set<Channel> channels = new HashSet<Channel>();
+	private Channel activeChannel;
 	
-	public void load() {
-		try {
-			data.load();
-		} catch (ConfigurationException e) {
-			logger.severe("Failed to load chatter data: " + e.getMessage());
-		}
+	public Chatter(Player parent) {
+		this.parent = parent;
 	}
 	
-	public Chatter getChatter(String name) {
-		for (Chatter chatter : chatters) {
-			if (chatter.getName().equals(name)) {
-				return chatter;
-			}
-		}
-
-		return null;
+	public void send(String message) {
+		parent.sendMessage(message);
 	}
 	
-	public void login(Player player) {
-		Chat chat = WindChat.getChat();
-		Channel channel = chat.getChannel(data.getNode("chatters." + player.getName() + ".channel").getString());
-		if (channel == null) {
-			channel = chat.getChannel(Configuration.DEFAULT_CHANNEL.getString());
-		}
-
-		Chatter chatter = new Chatter(player);
-		chatter.join(channel);
-		chatters.add(chatter);
+	public String getName() {
+		return parent.getName();
 	}
-}
+	
+	public void join(Channel channel) {
+		channels.add(channel);
+		channel.addChatter(this);
+		activeChannel = channel;
+	}
+	
+	public void leave(Channel channel) {
+		channels.remove(channel);
+	}
+	
+	public void setActiveChannel(Channel activeChannel) {
+		this.activeChannel = activeChannel;
+	}
+	
+	public Channel getActiveChannel() {
+		return activeChannel;
+	}
+}                                    

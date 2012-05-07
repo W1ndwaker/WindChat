@@ -39,9 +39,17 @@ public class EventListener implements Listener {
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
 		System.out.println("Player chat");
-		event.setCancelled(true);                 
+		event.setCancelled(true);   
+		Chat chat = WindChat.getChat();
 		Player player = event.getPlayer();
-		Channel channel = WindChat.getChat().getChannel(player);
+		Chatter chatter = chat.getChatter(player.getName());
+		if (chatter == null) {
+			return;
+		}
+		
+		System.out.println("Chatter not null");
+
+		Channel channel = chatter.getActiveChannel();
 		if (channel == null) {
 			return;
 		}

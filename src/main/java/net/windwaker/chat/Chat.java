@@ -31,7 +31,6 @@ import java.util.Map;
 public class Chat {
 	private final Channels channels = new Channels();
 	private final Chatters chatters = new Chatters();
-	private final Map<Player, Channel> channelMap = new HashMap<Player, Channel>();
 
 	public void initialize() {
 		channels.load();
@@ -45,12 +44,8 @@ public class Chat {
 	public Channel getChannel(String name) {
 		return channels.getChannel(name);
 	}
-
-	public Channel getChannel(Player player) {
-		return channelMap.get(player);
-	}
-
-	public void setChannel(Player player, Channel channel) {
-		channelMap.put(player, channel);
+	
+	public Chatter getChatter(String name) {
+		return chatters.getChatter(name);
 	}
 }

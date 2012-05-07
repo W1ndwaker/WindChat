@@ -30,7 +30,7 @@ import static java.util.regex.Matcher.quoteReplacement;
 
 public class Channel {
 	private final String name;
-	private final Set<Player> chatters = new HashSet<Player>();
+	private final Set<Chatter> chatters = new HashSet<Chatter>();
 	private final ChatLogger logger = ChatLogger.getInstance();
 	private String format = "[%channel%] %message%";
 	private String password;
@@ -63,7 +63,7 @@ public class Channel {
 		this.format = format;
 	}
 	
-	public boolean addChatter(Player chatter) {
+	public boolean addChatter(Chatter chatter) {
 		return chatters.add(chatter);
 	}
 	
@@ -73,8 +73,8 @@ public class Channel {
 	
 	public void broadcast(String message) {
 		message = format(format, name, message);
-		for (Player chatter : chatters) {
-			chatter.sendMessage(message);
+		for (Chatter chatter : chatters) {
+			chatter.send(message);
 		}
 
 		logger.info(message);
