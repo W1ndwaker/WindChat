@@ -31,9 +31,9 @@ import org.spout.api.exception.CommandException;
 public class ChannelCommand {
 
 	@Command(aliases = {"channel", "ch"}, desc = "Parent command for WindChat")
-	@CommandPermissions("windchat.command.chat")
+	@CommandPermissions("windchat.command.channel")
 	@NestedCommand(ChannelCommands.class)
-	public void chat(CommandContext args, CommandSource source) throws CommandException {
+	public void channel(CommandContext args, CommandSource source) throws CommandException {
 
 	}
 }

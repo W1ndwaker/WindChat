@@ -19,7 +19,9 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat;
+package net.windwaker.chat.channel;
+
+import net.windwaker.chat.channel.Channel;
 
 import org.spout.api.player.Player;
 
@@ -33,6 +35,10 @@ public class Chatter {
 	
 	public Chatter(Player parent) {
 		this.parent = parent;
+	}
+	
+	public void chat(String message) {
+		activeChannel.broadcast(message);
 	}
 	
 	public void send(String message) {

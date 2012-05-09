@@ -21,6 +21,8 @@
  */
 package net.windwaker.chat;
 
+import net.windwaker.chat.channel.Chatter;
+import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.data.Channels;
 import net.windwaker.chat.data.Chatters;
 import org.spout.api.player.Player;

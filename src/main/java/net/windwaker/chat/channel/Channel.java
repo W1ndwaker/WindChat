@@ -19,22 +19,24 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat;
+package net.windwaker.chat.channel;
 
 import java.util.HashSet;
 import java.util.Set;
+import net.windwaker.chat.ChatLogger;
+import net.windwaker.chat.WindChat;
+import org.spout.api.ChatColor;
 
 public class Channel {
 	private final String name;
 	private final Set<String> listeners = new HashSet<String>();
 	private final ChatLogger logger = ChatLogger.getInstance();
-	private String format = "[%channel%] %message%";
-	private String password;
-	private String joinMessage;
-	private String leaveMessage;
+	private String format = "[%channel%] %message%", password, joinMessage, leaveMessage;
 
 	public Channel(String name) {
 		this.name = name;
+		joinMessage = ChatColor.BRIGHT_GREEN + "You have joined " + name + "!";
+		leaveMessage = ChatColor.RED + "You have left " + name + "!";
 	}
 	
 	public String getName() {
@@ -82,12 +84,12 @@ public class Channel {
 	}
 	
 	public boolean removeListener(Chatter chatter) {
-		return listeners.remove(chatter);
+		return listeners.remove(chatter.getName());
 	}
 	
 	public void broadcast(String message) {
 		message = format(format, name, message);
-		for (String name : listeners) {
+		for (String n : listeners) {
 			Chatter chatter = WindChat.getChat().getChatter(name);
 			if (chatter != null) {
 				chatter.send(message);

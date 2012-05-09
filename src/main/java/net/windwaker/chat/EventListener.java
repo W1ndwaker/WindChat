@@ -21,6 +21,9 @@
  */
 package net.windwaker.chat;
 
+import net.windwaker.chat.channel.Chatter;
+import net.windwaker.chat.channel.Channel;
+
 import org.spout.api.data.ValueHolder;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
@@ -48,13 +51,7 @@ public class EventListener implements Listener {
 		}
 		
 		System.out.println("Chatter not null");
-
-		Channel channel = chatter.getActiveChannel();
-		if (channel == null) {
-			return;
-		}
-
-		System.out.println("Channel not null");
+		
 		// Get the format to format the message
 		String message = "%player%: %message%";
 		ValueHolder data = player.getData("chat-format");
@@ -74,7 +71,7 @@ public class EventListener implements Listener {
 		}
 
 		// Broadcast the message through the channel
-		channel.broadcast(message);
+		chatter.chat(message);
 	}
 
 	@EventHandler

@@ -21,9 +21,9 @@
  */
 package net.windwaker.chat.command;
 
-import net.windwaker.chat.Channel;
+import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.Chat;
-import net.windwaker.chat.Chatter;
+import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.WindChat;
 import org.spout.api.command.CommandContext;
 import org.spout.api.command.CommandSource;
@@ -35,7 +35,7 @@ import org.spout.api.player.Player;
 public class ChannelCommands {
 
 	@Command(aliases = {"-join", "-j"}, desc = "Join a channel", min = 1, max = 1)
-	@CommandPermissions("windchat.command.chat.join")
+	@CommandPermissions("windchat.command.channel.join")
 	public void joinChannel(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
 			throw new CommandException("You must be a player to perform this command!");
@@ -45,7 +45,8 @@ public class ChannelCommands {
 		Chat chat = WindChat.getChat();
 		Chatter chatter = chat.getChatter(player.getName());
 		if (chatter == null) {
-			throw new CommandException("You were not found! Please login again!");
+			player.kick("Error: Chatter was null");
+			throw new CommandException("Chatter was null");
 		}
 
 		Channel channel = chat.getChannel(args.getString(0));
@@ -61,6 +62,7 @@ public class ChannelCommands {
 	}
 
 	@Command(aliases = {"-leave", "-l"}, desc = "Leave a channel", min = 1, max = 1)
+	@CommandPermissions("windchat.command.channel.leave")
 	public void leaveChannel(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
 			throw new CommandException("You must be a player to perform this command!");
@@ -70,7 +72,8 @@ public class ChannelCommands {
 		Chat chat = WindChat.getChat();
 		Chatter chatter = chat.getChatter(player.getName());
 		if (chatter == null) {
-			throw new CommandException("You were not found! Please login again!");
+			player.kick("Error: Chatter was null");
+			throw new CommandException("Chatter was null");
 		}
 		
 		Channel channel = chat.getChannel(args.getString(0));

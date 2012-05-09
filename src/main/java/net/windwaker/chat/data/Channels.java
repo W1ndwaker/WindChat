@@ -21,7 +21,7 @@
  */
 package net.windwaker.chat.data;
 
-import net.windwaker.chat.Channel;
+import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.ChatLogger;
 import org.spout.api.exception.ConfigurationException;
 import org.spout.api.util.config.ConfigurationNode;
