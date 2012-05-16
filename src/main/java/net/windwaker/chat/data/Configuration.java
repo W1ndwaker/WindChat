@@ -30,7 +30,8 @@ import org.spout.api.util.config.yaml.YamlConfiguration;
 import java.io.File;
 
 public class Configuration extends ConfigurationHolderConfiguration {
-	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("global", "default-channel");
+	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("spout", "default-channel");
+	public static final ConfigurationHolder DEFAULT_FORMAT = new ConfigurationHolder("%player%: %message%", "default-format");
 	private final ChatLogger logger = ChatLogger.getInstance();
 
 	public Configuration() {

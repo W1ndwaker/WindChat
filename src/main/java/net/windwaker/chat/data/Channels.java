@@ -23,6 +23,8 @@ package net.windwaker.chat.data;
 
 import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.ChatLogger;
+
+import org.spout.api.ChatColor;
 import org.spout.api.exception.ConfigurationException;
 import org.spout.api.util.config.ConfigurationNode;
 import org.spout.api.util.config.yaml.YamlConfiguration;
@@ -49,10 +51,10 @@ public class Channels {
 	}
 
 	private void addDefaults() {
-		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "format"}, "[%channel%] %message%"));
-		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "password"}, "spout"));
-		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "join-message"}, "&cYou have joined global!"));
-		data.setNode(new ConfigurationNode(data, new String[] {"channels", "global", "leave-message"}, "&4You have left global."));
+		data.setNode(new ConfigurationNode(data, new String[] {"channels", "spout", "format"}, "[&3%channel%&f] %message%"));
+		data.setNode(new ConfigurationNode(data, new String[] {"channels", "spout", "password"}, "unleashtheflow"));
+		data.setNode(new ConfigurationNode(data, new String[] {"channels", "spout", "join-message"}, "&aYou have joined Spout!"));
+		data.setNode(new ConfigurationNode(data, new String[] {"channels", "spout", "leave-message"}, "&cYou have left Spout."));
 	}
 	
 	private void loadChannels() {

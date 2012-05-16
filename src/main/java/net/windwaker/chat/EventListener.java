@@ -22,7 +22,7 @@
 package net.windwaker.chat;
 
 import net.windwaker.chat.channel.Chatter;
-import net.windwaker.chat.channel.Channel;
+import net.windwaker.chat.data.Configuration;
 
 import org.spout.api.data.ValueHolder;
 import org.spout.api.event.EventHandler;
@@ -53,7 +53,7 @@ public class EventListener implements Listener {
 		System.out.println("Chatter not null");
 		
 		// Get the format to format the message
-		String message = "%player%: %message%";
+		String message = Configuration.DEFAULT_FORMAT.getString();
 		ValueHolder data = player.getData("chat-format");
 		if (data != null && data.getString() != null) {
 			message = data.getString();

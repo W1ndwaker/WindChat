@@ -1,5 +1,5 @@
 name: WindChat
-version: ${project.version}
+version: ${build.number}
 description: WindChat is a plugin for the Spout server that provides configurable chat formats.
 author: Windwaker
 website: http://github.com/W1ndwaker/WindChat
