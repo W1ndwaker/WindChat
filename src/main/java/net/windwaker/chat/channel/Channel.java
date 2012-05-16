@@ -80,17 +80,17 @@ public class Channel {
 	}
 	
 	public boolean addListener(Chatter chatter) {
-		return listeners.add(chatter.getName());
+		return listeners.add(chatter.getParent().getName());
 	}
 	
 	public boolean removeListener(Chatter chatter) {
-		return listeners.remove(chatter.getName());
+		return listeners.remove(chatter.getParent().getName());
 	}
 	
 	public void broadcast(String message) {
 		message = format(format, name, message);
 		for (String n : listeners) {
-			Chatter chatter = WindChat.getChat().getChatter(name);
+			Chatter chatter = WindChat.getChat().getChatter(n);
 			if (chatter != null) {
 				chatter.send(message);
 			}

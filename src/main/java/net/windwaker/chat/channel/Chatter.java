@@ -42,11 +42,12 @@ public class Chatter {
 	}
 	
 	public void send(String message) {
+		System.out.println("Parent: " + parent.getName());
 		parent.sendMessage(message);
 	}
 	
-	public String getName() {
-		return parent.getName();
+	public Player getParent() {
+		return parent;
 	}
 	
 	public void join(Channel channel) {

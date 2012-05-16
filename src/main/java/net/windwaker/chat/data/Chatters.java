@@ -47,7 +47,7 @@ public class Chatters {
 	
 	public Chatter getChatter(String name) {
 		for (Chatter chatter : chatters) {
-			if (chatter.getName().equals(name)) {
+			if (chatter.getParent().getName().equalsIgnoreCase(name)) {
 				return chatter;
 			}
 		}

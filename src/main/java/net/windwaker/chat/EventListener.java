@@ -41,17 +41,14 @@ public class EventListener implements Listener {
 
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
-		System.out.println("Player chat");
-		event.setCancelled(true);   
+		event.setCancelled(true);
 		Chat chat = WindChat.getChat();
 		Player player = event.getPlayer();
 		Chatter chatter = chat.getChatter(player.getName());
 		if (chatter == null) {
 			return;
 		}
-		
-		System.out.println("Chatter not null");
-		
+
 		// Get the format to format the message
 		String message = Configuration.DEFAULT_FORMAT.getString();
 		ValueHolder data = player.getData("chat-format");
@@ -71,6 +68,7 @@ public class EventListener implements Listener {
 		}
 
 		// Broadcast the message through the channel
+		System.out.println("Message: " + message);
 		chatter.chat(message);
 	}
 
