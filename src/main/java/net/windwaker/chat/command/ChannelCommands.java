@@ -34,7 +34,7 @@ import org.spout.api.player.Player;
 
 public class ChannelCommands {
 
-	@Command(aliases = {"-join", "-j"}, desc = "Join a channel", min = 1, max = 1)
+	@Command(aliases = {"-join", "-j"}, desc = "Join a channel", min = 1, max = 2)
 	@CommandPermissions("windchat.command.channel.join")
 	public void joinChannel(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
@@ -58,7 +58,20 @@ public class ChannelCommands {
 			throw new CommandException("You are already in " + channel.getName() + "!");
 		}
 
-		chatter.join(channel);
+		if (args.length() == 1) {
+			if (channel.hasPassword()) {
+				throw new CommandException(channel.getName() + " requires a password for entrance!");
+			}
+			chatter.join(channel);
+		}
+		
+		if (args.length() == 2) {
+			if (channel.hasPassword() && !channel.getPassword().equalsIgnoreCase(args.getString(1))) {
+				throw new CommandException("Access denied.");
+			}
+
+			chatter.join(channel);
+		}
 	}
 
 	@Command(aliases = {"-leave", "-l"}, desc = "Leave a channel", min = 1, max = 1)

@@ -42,7 +42,6 @@ public class Chatter {
 	}
 	
 	public void send(String message) {
-		System.out.println("Parent: " + parent.getName());
 		parent.sendMessage(message);
 	}
 	

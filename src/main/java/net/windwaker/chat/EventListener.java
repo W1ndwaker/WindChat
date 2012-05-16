@@ -68,12 +68,29 @@ public class EventListener implements Listener {
 		}
 
 		// Broadcast the message through the channel
-		System.out.println("Message: " + message);
 		chatter.chat(message);
 	}
 
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		String message = Configuration.DEFAULT_JOIN_MESSAGE.getString();
+		ValueHolder data = player.getData("join-message");
+		if (data != null && data.getString() != null) {
+			message = data.getString();
+		}
+		
+		message = message.replaceAll("%player%", player.getDisplayName().replaceAll("%message%", event.getMessage()).replaceAll("&", "§"));
+		for (String variable : message.split("%")) {
+			ValueHolder value = player.getData(variable);
+			if (value == null || value.getString() == null) {
+				continue;
+			}
+
+			message = message.replaceAll("%" + variable + "%", value.getString());
+		}
+				
+		event.setMessage(message);
 		WindChat.getChat().login(event.getPlayer());
 	}
 }
