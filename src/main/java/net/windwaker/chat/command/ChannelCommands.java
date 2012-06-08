@@ -21,10 +21,11 @@
  */
 package net.windwaker.chat.command;
 
-import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.Chat;
-import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.WindChat;
+import net.windwaker.chat.channel.Channel;
+import net.windwaker.chat.channel.Chatter;
+
 import org.spout.api.command.CommandContext;
 import org.spout.api.command.CommandSource;
 import org.spout.api.command.annotated.Command;
@@ -33,7 +34,6 @@ import org.spout.api.exception.CommandException;
 import org.spout.api.player.Player;
 
 public class ChannelCommands {
-
 	@Command(aliases = {"-join", "-j"}, desc = "Join a channel", min = 1, max = 2)
 	@CommandPermissions("windchat.command.channel.join")
 	public void joinChannel(CommandContext args, CommandSource source) throws CommandException {
@@ -64,7 +64,7 @@ public class ChannelCommands {
 			}
 			chatter.join(channel);
 		}
-		
+
 		if (args.length() == 2) {
 			if (channel.hasPassword() && !channel.getPassword().equalsIgnoreCase(args.getString(1))) {
 				throw new CommandException("Access denied.");
@@ -80,7 +80,7 @@ public class ChannelCommands {
 		if (!(source instanceof Player)) {
 			throw new CommandException("You must be a player to perform this command!");
 		}
-		
+
 		Player player = (Player) source;
 		Chat chat = WindChat.getChat();
 		Chatter chatter = chat.getChatter(player.getName());
@@ -88,7 +88,7 @@ public class ChannelCommands {
 			player.kick("Error: Chatter was null");
 			throw new CommandException("Chatter was null");
 		}
-		
+
 		Channel channel = chat.getChannel(args.getString(0));
 		if (channel == null) {
 			throw new CommandException("Channel doesn't exist!");

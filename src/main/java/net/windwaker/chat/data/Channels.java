@@ -21,23 +21,22 @@
  */
 package net.windwaker.chat.data;
 
-import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.ChatLogger;
-
-import org.spout.api.ChatColor;
-import org.spout.api.exception.ConfigurationException;
-import org.spout.api.util.config.ConfigurationNode;
-import org.spout.api.util.config.yaml.YamlConfiguration;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+
+import net.windwaker.chat.ChatLogger;
+import net.windwaker.chat.channel.Channel;
+
+import org.spout.api.exception.ConfigurationException;
+import org.spout.api.util.config.ConfigurationNode;
+import org.spout.api.util.config.yaml.YamlConfiguration;
 
 public class Channels {
 	private final YamlConfiguration data = new YamlConfiguration(new File("plugins/WindChat/channels.yml"));
 	private final ChatLogger logger = ChatLogger.getInstance();
 	private final Set<Channel> channels = new HashSet<Channel>();
-	
+
 	public void load() {
 		try {
 			data.load();
@@ -51,12 +50,12 @@ public class Channels {
 	}
 
 	private void addDefaults() {
-		data.setNode(new ConfigurationNode(data, new String[] {"channels", "spout", "format"}, "[&3%channel%&f] %message%"));
-		data.setNode(new ConfigurationNode(data, new String[] {"channels", "spout", "password"}, "unleashtheflow"));
-		data.setNode(new ConfigurationNode(data, new String[] {"channels", "spout", "join-message"}, "&aYou have joined Spout!"));
-		data.setNode(new ConfigurationNode(data, new String[] {"channels", "spout", "leave-message"}, "&cYou have left Spout."));
+		data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "format"}, "[&3%channel%&f] %message%"));
+		data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "password"}, "unleashtheflow"));
+		data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "join-message"}, "&aYou have joined Spout!"));
+		data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "leave-message"}, "&cYou have left Spout."));
 	}
-	
+
 	private void loadChannels() {
 		for (String name : data.getNode("channels").getKeys(false)) {
 			Channel channel = new Channel(name);
@@ -68,7 +67,7 @@ public class Channels {
 			channels.add(channel);
 		}
 	}
-	
+
 	public Channel getChannel(String name) {
 		for (Channel channel : channels) {
 			if (channel.getName().equalsIgnoreCase(name)) {

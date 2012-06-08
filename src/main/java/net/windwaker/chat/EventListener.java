@@ -34,11 +34,9 @@ import org.spout.api.player.Player;
 
 /**
  * Handles formatting of messages from players.
- *
  * @author Windwaker
  */
 public class EventListener implements Listener {
-
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
 		event.setCancelled(true);
@@ -79,7 +77,7 @@ public class EventListener implements Listener {
 		if (data != null && data.getString() != null) {
 			message = data.getString();
 		}
-		
+
 		message = message.replaceAll("%player%", player.getDisplayName().replaceAll("%message%", event.getMessage()).replaceAll("&", "§"));
 		for (String variable : message.split("%")) {
 			ValueHolder value = player.getData(variable);
@@ -89,7 +87,7 @@ public class EventListener implements Listener {
 
 			message = message.replaceAll("%" + variable + "%", value.getString());
 		}
-				
+
 		event.setMessage(message);
 		WindChat.getChat().login(event.getPlayer());
 	}

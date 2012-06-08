@@ -21,14 +21,12 @@
  */
 package net.windwaker.chat;
 
-import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.channel.Channel;
+import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.data.Channels;
 import net.windwaker.chat.data.Chatters;
-import org.spout.api.player.Player;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.spout.api.player.Player;
 
 public class Chat {
 	private final Channels channels = new Channels();
@@ -38,15 +36,15 @@ public class Chat {
 		channels.load();
 		chatters.load();
 	}
-	
+
 	public void login(Player player) {
 		chatters.login(player);
 	}
-	
+
 	public Channel getChannel(String name) {
 		return channels.getChannel(name);
 	}
-	
+
 	public Chatter getChatter(String name) {
 		return chatters.getChatter(name);
 	}

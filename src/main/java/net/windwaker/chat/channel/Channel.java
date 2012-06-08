@@ -23,8 +23,10 @@ package net.windwaker.chat.channel;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import net.windwaker.chat.ChatLogger;
 import net.windwaker.chat.WindChat;
+
 import org.spout.api.ChatColor;
 
 public class Channel {
@@ -38,31 +40,31 @@ public class Channel {
 		joinMessage = ChatColor.BRIGHT_GREEN + "You have joined " + name + "!";
 		leaveMessage = ChatColor.RED + "You have left " + name + "!";
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getJoinMessage() {
 		return joinMessage;
 	}
-	
+
 	public void setJoinMessage(String joinMessage) {
 		this.joinMessage = joinMessage;
 	}
-	
+
 	public String getLeaveMessage() {
 		return leaveMessage;
 	}
-	
+
 	public void setLeaveMessage(String leaveMessage) {
 		this.leaveMessage = leaveMessage;
 	}
-	
+
 	public String getPassword() {
 		return password;
 	}
-	
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -70,23 +72,23 @@ public class Channel {
 	public boolean hasPassword() {
 		return password != null;
 	}
-	
+
 	public String getFormat() {
 		return format;
 	}
-	
+
 	public void setFormat(String format) {
 		this.format = format;
 	}
-	
+
 	public boolean addListener(Chatter chatter) {
 		return listeners.add(chatter.getParent().getName());
 	}
-	
+
 	public boolean removeListener(Chatter chatter) {
 		return listeners.remove(chatter.getParent().getName());
 	}
-	
+
 	public void broadcast(String message) {
 		message = format(format, name, message);
 		for (String n : listeners) {
@@ -98,7 +100,7 @@ public class Channel {
 
 		logger.info(message);
 	}
-	
+
 	// TODO: Extra variables
 	public static String format(String format, String channelName, String message) {
 		return format.replaceAll("%channel%", channelName).replaceAll("%message%", message).replaceAll("&", "§");

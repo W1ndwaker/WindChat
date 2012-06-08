@@ -21,13 +21,12 @@
  */
 package net.windwaker.chat;
 
-import org.spout.api.Spout;
-
 import java.util.logging.Level;
+
+import org.spout.api.Spout;
 
 /**
  * Logger for WindChat plugin
- *
  * @author Windwaker
  */
 public class ChatLogger {

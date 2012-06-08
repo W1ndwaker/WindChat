@@ -23,6 +23,7 @@ package net.windwaker.chat;
 
 import net.windwaker.chat.command.ChannelCommand;
 import net.windwaker.chat.data.Configuration;
+
 import org.spout.api.Spout;
 import org.spout.api.command.CommandRegistrationsFactory;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
@@ -32,7 +33,6 @@ import org.spout.api.plugin.CommonPlugin;
 
 /**
  * Chat plugin for the Spout voxel software.
- *
  * @author Windwaker
  */
 public class WindChat extends CommonPlugin {

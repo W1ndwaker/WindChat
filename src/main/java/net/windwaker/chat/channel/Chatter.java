@@ -21,41 +21,39 @@
  */
 package net.windwaker.chat.channel;
 
-import net.windwaker.chat.channel.Channel;
-
-import org.spout.api.player.Player;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import org.spout.api.player.Player;
 
 public class Chatter {
 	private final Player parent;
 	private final Set<Channel> channels = new HashSet<Channel>();
 	private Channel activeChannel;
-	
+
 	public Chatter(Player parent) {
 		this.parent = parent;
 	}
-	
+
 	public void chat(String message) {
 		activeChannel.broadcast(message);
 	}
-	
+
 	public void send(String message) {
 		parent.sendMessage(message);
 	}
-	
+
 	public Player getParent() {
 		return parent;
 	}
-	
+
 	public void join(Channel channel) {
 		channels.add(channel);
 		channel.addListener(this);
 		activeChannel = channel;
 		send(channel.getJoinMessage());
 	}
-	
+
 	public void leave(Channel channel) {
 		if (channel.equals(activeChannel)) {
 			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
@@ -64,17 +62,16 @@ public class Chatter {
 		channel.removeListener(this);
 		channels.remove(channel);
 		send(channel.getLeaveMessage());
-
 	}
-	
+
 	public void setActiveChannel(Channel activeChannel) {
 		this.activeChannel = activeChannel;
 	}
-	
+
 	public Channel getActiveChannel() {
 		return activeChannel;
 	}
-	
+
 	public boolean isIn(Channel channel) {
 		return channels.contains(channel);
 	}

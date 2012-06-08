@@ -21,22 +21,25 @@
  */
 package net.windwaker.chat.data;
 
-import net.windwaker.chat.channel.Chatter;
-import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.*;
-import org.spout.api.exception.ConfigurationException;
-import org.spout.api.player.Player;
-import org.spout.api.util.config.yaml.YamlConfiguration;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+
+import net.windwaker.chat.Chat;
+import net.windwaker.chat.ChatLogger;
+import net.windwaker.chat.WindChat;
+import net.windwaker.chat.channel.Channel;
+import net.windwaker.chat.channel.Chatter;
+
+import org.spout.api.exception.ConfigurationException;
+import org.spout.api.player.Player;
+import org.spout.api.util.config.yaml.YamlConfiguration;
 
 public class Chatters {
 	private final YamlConfiguration data = new YamlConfiguration(new File("plugins/WindChat/chatters.yml"));
 	private final ChatLogger logger = ChatLogger.getInstance();
 	private final Set<Chatter> chatters = new HashSet<Chatter>();
-	
+
 	public void load() {
 		try {
 			data.load();
@@ -44,7 +47,7 @@ public class Chatters {
 			logger.severe("Failed to load chatter data: " + e.getMessage());
 		}
 	}
-	
+
 	public Chatter getChatter(String name) {
 		for (Chatter chatter : chatters) {
 			if (chatter.getParent().getName().equalsIgnoreCase(name)) {
@@ -54,7 +57,7 @@ public class Chatters {
 
 		return null;
 	}
-	
+
 	public void login(Player player) {
 		Chat chat = WindChat.getChat();
 		Channel channel = chat.getChannel(data.getNode("chatters." + player.getName() + ".channel").getString());
