@@ -76,7 +76,6 @@
                 <directory>${basedir}</directory>
                 <includes>
                     <include>LICENSE.txt</include>
-                    <include>README.md</include>
                 </includes>
             </resource>
         </resources>
