@@ -51,7 +51,7 @@ public class WindChat extends CommonPlugin {
 
 		// Register commands
 		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
-		getGame().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
+		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 
 		// Load chat
 		chat.initialize();
