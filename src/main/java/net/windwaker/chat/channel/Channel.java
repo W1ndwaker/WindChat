@@ -24,6 +24,7 @@ package net.windwaker.chat.channel;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.windwaker.chat.Chat;
 import net.windwaker.chat.ChatLogger;
 import net.windwaker.chat.WindChat;
 
@@ -50,7 +51,7 @@ public class Channel {
 	}
 
 	public void setJoinMessage(String joinMessage) {
-		this.joinMessage = joinMessage;
+		this.joinMessage = Chat.color(joinMessage);
 	}
 
 	public String getLeaveMessage() {
@@ -58,7 +59,7 @@ public class Channel {
 	}
 
 	public void setLeaveMessage(String leaveMessage) {
-		this.leaveMessage = leaveMessage;
+		this.leaveMessage = Chat.color(leaveMessage);
 	}
 
 	public String getPassword() {
@@ -103,6 +104,6 @@ public class Channel {
 
 	// TODO: Extra variables
 	public static String format(String format, String channelName, String message) {
-		return format.replaceAll("%channel%", channelName).replaceAll("%message%", message).replaceAll("&", "§");
+		return format.replaceAll("%channel%", channelName).replaceAll("%message%", message).replaceAll("&", "\\u00A7");
 	}
 }

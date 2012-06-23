@@ -62,8 +62,8 @@ public class Channels {
 			String path = "channels." + name;
 			channel.setFormat(data.getNode(path + ".format").getString());
 			channel.setPassword(data.getNode(path + ".password").getString());
-			channel.setJoinMessage(data.getNode(path + ".join-message").getString().replaceAll("&", "§"));
-			channel.setLeaveMessage(data.getNode(path + ".leave-message").getString().replaceAll("&", "§"));
+			channel.setJoinMessage(data.getNode(path + ".join-message").getString());
+			channel.setLeaveMessage(data.getNode(path + ".leave-message").getString());
 			channels.add(channel);
 		}
 	}

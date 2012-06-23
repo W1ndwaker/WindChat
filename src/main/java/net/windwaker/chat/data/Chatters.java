@@ -54,7 +54,6 @@ public class Chatters {
 				return chatter;
 			}
 		}
-
 		return null;
 	}
 
@@ -64,7 +63,6 @@ public class Chatters {
 		if (channel == null) {
 			channel = chat.getChannel(Configuration.DEFAULT_CHANNEL.getString());
 		}
-
 		Chatter chatter = new Chatter(player);
 		chatter.join(channel);
 		chatters.add(chatter);

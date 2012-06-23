@@ -48,4 +48,8 @@ public class Chat {
 	public Chatter getChatter(String name) {
 		return chatters.getChatter(name);
 	}
+
+	public static String color(String s) {
+		return s.replaceAll("&", "\\u00A7");
+	}
 }

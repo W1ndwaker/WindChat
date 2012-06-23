@@ -47,15 +47,13 @@ public class EventListener implements Listener {
 			return;
 		}
 
-		// Get the format to format the message
 		String message = Configuration.DEFAULT_FORMAT.getString();
 		ValueHolder data = player.getData("chat-format");
 		if (data != null && data.getString() != null) {
 			message = data.getString();
 		}
 
-		// Format the message
-		message = message.replaceAll("%player%", player.getDisplayName()).replaceAll("%message%", event.getMessage()).replaceAll("&", "§");
+		message = message.replaceAll("%player%", player.getDisplayName()).replaceAll("%message%", event.getMessage()).replaceAll("&", "\\u00A7");
 		for (String variable : message.split("%")) {
 			ValueHolder value = player.getData(variable);
 			if (value == null || value.getString() == null) {
@@ -64,8 +62,6 @@ public class EventListener implements Listener {
 
 			message = message.replaceAll("%" + variable + "%", value.getString());
 		}
-
-		// Broadcast the message through the channel
 		chatter.chat(message);
 	}
 
@@ -78,7 +74,7 @@ public class EventListener implements Listener {
 			message = data.getString();
 		}
 
-		message = message.replaceAll("%player%", player.getDisplayName().replaceAll("%message%", event.getMessage()).replaceAll("&", "§"));
+		message = message.replaceAll("%player%", player.getDisplayName().replaceAll("%message%", event.getMessage()).replaceAll("&", "\\u00A7"));
 		for (String variable : message.split("%")) {
 			ValueHolder value = player.getData(variable);
 			if (value == null || value.getString() == null) {
@@ -87,7 +83,6 @@ public class EventListener implements Listener {
 
 			message = message.replaceAll("%" + variable + "%", value.getString());
 		}
-
 		event.setMessage(message);
 		WindChat.getChat().login(event.getPlayer());
 	}
