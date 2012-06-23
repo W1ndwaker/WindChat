@@ -53,7 +53,9 @@ public class EventListener implements Listener {
 			message = data.getString();
 		}
 
-		message = message.replaceAll("%player%", player.getDisplayName()).replaceAll("%message%", event.getMessage()).replaceAll("&", "\\u00A7");
+		message = Chat.color(message.replaceAll("%player%", player.getDisplayName())
+				.replaceAll("%message%", event.getMessage()));
+
 		for (String variable : message.split("%")) {
 			ValueHolder value = player.getData(variable);
 			if (value == null || value.getString() == null) {
@@ -74,13 +76,14 @@ public class EventListener implements Listener {
 			message = data.getString();
 		}
 
-		message = message.replaceAll("%player%", player.getDisplayName().replaceAll("%message%", event.getMessage()).replaceAll("&", "\\u00A7"));
+		message = Chat.color(message.replaceAll("%player%", player.getDisplayName()
+				.replaceAll("%message%", event.getMessage())));
+
 		for (String variable : message.split("%")) {
 			ValueHolder value = player.getData(variable);
 			if (value == null || value.getString() == null) {
 				continue;
 			}
-
 			message = message.replaceAll("%" + variable + "%", value.getString());
 		}
 		event.setMessage(message);
