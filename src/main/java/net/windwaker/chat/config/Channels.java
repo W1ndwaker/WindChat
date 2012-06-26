@@ -58,7 +58,7 @@ public class Channels {
 
 	private void addDefaults() {
 		data.setNode(new ConfigurationNode(data, new String[]{
-				"channels", "spout", "tagSwap"},
+				"channels", "spout", "format"},
 				"[&3%channel%&f] %message%"));
 		data.setNode(new ConfigurationNode(data, new String[]{
 				"channels", "spout", "password"},
@@ -75,7 +75,7 @@ public class Channels {
 		for (String name : data.getNode("channels").getKeys(false)) {
 			Channel channel = new Channel(name);
 			String path = "channels." + name;
-			channel.setFormat(data.getNode(path + ".tagSwap").getString());
+			channel.setFormat(data.getNode(path + ".format").getString());
 			channel.setPassword(data.getNode(path + ".password").getString());
 			channel.setJoinMessage(data.getNode(path + ".join-message").getString());
 			channel.setLeaveMessage(data.getNode(path + ".leave-message").getString());
