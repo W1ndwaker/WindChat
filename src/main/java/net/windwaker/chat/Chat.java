@@ -21,35 +21,72 @@
  */
 package net.windwaker.chat;
 
+import java.util.Map;
+
 import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.channel.Chatter;
-import net.windwaker.chat.data.Channels;
-import net.windwaker.chat.data.Chatters;
 
+import org.spout.api.data.ValueHolder;
 import org.spout.api.player.Player;
 
 public class Chat {
-	private final Channels channels = new Channels();
-	private final Chatters chatters = new Chatters();
+	private static WindChat plugin;
 
-	public void initialize() {
-		channels.load();
-		chatters.load();
+	private Chat() {
 	}
 
-	public void login(Player player) {
-		chatters.login(player);
+	public static void setPlugin(WindChat instance) {
+		plugin = instance;
 	}
 
-	public Channel getChannel(String name) {
-		return channels.getChannel(name);
+	public static WindChat getPlugin() {
+		return plugin;
 	}
 
-	public Chatter getChatter(String name) {
-		return chatters.getChatter(name);
+	public static void onLogin(Player player) {
+		plugin.onLogin(player);
+	}
+
+	public static Channel getChannel(String name) {
+		return plugin.getChannel(name);
+	}
+
+	public static Chatter getChatter(String name) {
+		return plugin.getChatter(name);
 	}
 
 	public static String color(String s) {
-		return s.replaceAll("&", "\\u00A7");
+		return s.replaceAll("&", "§");
+	}
+
+	public static String getData(Player player, Format format) {
+		String def = format.getDefault();
+		ValueHolder data = player.getData(format.toString());
+		if (data != null && data.getString() != null) {
+			def = data.getString();
+		}
+		return def;
+	}
+
+	public static String tagSwap(Map<String, String> tagMap, String message) {
+		for (Map.Entry<String, String> entry : tagMap.entrySet()) {
+			message = message.replaceAll("%" + entry.getKey() + "%", entry.getValue());
+		}
+		return color(message);
+	}
+
+	public static String dataSplit(Player player, String message) {
+		for (String variable : message.split("%")) {
+			ValueHolder value = player.getData(variable);
+			if (value == null || value.getString() == null) {
+				continue;
+			}
+			message = message.replaceAll("%" + variable + "%", value.getString());
+		}
+		return color(message);
+	}
+
+	public static String format(Player player, Format format, Map<String, String> tagMap) {
+		return dataSplit(player, tagSwap(tagMap, getData(player, format)));
 	}
 }

@@ -58,7 +58,6 @@ public class Chatter {
 		if (channel.equals(activeChannel)) {
 			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
 		}
-
 		channel.removeListener(this);
 		channels.remove(channel);
 		send(channel.getLeaveMessage());

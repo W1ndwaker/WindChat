@@ -21,14 +21,19 @@
  */
 package net.windwaker.chat;
 
+import net.windwaker.chat.channel.Channel;
+import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.command.ChannelCommand;
-import net.windwaker.chat.data.Configuration;
+import net.windwaker.chat.config.Channels;
+import net.windwaker.chat.config.Chatters;
+import net.windwaker.chat.config.Settings;
 
 import org.spout.api.Spout;
 import org.spout.api.command.CommandRegistrationsFactory;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
 import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
+import org.spout.api.player.Player;
 import org.spout.api.plugin.CommonPlugin;
 
 /**
@@ -37,35 +42,73 @@ import org.spout.api.plugin.CommonPlugin;
  */
 public class WindChat extends CommonPlugin {
 	private final ChatLogger logger = ChatLogger.getInstance();
-	private final Configuration config = new Configuration();
-	private static final Chat chat = new Chat();
+	private final Settings config = new Settings();
+	private final Channels channels = new Channels();
+	private final Chatters chatters = new Chatters();
+
+	@Override
+	public void onReload() {
+		// Save and load all the config
+		reloadData();
+		logger.info("WindChat v" + getDescription().getVersion() + " by "
+				+ getDescription().getAuthors() + " reloaded!");
+	}
 
 	@Override
 	public void onEnable() {
-
+		// Set the plugin of Chat
+		Chat.setPlugin(this);
 		// Load config
-		config.load();
-
+		loadData();
 		// Register events
 		Spout.getEventManager().registerEvents(new EventListener(), this);
-
 		// Register commands
-		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
-		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
-
-		// Load chat
-		chat.initialize();
-
-		// Hello world!
-		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
+		registerCommands();
+		logger.info("WindChat v" + getDescription().getVersion() + " by "
+				+ getDescription().getAuthors() + " enabled!");
 	}
 
 	@Override
 	public void onDisable() {
-		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
+		saveData();
+		logger.info("WindChat v" + getDescription().getVersion() + " by "
+				+ getDescription().getAuthors() + " disabled.");
 	}
 
-	public static Chat getChat() {
-		return chat;
+	public void onLogin(Player player) {
+		chatters.onLogin(player);
+	}
+
+	public Channel getChannel(String name) {
+		return channels.get(name);
+	}
+
+	public Chatter getChatter(String name) {
+		return chatters.get(name);
+	}
+
+	private void registerCommands() {
+		CommandRegistrationsFactory<Class<?>> commandRegFactory =
+				new AnnotatedCommandRegistrationFactory(new SimpleInjector(),
+						new SimpleAnnotatedCommandExecutorFactory());
+		getEngine().getRootCommand().addSubCommands(
+				this, ChannelCommand.class, commandRegFactory);
+	}
+
+	private void loadData() {
+		config.load();
+		channels.load();
+		chatters.load();
+	}
+
+	private void saveData() {
+		config.save();
+		channels.save();
+		chatters.save();
+	}
+
+	private void reloadData() {
+		saveData();
+		loadData();
 	}
 }

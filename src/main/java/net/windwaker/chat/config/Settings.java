@@ -19,52 +19,40 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.data;
+package net.windwaker.chat.config;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
-import net.windwaker.chat.Chat;
 import net.windwaker.chat.ChatLogger;
-import net.windwaker.chat.WindChat;
-import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.channel.Chatter;
 
 import org.spout.api.exception.ConfigurationException;
-import org.spout.api.player.Player;
+import org.spout.api.util.config.ConfigurationHolder;
+import org.spout.api.util.config.ConfigurationHolderConfiguration;
 import org.spout.api.util.config.yaml.YamlConfiguration;
 
-public class Chatters {
-	private final YamlConfiguration data = new YamlConfiguration(new File("plugins/WindChat/chatters.yml"));
+public class Settings extends ConfigurationHolderConfiguration {
+	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("spout", "default-channel");
+	public static final ConfigurationHolder DEFAULT_FORMAT = new ConfigurationHolder("%player%: %message%", "default-tagSwap");
+	public static final ConfigurationHolder DEFAULT_JOIN_MESSAGE = new ConfigurationHolder("&3%player%&7 has joined the game.", "default-join-message");
 	private final ChatLogger logger = ChatLogger.getInstance();
-	private final Set<Chatter> chatters = new HashSet<Chatter>();
+
+	public Settings() {
+		super(new YamlConfiguration(new File("plugins/WindChat/config.yml")));
+	}
 
 	public void load() {
 		try {
-			data.load();
+			super.load();
 		} catch (ConfigurationException e) {
-			logger.severe("Failed to load chatter data: " + e.getMessage());
+			logger.severe("Failed to load configuration: " + e.getMessage());
 		}
 	}
 
-	public Chatter getChatter(String name) {
-		for (Chatter chatter : chatters) {
-			if (chatter.getParent().getName().equalsIgnoreCase(name)) {
-				return chatter;
-			}
+	public void save() {
+		try {
+			super.save();
+		} catch (ConfigurationException e) {
+			logger.severe("Failed to save configuration: " + e.getMessage());
 		}
-		return null;
-	}
-
-	public void login(Player player) {
-		Chat chat = WindChat.getChat();
-		Channel channel = chat.getChannel(data.getNode("chatters." + player.getName() + ".channel").getString());
-		if (channel == null) {
-			channel = chat.getChannel(Configuration.DEFAULT_CHANNEL.getString());
-		}
-		Chatter chatter = new Chatter(player);
-		chatter.join(channel);
-		chatters.add(chatter);
 	}
 }

@@ -21,10 +21,11 @@
  */
 package net.windwaker.chat;
 
-import net.windwaker.chat.channel.Chatter;
-import net.windwaker.chat.data.Configuration;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.spout.api.data.ValueHolder;
+import net.windwaker.chat.channel.Chatter;
+
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
 import org.spout.api.event.Order;
@@ -39,54 +40,35 @@ import org.spout.api.player.Player;
 public class EventListener implements Listener {
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
+		// Cancel the event to channel it through our own system
 		event.setCancelled(true);
-		Chat chat = WindChat.getChat();
 		Player player = event.getPlayer();
-		Chatter chatter = chat.getChatter(player.getName());
+		Chatter chatter = Chat.getChatter(player.getName());
 		if (chatter == null) {
 			return;
 		}
 
-		String message = Configuration.DEFAULT_FORMAT.getString();
-		ValueHolder data = player.getData("chat-format");
-		if (data != null && data.getString() != null) {
-			message = data.getString();
-		}
+		// Define tags
+		Map<String, String> tagMap = new HashMap<String, String>(2);
+		tagMap.put("player", player.getDisplayName());
+		tagMap.put("message", event.getMessage());
 
-		message = Chat.color(message.replaceAll("%player%", player.getDisplayName())
-				.replaceAll("%message%", event.getMessage()));
-
-		for (String variable : message.split("%")) {
-			ValueHolder value = player.getData(variable);
-			if (value == null || value.getString() == null) {
-				continue;
-			}
-
-			message = message.replaceAll("%" + variable + "%", value.getString());
-		}
+		// Format and send the message
+		String message = Chat.format(player, Format.CHAT_FORMAT, tagMap);
 		chatter.chat(message);
 	}
 
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
+		// Define tags
 		Player player = event.getPlayer();
-		String message = Configuration.DEFAULT_JOIN_MESSAGE.getString();
-		ValueHolder data = player.getData("join-message");
-		if (data != null && data.getString() != null) {
-			message = data.getString();
-		}
+		Map<String, String> tagMap = new HashMap<String, String>(2);
+		tagMap.put("player", player.getDisplayName());
+		tagMap.put("message", event.getMessage());
 
-		message = Chat.color(message.replaceAll("%player%", player.getDisplayName()
-				.replaceAll("%message%", event.getMessage())));
-
-		for (String variable : message.split("%")) {
-			ValueHolder value = player.getData(variable);
-			if (value == null || value.getString() == null) {
-				continue;
-			}
-			message = message.replaceAll("%" + variable + "%", value.getString());
-		}
+		// Format and set the join message
+		String message = Chat.format(player, Format.JOIN_MESSAGE, tagMap);
 		event.setMessage(message);
-		WindChat.getChat().login(event.getPlayer());
+		Chat.onLogin(event.getPlayer());
 	}
 }

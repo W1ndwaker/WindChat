@@ -19,33 +19,27 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.data;
+package net.windwaker.chat;
 
-import java.io.File;
+import net.windwaker.chat.config.Settings;
 
-import net.windwaker.chat.ChatLogger;
+public enum Format {
+	CHAT_FORMAT("windchat.chat_format", Settings.DEFAULT_FORMAT.getString()),
+	JOIN_MESSAGE("windchat.join_message", Settings.DEFAULT_JOIN_MESSAGE.getString());
 
-import org.spout.api.exception.ConfigurationException;
-import org.spout.api.util.config.ConfigurationHolder;
-import org.spout.api.util.config.ConfigurationHolderConfiguration;
-import org.spout.api.util.config.yaml.YamlConfiguration;
+	private final String node, def;
 
-public class Configuration extends ConfigurationHolderConfiguration {
-	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("spout", "default-channel");
-	public static final ConfigurationHolder DEFAULT_FORMAT = new ConfigurationHolder("%player%: %message%", "default-format");
-	public static final ConfigurationHolder DEFAULT_JOIN_MESSAGE = new ConfigurationHolder("&3%player%&7 has joined the game.", "default-join-message");
-	private final ChatLogger logger = ChatLogger.getInstance();
-
-	public Configuration() {
-		super(new YamlConfiguration(new File("plugins/WindChat/config.yml")));
+	private Format(String node, String def) {
+		this.node = node;
+		this.def = def;
 	}
 
-	public void load() {
-		try {
-			super.load();
-			super.save();
-		} catch (ConfigurationException e) {
-			logger.severe("Failed to load configuration: " + e.getMessage());
-		}
+	public String getDefault() {
+		return def;
+	}
+
+	@Override
+	public String toString() {
+		return node;
 	}
 }

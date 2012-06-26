@@ -21,12 +21,13 @@
  */
 package net.windwaker.chat.channel;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.windwaker.chat.Chat;
 import net.windwaker.chat.ChatLogger;
-import net.windwaker.chat.WindChat;
 
 import org.spout.api.ChatColor;
 
@@ -91,19 +92,17 @@ public class Channel {
 	}
 
 	public void broadcast(String message) {
-		message = format(format, name, message);
+		// Define tags
+		Map<String, String> tagMap = new HashMap<String, String>(2);
+		tagMap.put("channel", name);
+		tagMap.put("message", message);
+		message = Chat.tagSwap(tagMap, message);
 		for (String n : listeners) {
-			Chatter chatter = WindChat.getChat().getChatter(n);
+			Chatter chatter = Chat.getChatter(n);
 			if (chatter != null) {
 				chatter.send(message);
 			}
 		}
-
 		logger.info(message);
-	}
-
-	// TODO: Extra variables
-	public static String format(String format, String channelName, String message) {
-		return format.replaceAll("%channel%", channelName).replaceAll("%message%", message).replaceAll("&", "\\u00A7");
 	}
 }

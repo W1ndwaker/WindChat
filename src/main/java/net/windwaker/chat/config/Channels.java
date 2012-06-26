@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.data;
+package net.windwaker.chat.config;
 
 import java.io.File;
 import java.util.HashSet;
@@ -39,28 +39,43 @@ public class Channels {
 
 	public void load() {
 		try {
-			data.load();
 			data.setWritesDefaults(true);
 			addDefaults();
-			loadChannels();
+			data.load();
+			initChannels();
+		} catch (ConfigurationException e) {
+			logger.severe("Failed to load channel config: " + e.getMessage());
+		}
+	}
+
+	public void save() {
+		try {
 			data.save();
 		} catch (ConfigurationException e) {
-			logger.severe("Failed to load channel data: " + e.getMessage());
+			logger.severe("Failed to save channel config: " + e.getMessage());
 		}
 	}
 
 	private void addDefaults() {
-		data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "format"}, "[&3%channel%&f] %message%"));
-		data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "password"}, "unleashtheflow"));
-		data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "join-message"}, "&aYou have joined Spout!"));
-		data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "leave-message"}, "&cYou have left Spout."));
+		data.setNode(new ConfigurationNode(data, new String[]{
+				"channels", "spout", "tagSwap"},
+				"[&3%channel%&f] %message%"));
+		data.setNode(new ConfigurationNode(data, new String[]{
+				"channels", "spout", "password"},
+				"unleashtheflow"));
+		data.setNode(new ConfigurationNode(data, new String[]{
+				"channels", "spout", "join-message"},
+				"&aYou have joined Spout!"));
+		data.setNode(new ConfigurationNode(data, new String[]{
+				"channels", "spout", "leave-message"},
+				"&cYou have left Spout."));
 	}
 
-	private void loadChannels() {
+	private void initChannels() {
 		for (String name : data.getNode("channels").getKeys(false)) {
 			Channel channel = new Channel(name);
 			String path = "channels." + name;
-			channel.setFormat(data.getNode(path + ".format").getString());
+			channel.setFormat(data.getNode(path + ".tagSwap").getString());
 			channel.setPassword(data.getNode(path + ".password").getString());
 			channel.setJoinMessage(data.getNode(path + ".join-message").getString());
 			channel.setLeaveMessage(data.getNode(path + ".leave-message").getString());
@@ -68,13 +83,12 @@ public class Channels {
 		}
 	}
 
-	public Channel getChannel(String name) {
+	public Channel get(String name) {
 		for (Channel channel : channels) {
 			if (channel.getName().equalsIgnoreCase(name)) {
 				return channel;
 			}
 		}
-
 		return null;
 	}
 }
