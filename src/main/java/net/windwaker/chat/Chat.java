@@ -87,6 +87,6 @@ public class Chat {
 	}
 
 	public static String format(Player player, Format format, Map<String, String> tagMap) {
-		return dataSplit(player, tagSwap(tagMap, getData(player, format)));
+		return color(dataSplit(player, tagSwap(tagMap, getData(player, format))));
 	}
 }
