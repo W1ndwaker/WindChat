@@ -48,7 +48,7 @@ public class ChannelCommands {
 			throw new CommandException("Chatter was null");
 		}
 
-		Channel channel = chat.getChannel(args.getString(0));
+		Channel channel = Chat.getChannel(args.getString(0));
 		if (channel == null) {
 			throw new CommandException("Channel doesn't exist!");
 		}
