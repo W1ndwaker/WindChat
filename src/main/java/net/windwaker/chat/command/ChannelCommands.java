@@ -42,8 +42,7 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chat chat = WindChat.getChat();
-		Chatter chatter = chat.getChatter(player.getName());
+		Chatter chatter = Chat.getChatter(player.getName());
 		if (chatter == null) {
 			player.kick("Error: Chatter was null");
 			throw new CommandException("Chatter was null");
@@ -69,7 +68,6 @@ public class ChannelCommands {
 			if (channel.hasPassword() && !channel.getPassword().equalsIgnoreCase(args.getString(1))) {
 				throw new CommandException("Access denied.");
 			}
-
 			chatter.join(channel);
 		}
 	}
@@ -82,14 +80,13 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chat chat = WindChat.getChat();
-		Chatter chatter = chat.getChatter(player.getName());
+		Chatter chatter = Chat.getChatter(player.getName());
 		if (chatter == null) {
 			player.kick("Error: Chatter was null");
 			throw new CommandException("Chatter was null");
 		}
 
-		Channel channel = chat.getChannel(args.getString(0));
+		Channel channel = Chat.getChannel(args.getString(0));
 		if (channel == null) {
 			throw new CommandException("Channel doesn't exist!");
 		}
@@ -101,7 +98,6 @@ public class ChannelCommands {
 		if (!chatter.isIn(channel)) {
 			throw new CommandException("You are not in " + channel.getName() + "!");
 		}
-
 		chatter.leave(channel);
 	}
 }
