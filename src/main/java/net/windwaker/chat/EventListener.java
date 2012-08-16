@@ -31,7 +31,7 @@ import org.spout.api.event.Listener;
 import org.spout.api.event.Order;
 import org.spout.api.event.player.PlayerChatEvent;
 import org.spout.api.event.player.PlayerJoinEvent;
-import org.spout.api.player.Player;
+import org.spout.api.entity.Player;
 
 /**
  * Handles formatting of messages from players.
@@ -51,7 +51,7 @@ public class EventListener implements Listener {
 		// Define tags
 		Map<String, String> tagMap = new HashMap<String, String>(2);
 		tagMap.put("player", player.getDisplayName());
-		tagMap.put("message", event.getMessage());
+		tagMap.put("message", event.getMessage().getPlainString());
 
 		// Format and send the message
 		String message = Chat.format(player, Format.CHAT_FORMAT, tagMap);
@@ -64,7 +64,7 @@ public class EventListener implements Listener {
 		Player player = event.getPlayer();
 		Map<String, String> tagMap = new HashMap<String, String>(2);
 		tagMap.put("player", player.getDisplayName());
-		tagMap.put("message", event.getMessage());
+		//tagMap.put("message", event.getMessage());
 
 		// Format and set the join message
 		String message = Chat.format(player, Format.JOIN_MESSAGE, tagMap);

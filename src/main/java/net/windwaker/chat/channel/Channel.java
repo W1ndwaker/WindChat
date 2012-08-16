@@ -29,7 +29,7 @@ import java.util.Set;
 import net.windwaker.chat.Chat;
 import net.windwaker.chat.ChatLogger;
 
-import org.spout.api.ChatColor;
+import org.spout.api.chat.style.ChatStyle;
 
 public class Channel {
 	private final String name;
@@ -39,8 +39,8 @@ public class Channel {
 
 	public Channel(String name) {
 		this.name = name;
-		joinMessage = ChatColor.BRIGHT_GREEN + "You have joined " + name + "!";
-		leaveMessage = ChatColor.RED + "You have left " + name + "!";
+		joinMessage = ChatStyle.BRIGHT_GREEN + "You have joined " + name + "!";
+		leaveMessage = ChatStyle.RED + "You have left " + name + "!";
 	}
 
 	public String getName() {

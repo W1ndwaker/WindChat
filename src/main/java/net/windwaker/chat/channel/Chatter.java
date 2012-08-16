@@ -24,7 +24,7 @@ package net.windwaker.chat.channel;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.spout.api.player.Player;
+import org.spout.api.entity.Player;
 
 public class Chatter {
 	private final Player parent;

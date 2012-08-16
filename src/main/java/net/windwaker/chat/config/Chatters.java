@@ -31,7 +31,7 @@ import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.channel.Chatter;
 
 import org.spout.api.exception.ConfigurationException;
-import org.spout.api.player.Player;
+import org.spout.api.entity.Player;
 import org.spout.api.util.config.yaml.YamlConfiguration;
 
 public class Chatters {

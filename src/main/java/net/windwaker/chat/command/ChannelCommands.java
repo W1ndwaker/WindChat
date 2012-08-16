@@ -31,7 +31,7 @@ import org.spout.api.command.CommandSource;
 import org.spout.api.command.annotated.Command;
 import org.spout.api.command.annotated.CommandPermissions;
 import org.spout.api.exception.CommandException;
-import org.spout.api.player.Player;
+import org.spout.api.entity.Player;
 
 public class ChannelCommands {
 	@Command(aliases = {"-join", "-j"}, desc = "Join a channel", min = 1, max = 2)

@@ -33,7 +33,7 @@ import org.spout.api.command.CommandRegistrationsFactory;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
 import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
-import org.spout.api.player.Player;
+import org.spout.api.entity.Player;
 import org.spout.api.plugin.CommonPlugin;
 
 /**
@@ -50,8 +50,7 @@ public class WindChat extends CommonPlugin {
 	public void onReload() {
 		// Save and load all the config
 		reloadData();
-		logger.info("WindChat v" + getDescription().getVersion() + " by "
-				+ getDescription().getAuthors() + " reloaded!");
+		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " reloaded!");
 	}
 
 	@Override
@@ -64,15 +63,13 @@ public class WindChat extends CommonPlugin {
 		Spout.getEventManager().registerEvents(new EventListener(), this);
 		// Register commands
 		registerCommands();
-		logger.info("WindChat v" + getDescription().getVersion() + " by "
-				+ getDescription().getAuthors() + " enabled!");
+		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
 	}
 
 	@Override
 	public void onDisable() {
 		saveData();
-		logger.info("WindChat v" + getDescription().getVersion() + " by "
-				+ getDescription().getAuthors() + " disabled.");
+		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
 	}
 
 	public void onLogin(Player player) {
@@ -88,11 +85,8 @@ public class WindChat extends CommonPlugin {
 	}
 
 	private void registerCommands() {
-		CommandRegistrationsFactory<Class<?>> commandRegFactory =
-				new AnnotatedCommandRegistrationFactory(new SimpleInjector(),
-						new SimpleAnnotatedCommandExecutorFactory());
-		getEngine().getRootCommand().addSubCommands(
-				this, ChannelCommand.class, commandRegFactory);
+		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
+		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 	}
 
 	private void loadData() {

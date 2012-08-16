@@ -27,7 +27,7 @@ import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.channel.Chatter;
 
 import org.spout.api.data.ValueHolder;
-import org.spout.api.player.Player;
+import org.spout.api.entity.Player;
 
 public class Chat {
 	private static WindChat plugin;
@@ -72,7 +72,7 @@ public class Chat {
 		for (Map.Entry<String, String> entry : tagMap.entrySet()) {
 			message = message.replaceAll("%" + entry.getKey() + "%", entry.getValue());
 		}
-		return color(message);
+		return message;
 	}
 
 	public static String dataSplit(Player player, String message) {
@@ -83,7 +83,7 @@ public class Chat {
 			}
 			message = message.replaceAll("%" + variable + "%", value.getString());
 		}
-		return color(message);
+		return message;
 	}
 
 	public static String format(Player player, Format format, Map<String, String> tagMap) {
