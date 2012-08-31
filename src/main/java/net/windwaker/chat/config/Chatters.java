@@ -65,8 +65,7 @@ public class Chatters {
 	}
 
 	public void onLogin(Player player) {
-		Channel channel = Chat.getChannel(data.getNode(
-				"chatters." + player.getName() + ".channel").getString());
+		Channel channel = Chat.getChannel(data.getNode("chatters." + player.getName() + ".channel").getString());
 		if (channel == null) {
 			channel = Chat.getChannel(Settings.DEFAULT_CHANNEL.getString());
 		}

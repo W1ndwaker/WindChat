@@ -33,7 +33,7 @@ import org.spout.api.util.config.yaml.YamlConfiguration;
 public class Settings extends ConfigurationHolderConfiguration {
 	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("spout", "default-channel");
 	public static final ConfigurationHolder DEFAULT_FORMAT = new ConfigurationHolder("%player%: %message%", "default-format");
-	public static final ConfigurationHolder DEFAULT_JOIN_MESSAGE = new ConfigurationHolder("&3%player%&7 has joined the game.", "default-join-message");
+	public static final ConfigurationHolder DEFAULT_JOIN_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}%player% {{GRAY}}has joined the game.", "default-join-message");
 	private final ChatLogger logger = ChatLogger.getInstance();
 
 	public Settings() {

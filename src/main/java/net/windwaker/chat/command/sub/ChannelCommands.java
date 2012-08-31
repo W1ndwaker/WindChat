@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.command;
+package net.windwaker.chat.command.sub;
 
 import net.windwaker.chat.Chat;
 import net.windwaker.chat.WindChat;
@@ -34,9 +34,9 @@ import org.spout.api.exception.CommandException;
 import org.spout.api.entity.Player;
 
 public class ChannelCommands {
-	@Command(aliases = {"-join", "-j"}, desc = "Join a channel", min = 1, max = 2)
+	@Command(aliases = {"join", "j"}, desc = "Join a channel", min = 1, max = 2)
 	@CommandPermissions("windchat.command.channel.join")
-	public void joinChannel(CommandContext args, CommandSource source) throws CommandException {
+	public void join(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
 			throw new CommandException("You must be a player to perform this command!");
 		}
@@ -72,9 +72,9 @@ public class ChannelCommands {
 		}
 	}
 
-	@Command(aliases = {"-leave", "-l"}, desc = "Leave a channel", min = 1, max = 1)
+	@Command(aliases = {"leave", "l"}, desc = "Leave a channel", min = 1, max = 1)
 	@CommandPermissions("windchat.command.channel.leave")
-	public void leaveChannel(CommandContext args, CommandSource source) throws CommandException {
+	public void leave(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
 			throw new CommandException("You must be a player to perform this command!");
 		}

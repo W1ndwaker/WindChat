@@ -21,6 +21,8 @@
  */
 package net.windwaker.chat.command;
 
+import net.windwaker.chat.command.sub.ChannelCommands;
+
 import org.spout.api.command.CommandContext;
 import org.spout.api.command.CommandSource;
 import org.spout.api.command.annotated.Command;
@@ -33,6 +35,5 @@ public class ChannelCommand {
 	@CommandPermissions("windchat.command.channel")
 	@NestedCommand(ChannelCommands.class)
 	public void channel(CommandContext args, CommandSource source) throws CommandException {
-
 	}
 }

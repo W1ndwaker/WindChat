@@ -50,7 +50,7 @@ public class WindChat extends CommonPlugin {
 	public void onReload() {
 		// Save and load all the config
 		reloadData();
-		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " reloaded!");
+		logger.info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " reloaded!");
 	}
 
 	@Override
@@ -62,14 +62,15 @@ public class WindChat extends CommonPlugin {
 		// Register events
 		Spout.getEventManager().registerEvents(new EventListener(), this);
 		// Register commands
-		registerCommands();
-		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
+		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
+		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
+		logger.info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
 	}
 
 	@Override
 	public void onDisable() {
 		saveData();
-		logger.info("WindChat v" + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
+		logger.info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
 	}
 
 	public void onLogin(Player player) {
@@ -82,11 +83,6 @@ public class WindChat extends CommonPlugin {
 
 	public Chatter getChatter(String name) {
 		return chatters.get(name);
-	}
-
-	private void registerCommands() {
-		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
-		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 	}
 
 	private void loadData() {

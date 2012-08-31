@@ -26,12 +26,13 @@ import java.util.Map;
 
 import net.windwaker.chat.channel.Chatter;
 
+import org.spout.api.chat.ChatArguments;
+import org.spout.api.entity.Player;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
 import org.spout.api.event.Order;
 import org.spout.api.event.player.PlayerChatEvent;
 import org.spout.api.event.player.PlayerJoinEvent;
-import org.spout.api.entity.Player;
 
 /**
  * Handles formatting of messages from players.
@@ -40,35 +41,27 @@ import org.spout.api.entity.Player;
 public class EventListener implements Listener {
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
-		// Cancel the event to channel it through our own system
 		event.setCancelled(true);
 		Player player = event.getPlayer();
 		Chatter chatter = Chat.getChatter(player.getName());
 		if (chatter == null) {
 			return;
 		}
-
-		// Define tags
 		Map<String, String> tagMap = new HashMap<String, String>(2);
 		tagMap.put("player", player.getDisplayName());
-		tagMap.put("message", event.getMessage().getPlainString());
-
-		// Format and send the message
-		String message = Chat.format(player, Format.CHAT_FORMAT, tagMap);
+		tagMap.put("message", event.getMessage().asString());
+		ChatArguments message = Chat.format(Format.CHAT, player, tagMap);
 		chatter.chat(message);
 	}
 
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
-		// Define tags
 		Player player = event.getPlayer();
 		Map<String, String> tagMap = new HashMap<String, String>(2);
 		tagMap.put("player", player.getDisplayName());
-		//tagMap.put("message", event.getMessage());
-
-		// Format and set the join message
-		String message = Chat.format(player, Format.JOIN_MESSAGE, tagMap);
+		tagMap.put("message", event.getMessage().asString());
+		ChatArguments message = Chat.format(Format.JOIN_MESSAGE, player, tagMap);
 		event.setMessage(message);
-		Chat.onLogin(event.getPlayer());
+		Chat.onLogin(player);
 	}
 }

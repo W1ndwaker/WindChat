@@ -24,9 +24,8 @@ package net.windwaker.chat;
 import net.windwaker.chat.config.Settings;
 
 public enum Format {
-	CHAT_FORMAT("windchat.chat_format", Settings.DEFAULT_FORMAT.getString()),
-	JOIN_MESSAGE("windchat.join_message", Settings.DEFAULT_JOIN_MESSAGE.getString());
-
+	CHAT("chat_format", Settings.DEFAULT_FORMAT.getString()),
+	JOIN_MESSAGE("join_message_format", Settings.DEFAULT_JOIN_MESSAGE_FORMAT.getString());
 	private final String node, def;
 
 	private Format(String node, String def) {

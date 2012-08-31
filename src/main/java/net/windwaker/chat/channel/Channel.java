@@ -21,46 +21,46 @@
  */
 package net.windwaker.chat.channel;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import net.windwaker.chat.Chat;
 import net.windwaker.chat.ChatLogger;
 
+import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
 
 public class Channel {
 	private final String name;
 	private final Set<String> listeners = new HashSet<String>();
 	private final ChatLogger logger = ChatLogger.getInstance();
-	private String format = "[%channel%] %message%", password, joinMessage, leaveMessage;
+	private String format = "[%channel%] %message%", password;
+	private ChatArguments joinMessage, leaveMessage;
 
 	public Channel(String name) {
 		this.name = name;
-		joinMessage = ChatStyle.BRIGHT_GREEN + "You have joined " + name + "!";
-		leaveMessage = ChatStyle.RED + "You have left " + name + "!";
+		joinMessage = new ChatArguments(ChatStyle.BRIGHT_GREEN, "You have joined ", name, "!");
+		leaveMessage = new ChatArguments(ChatStyle.RED, "You have left ", name, "!");
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public String getJoinMessage() {
+	public ChatArguments getJoinMessage() {
 		return joinMessage;
 	}
 
-	public void setJoinMessage(String joinMessage) {
-		this.joinMessage = Chat.color(joinMessage);
+	public void setJoinMessage(Object... joinMessage) {
+		this.joinMessage = new ChatArguments(joinMessage);
 	}
 
-	public String getLeaveMessage() {
+	public ChatArguments getLeaveMessage() {
 		return leaveMessage;
 	}
 
-	public void setLeaveMessage(String leaveMessage) {
-		this.leaveMessage = Chat.color(leaveMessage);
+	public void setLeaveMessage(Object... leaveMessage) {
+		this.leaveMessage = new ChatArguments(leaveMessage);
 	}
 
 	public String getPassword() {
@@ -91,18 +91,13 @@ public class Channel {
 		return listeners.remove(chatter.getParent().getName());
 	}
 
-	public void broadcast(String message) {
-		// Define tags
-		Map<String, String> tagMap = new HashMap<String, String>(2);
-		tagMap.put("channel", name);
-		tagMap.put("message", message);
-		message = Chat.tagSwap(tagMap, message);
+	public void broadcast(Object... message) {
 		for (String n : listeners) {
 			Chatter chatter = Chat.getChatter(n);
 			if (chatter != null) {
-				chatter.send(message);
+				chatter.getParent().sendMessage(message);
 			}
 		}
-		logger.info(message);
+		logger.info(new ChatArguments(message).getPlainString());
 	}
 }

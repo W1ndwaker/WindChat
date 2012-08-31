@@ -39,10 +39,25 @@ public class Channels {
 
 	public void load() {
 		try {
+			// Add defaults
 			data.setWritesDefaults(true);
-			addDefaults();
+			data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "format"}, "[%channel%] %message%"));
+			data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "password"}, "unleashtheflow"));
+			data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "join-message"}, "{{BRIGHT_GREEN}}You have joined Spout!"));
+			data.setNode(new ConfigurationNode(data, new String[]{"channels", "spout", "leave-message"}, "{{RED}}You have left Spout."));
+			// Load config
 			data.load();
-			initChannels();
+			// Load channels
+			for (String name : data.getNode("channels").getKeys(false)) {
+				Channel channel = new Channel(name);
+				String path = "channels." + name;
+				System.out.println("Loading: " + name);
+				channel.setFormat(data.getNode(path + ".format").getString());
+				channel.setPassword(data.getNode(path + ".password").getString());
+				channel.setJoinMessage(data.getNode(path + ".join-message").getString());
+				channel.setLeaveMessage(data.getNode(path + ".leave-message").getString());
+				channels.add(channel);
+			}
 		} catch (ConfigurationException e) {
 			logger.severe("Failed to load channel config: " + e.getMessage());
 		}
@@ -53,33 +68,6 @@ public class Channels {
 			data.save();
 		} catch (ConfigurationException e) {
 			logger.severe("Failed to save channel config: " + e.getMessage());
-		}
-	}
-
-	private void addDefaults() {
-		data.setNode(new ConfigurationNode(data, new String[]{
-				"channels", "spout", "format"},
-				"[&3%channel%&f] %message%"));
-		data.setNode(new ConfigurationNode(data, new String[]{
-				"channels", "spout", "password"},
-				"unleashtheflow"));
-		data.setNode(new ConfigurationNode(data, new String[]{
-				"channels", "spout", "join-message"},
-				"&aYou have joined Spout!"));
-		data.setNode(new ConfigurationNode(data, new String[]{
-				"channels", "spout", "leave-message"},
-				"&cYou have left Spout."));
-	}
-
-	private void initChannels() {
-		for (String name : data.getNode("channels").getKeys(false)) {
-			Channel channel = new Channel(name);
-			String path = "channels." + name;
-			channel.setFormat(data.getNode(path + ".format").getString());
-			channel.setPassword(data.getNode(path + ".password").getString());
-			channel.setJoinMessage(data.getNode(path + ".join-message").getString());
-			channel.setLeaveMessage(data.getNode(path + ".leave-message").getString());
-			channels.add(channel);
 		}
 	}
 

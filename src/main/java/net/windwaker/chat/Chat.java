@@ -26,6 +26,7 @@ import java.util.Map;
 import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.channel.Chatter;
 
+import org.spout.api.chat.ChatArguments;
 import org.spout.api.data.ValueHolder;
 import org.spout.api.entity.Player;
 
@@ -55,11 +56,7 @@ public class Chat {
 		return plugin.getChatter(name);
 	}
 
-	public static String color(String s) {
-		return s.replaceAll("&", "§");
-	}
-
-	public static String getData(Player player, Format format) {
+	public static String getFormatData(Format format, Player player) {
 		String def = format.getDefault();
 		ValueHolder data = player.getData(format.toString());
 		if (data != null && data.getString() != null) {
@@ -68,25 +65,29 @@ public class Chat {
 		return def;
 	}
 
-	public static String tagSwap(Map<String, String> tagMap, String message) {
+	public static String tagSwap(Map<String, String> tagMap, String s) {
 		for (Map.Entry<String, String> entry : tagMap.entrySet()) {
-			message = message.replaceAll("%" + entry.getKey() + "%", entry.getValue());
+			s = s.replaceAll("%" + entry.getKey() + "%", entry.getValue());
 		}
-		return message;
+		return s;
 	}
 
-	public static String dataSplit(Player player, String message) {
-		for (String variable : message.split("%")) {
+	public static String dataSwap(Player player, String s) {
+		for (String variable : s.split("%")) {
 			ValueHolder value = player.getData(variable);
 			if (value == null || value.getString() == null) {
 				continue;
 			}
-			message = message.replaceAll("%" + variable + "%", value.getString());
+			s = s.replaceAll("%" + variable + "%", value.getString());
 		}
-		return message;
+		return s;
 	}
 
-	public static String format(Player player, Format format, Map<String, String> tagMap) {
-		return color(dataSplit(player, tagSwap(tagMap, getData(player, format))));
+	public static ChatArguments style(String s) {
+		return ChatArguments.fromString(s);
+	}
+
+	public static ChatArguments format(Format format, Player player, Map<String, String> tagMap) {
+		return style(dataSwap(player, tagSwap(tagMap, getFormatData(format, player))));
 	}
 }

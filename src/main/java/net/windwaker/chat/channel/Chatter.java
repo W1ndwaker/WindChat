@@ -27,7 +27,7 @@ import java.util.Set;
 import org.spout.api.entity.Player;
 
 public class Chatter {
-	private final Player parent;
+	private final Player parent; // TODO: Make Chatter a component of Player
 	private final Set<Channel> channels = new HashSet<Channel>();
 	private Channel activeChannel;
 
@@ -35,23 +35,19 @@ public class Chatter {
 		this.parent = parent;
 	}
 
-	public void chat(String message) {
-		activeChannel.broadcast(message);
-	}
-
-	public void send(String message) {
-		parent.sendMessage(message);
-	}
-
 	public Player getParent() {
 		return parent;
+	}
+
+	public void chat(Object... message) {
+		activeChannel.broadcast(message);
 	}
 
 	public void join(Channel channel) {
 		channels.add(channel);
 		channel.addListener(this);
 		activeChannel = channel;
-		send(channel.getJoinMessage());
+		parent.sendMessage(channel.getJoinMessage());
 	}
 
 	public void leave(Channel channel) {
@@ -60,7 +56,7 @@ public class Chatter {
 		}
 		channel.removeListener(this);
 		channels.remove(channel);
-		send(channel.getLeaveMessage());
+		parent.sendMessage(channel.getLeaveMessage());
 	}
 
 	public void setActiveChannel(Channel activeChannel) {
