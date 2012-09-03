@@ -24,12 +24,19 @@ package net.windwaker.chat;
 import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.command.ChannelCommand;
+import net.windwaker.chat.util.config.ChannelConfiguration;
+import net.windwaker.chat.util.config.ChatConfiguration;
+import net.windwaker.chat.util.Format;
+import net.windwaker.chat.util.config.ChatterConfiguration;
 
 import org.spout.api.Spout;
+import org.spout.api.chat.ChatArguments;
 import org.spout.api.command.CommandRegistrationsFactory;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
 import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
+import org.spout.api.data.ValueHolder;
+import org.spout.api.entity.Player;
 import org.spout.api.plugin.CommonPlugin;
 
 /**
@@ -38,15 +45,34 @@ import org.spout.api.plugin.CommonPlugin;
  */
 public class WindChat extends CommonPlugin {
 	private static WindChat instance;
+	private ChatConfiguration config;
+	private ChatterConfiguration chatters;
+	private ChannelConfiguration channels;
 
 	public WindChat() {
 		instance = this;
 	}
 
 	@Override
+	public void onReload() {
+		config.load();
+		chatters.load();
+		channels.load();
+	}
+
+	@Override
 	public void onEnable() {
+		// Load config
+		config = new ChatConfiguration();
+		config.load();
+		// Load channels
+		channels = new ChannelConfiguration();
+		channels.load();
+		// Load chatters
+		chatters = new ChatterConfiguration();
+		chatters.load();
 		// Register events
-		Spout.getEventManager().registerEvents(new EventListener(), this);
+		Spout.getEventManager().registerEvents(new ChatListener(), this);
 		// Register commands
 		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
 		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
@@ -62,11 +88,20 @@ public class WindChat extends CommonPlugin {
 		return instance;
 	}
 
-	public Chatter getChatter(String name) {
-		return null;
+	public ChatArguments getFormat(Format format, Player player) {
+		ChatArguments def = format.getDefault();
+		ValueHolder data = player.getData(format.toString());
+		if (data != null && data.getString() != null) {
+			def = ChatArguments.fromFormatString(data.getString());
+		}
+		return def;
 	}
 
-	public Channel getChannel(String name) {
-		return null;
+	public ChatterConfiguration getChatters() {
+		return chatters;
+	}
+
+	public ChannelConfiguration getChannels() {
+		return channels;
 	}
 }

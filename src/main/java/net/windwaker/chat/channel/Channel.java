@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import net.windwaker.chat.WindChat;
 
 import org.spout.api.chat.ChatArguments;
+import org.spout.api.chat.Placeholder;
 import org.spout.api.chat.style.ChatStyle;
 
 public class Channel {
@@ -35,7 +36,7 @@ public class Channel {
 	private final String name;
 	private final Set<String> listeners = new HashSet<String>();
 	private String password;
-	private ChatArguments joinMessage, leaveMessage;
+	private ChatArguments joinMessage, leaveMessage, format;
 
 	public Channel(String name) {
 		this.name = name;
@@ -45,11 +46,21 @@ public class Channel {
 		return name;
 	}
 
+	public ChatArguments getFormat() {
+		return format;
+	}
+
+	public void setFormat(ChatArguments format) {
+		plugin.getChannels().setFormat(name, format);
+		this.format = format;
+	}
+
 	public ChatArguments getJoinMessage() {
 		return joinMessage;
 	}
 
-	public void setJoinMessage(Object... joinMessage) {
+	public void setJoinMessage(ChatArguments joinMessage) {
+		plugin.getChannels().setJoinMessage(name, joinMessage);
 		this.joinMessage = new ChatArguments(joinMessage);
 	}
 
@@ -57,7 +68,8 @@ public class Channel {
 		return leaveMessage;
 	}
 
-	public void setLeaveMessage(Object... leaveMessage) {
+	public void setLeaveMessage(ChatArguments leaveMessage) {
+		plugin.getChannels().setLeaveMessage(name, leaveMessage);
 		this.leaveMessage = new ChatArguments(leaveMessage);
 	}
 
@@ -66,6 +78,7 @@ public class Channel {
 	}
 
 	public void setPassword(String password) {
+		plugin.getChannels().setPassword(name, password);
 		this.password = password;
 	}
 
@@ -74,20 +87,25 @@ public class Channel {
 	}
 
 	public boolean addListener(Chatter chatter) {
+		plugin.getChannels().addListener(name, chatter.getParent().getName());
 		return listeners.add(chatter.getParent().getName());
 	}
 
 	public boolean removeListener(Chatter chatter) {
+		plugin.getChannels().removeListener(name, chatter.getParent().getName());
 		return listeners.remove(chatter.getParent().getName());
 	}
 
-	public void broadcast(Object... message) {
+	public void broadcast(ChatArguments message) {
+		if (format.hasPlaceholder(Chatter.MESSAGE)) {
+			format.setPlaceHolder(Chatter.MESSAGE, message);
+		}
 		for (String n : listeners) {
-			Chatter chatter = plugin.getChatter(n);
+			Chatter chatter = plugin.getChatters().get(n);
 			if (chatter != null) {
-				chatter.getParent().sendMessage(message);
+				chatter.getParent().sendMessage(format);
 			}
 		}
-		plugin.getLogger().info(new ChatArguments(message).getPlainString());
+		plugin.getLogger().info(format.getPlainString());
 	}
 }

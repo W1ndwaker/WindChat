@@ -22,28 +22,46 @@
 package net.windwaker.chat.channel;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import net.windwaker.chat.WindChat;
+import net.windwaker.chat.util.Format;
+
+import org.spout.api.chat.ChatArguments;
+import org.spout.api.chat.Placeholder;
 import org.spout.api.entity.Player;
 
 public class Chatter {
+	public static final Placeholder NAME = new Placeholder("name"), MESSAGE = new Placeholder("message");
+	private final WindChat plugin = WindChat.getInstance();
 	private final Player parent; // TODO: Make Chatter a component of Player
-	private final Set<Channel> channels = new HashSet<Channel>();
+	private final Set<Channel> channels;
 	private Channel activeChannel;
 
-	public Chatter(Player parent) {
+	public Chatter(Player parent, Set<Channel> channels) {
 		this.parent = parent;
+		this.channels = channels;
 	}
 
 	public Player getParent() {
 		return parent;
 	}
 
-	public void chat(Object... message) {
-		activeChannel.broadcast(message);
+	public void chat(ChatArguments message) {
+		ChatArguments template = plugin.getFormat(Format.CHAT, parent);
+		if (template.hasPlaceholder(NAME)) {
+			template.setPlaceHolder(NAME, new ChatArguments(parent.getDisplayName()));
+		}
+		if (template.hasPlaceholder(MESSAGE)) {
+			template.setPlaceHolder(MESSAGE, message);
+		}
+		activeChannel.broadcast(template);
 	}
 
 	public void join(Channel channel) {
+		plugin.getChatters().addChannel(parent.getName(), channel.getName());
+		plugin.getChatters().setActiveChannel(parent.getName(), channel.getName());
 		channels.add(channel);
 		channel.addListener(this);
 		activeChannel = channel;
@@ -54,6 +72,7 @@ public class Chatter {
 		if (channel.equals(activeChannel)) {
 			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
 		}
+		plugin.getChatters().removeChannel(parent.getName(), channel.getName());
 		channel.removeListener(this);
 		channels.remove(channel);
 		parent.sendMessage(channel.getLeaveMessage());

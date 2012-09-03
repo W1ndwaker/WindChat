@@ -43,13 +43,13 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chatter chatter = plugin.getChatter(player.getName());
+		Chatter chatter = plugin.getChatters().get(player.getName());
 		if (chatter == null) {
 			player.kick("Error: Chatter was null");
 			throw new CommandException("Chatter was null");
 		}
 
-		Channel channel = plugin.getChannel(args.getString(0));
+		Channel channel = plugin.getChannels().get(args.getString(0));
 		if (channel == null) {
 			throw new CommandException("Channel doesn't exist!");
 		}
@@ -81,13 +81,13 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chatter chatter = plugin.getChatter(player.getName());
+		Chatter chatter = plugin.getChatters().get(player.getName());
 		if (chatter == null) {
 			player.kick("Error: Chatter was null");
 			throw new CommandException("Chatter was null");
 		}
 
-		Channel channel = plugin.getChannel(args.getString(0));
+		Channel channel = plugin.getChannels().get(args.getString(0));
 		if (channel == null) {
 			throw new CommandException("Channel doesn't exist!");
 		}

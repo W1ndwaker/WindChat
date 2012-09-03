@@ -19,13 +19,15 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat;
+package net.windwaker.chat.util;
+
+import net.windwaker.chat.util.config.ChatConfiguration;
 
 import org.spout.api.chat.ChatArguments;
 
 public enum Format {
-	CHAT("chat-format", ChatArguments.fromString(Settings.DEFAULT_CHAT_FORMAT.getString())),
-	JOIN_MESSAGE("join-message-format", ChatArguments.fromString(Settings.DEFAULT_JOIN_MESSAGE_FORMAT.getString()));
+	CHAT("chat-format", ChatArguments.fromFormatString(ChatConfiguration.DEFAULT_CHAT_FORMAT.getString())),
+	JOIN_MESSAGE("join-message-format", ChatArguments.fromFormatString(ChatConfiguration.DEFAULT_JOIN_MESSAGE_FORMAT.getString()));
 
 	private final String node;
 	private final ChatArguments def;

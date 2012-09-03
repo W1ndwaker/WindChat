@@ -21,12 +21,11 @@
  */
 package net.windwaker.chat;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.windwaker.chat.channel.Chatter;
+import net.windwaker.chat.util.Format;
 
 import org.spout.api.chat.ChatArguments;
+import org.spout.api.chat.style.ChatStyle;
 import org.spout.api.entity.Player;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
@@ -38,12 +37,29 @@ import org.spout.api.event.player.PlayerJoinEvent;
  * Handles formatting of messages from players.
  * @author Windwaker
  */
-public class EventListener implements Listener {
+public class ChatListener implements Listener {
+	private final WindChat plugin = WindChat.getInstance();
+
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
+		event.setCancelled(true);
+		Player player = event.getPlayer();
+		Chatter chatter = plugin.getChatters().get(player.getName());
+		if (chatter == null) {
+			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
+			return;
+		}
+		chatter.chat(event.getMessage());
 	}
 
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		ChatArguments template = plugin.getFormat(Format.JOIN_MESSAGE, player);
+		if (template.hasPlaceholder(Chatter.NAME)) {
+			template.setPlaceHolder(Chatter.NAME, new ChatArguments(player.getDisplayName()));
+		}
+		event.setMessage(template);
+		plugin.getChatters().login(player);
 	}
 }

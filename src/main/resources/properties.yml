@@ -5,3 +5,4 @@ author: Windwaker
 website: http://github.com/W1ndwaker/WindChat
 main: net.windwaker.chat.WindChat
 platform: BOTH
+reload: true
