@@ -86,6 +86,10 @@ public class Channel {
 		return password != null;
 	}
 
+	public Set<String> getListeners() {
+		return listeners;
+	}
+
 	public boolean addListener(Chatter chatter) {
 		plugin.getChannels().addListener(name, chatter.getParent().getName());
 		return listeners.add(chatter.getParent().getName());

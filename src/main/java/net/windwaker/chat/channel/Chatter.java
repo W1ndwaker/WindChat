@@ -21,8 +21,6 @@
  */
 package net.windwaker.chat.channel;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
