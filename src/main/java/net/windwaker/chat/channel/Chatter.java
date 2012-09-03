@@ -59,15 +59,11 @@ public class Chatter {
 		parent.sendMessage(channel.getLeaveMessage());
 	}
 
-	public void setActiveChannel(Channel activeChannel) {
-		this.activeChannel = activeChannel;
-	}
-
 	public Channel getActiveChannel() {
 		return activeChannel;
 	}
 
-	public boolean isIn(Channel channel) {
-		return channels.contains(channel);
+	public Set<Channel> getChannels() {
+		return channels;
 	}
 }                                    

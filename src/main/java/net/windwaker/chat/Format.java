@@ -21,19 +21,21 @@
  */
 package net.windwaker.chat;
 
-import net.windwaker.chat.config.Settings;
+import org.spout.api.chat.ChatArguments;
 
 public enum Format {
-	CHAT("chat_format", Settings.DEFAULT_FORMAT.getString()),
-	JOIN_MESSAGE("join_message_format", Settings.DEFAULT_JOIN_MESSAGE_FORMAT.getString());
-	private final String node, def;
+	CHAT("chat-format", ChatArguments.fromString(Settings.DEFAULT_CHAT_FORMAT.getString())),
+	JOIN_MESSAGE("join-message-format", ChatArguments.fromString(Settings.DEFAULT_JOIN_MESSAGE_FORMAT.getString()));
 
-	private Format(String node, String def) {
+	private final String node;
+	private final ChatArguments def;
+
+	private Format(String node, ChatArguments def) {
 		this.node = node;
 		this.def = def;
 	}
 
-	public String getDefault() {
+	public ChatArguments getDefault() {
 		return def;
 	}
 

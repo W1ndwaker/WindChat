@@ -23,24 +23,22 @@ package net.windwaker.chat.channel;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
-import net.windwaker.chat.Chat;
-import net.windwaker.chat.ChatLogger;
+import net.windwaker.chat.WindChat;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
 
 public class Channel {
+	private final WindChat plugin = WindChat.getInstance();
 	private final String name;
 	private final Set<String> listeners = new HashSet<String>();
-	private final ChatLogger logger = ChatLogger.getInstance();
-	private String format = "[%channel%] %message%", password;
+	private String password;
 	private ChatArguments joinMessage, leaveMessage;
 
 	public Channel(String name) {
 		this.name = name;
-		joinMessage = new ChatArguments(ChatStyle.BRIGHT_GREEN, "You have joined ", name, "!");
-		leaveMessage = new ChatArguments(ChatStyle.RED, "You have left ", name, "!");
 	}
 
 	public String getName() {
@@ -75,14 +73,6 @@ public class Channel {
 		return password != null;
 	}
 
-	public String getFormat() {
-		return format;
-	}
-
-	public void setFormat(String format) {
-		this.format = format;
-	}
-
 	public boolean addListener(Chatter chatter) {
 		return listeners.add(chatter.getParent().getName());
 	}
@@ -93,11 +83,11 @@ public class Channel {
 
 	public void broadcast(Object... message) {
 		for (String n : listeners) {
-			Chatter chatter = Chat.getChatter(n);
+			Chatter chatter = plugin.getChatter(n);
 			if (chatter != null) {
 				chatter.getParent().sendMessage(message);
 			}
 		}
-		logger.info(new ChatArguments(message).getPlainString());
+		plugin.getLogger().info(new ChatArguments(message).getPlainString());
 	}
 }

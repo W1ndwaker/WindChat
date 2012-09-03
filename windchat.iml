@@ -10,10 +10,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="spoutapi" />
-    <orderEntry type="library" name="Maven: org.spout:simplenbt:1.0.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spout:simplenbt:1.0.5-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: net.royawesome:jlibnoise:dev-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty:3.4.6.Final" level="project" />
     <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:1.47" level="project" />

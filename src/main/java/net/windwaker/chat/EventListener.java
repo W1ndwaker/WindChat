@@ -41,27 +41,9 @@ import org.spout.api.event.player.PlayerJoinEvent;
 public class EventListener implements Listener {
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {
-		event.setCancelled(true);
-		Player player = event.getPlayer();
-		Chatter chatter = Chat.getChatter(player.getName());
-		if (chatter == null) {
-			return;
-		}
-		Map<String, String> tagMap = new HashMap<String, String>(2);
-		tagMap.put("player", player.getDisplayName());
-		tagMap.put("message", event.getMessage().asString());
-		ChatArguments message = Chat.format(Format.CHAT, player, tagMap);
-		chatter.chat(message);
 	}
 
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		Map<String, String> tagMap = new HashMap<String, String>(2);
-		tagMap.put("player", player.getDisplayName());
-		tagMap.put("message", event.getMessage().asString());
-		ChatArguments message = Chat.format(Format.JOIN_MESSAGE, player, tagMap);
-		event.setMessage(message);
-		Chat.onLogin(player);
 	}
 }

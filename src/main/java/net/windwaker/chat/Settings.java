@@ -19,11 +19,12 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.config;
+package net.windwaker.chat;
 
 import java.io.File;
+import java.util.logging.Logger;
 
-import net.windwaker.chat.ChatLogger;
+import net.windwaker.chat.WindChat;
 
 import org.spout.api.exception.ConfigurationException;
 import org.spout.api.util.config.ConfigurationHolder;
@@ -31,10 +32,10 @@ import org.spout.api.util.config.ConfigurationHolderConfiguration;
 import org.spout.api.util.config.yaml.YamlConfiguration;
 
 public class Settings extends ConfigurationHolderConfiguration {
+	private final Logger logger = WindChat.getInstance().getLogger();
 	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("spout", "default-channel");
-	public static final ConfigurationHolder DEFAULT_FORMAT = new ConfigurationHolder("%player%: %message%", "default-format");
-	public static final ConfigurationHolder DEFAULT_JOIN_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}%player% {{GRAY}}has joined the game.", "default-join-message");
-	private final ChatLogger logger = ChatLogger.getInstance();
+	public static final ConfigurationHolder DEFAULT_CHAT_FORMAT = new ConfigurationHolder("{NAME}: {MESSAGE}", "default-format");
+	public static final ConfigurationHolder DEFAULT_JOIN_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{NAME} {{GRAY}}has joined the game.", "default-join-message");
 
 	public Settings() {
 		super(new YamlConfiguration(new File("plugins/WindChat/config.yml")));
@@ -43,6 +44,7 @@ public class Settings extends ConfigurationHolderConfiguration {
 	public void load() {
 		try {
 			super.load();
+			super.save();
 		} catch (ConfigurationException e) {
 			logger.severe("Failed to load configuration: " + e.getMessage());
 		}

@@ -21,7 +21,6 @@
  */
 package net.windwaker.chat.command.sub;
 
-import net.windwaker.chat.Chat;
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.channel.Chatter;
@@ -34,6 +33,8 @@ import org.spout.api.exception.CommandException;
 import org.spout.api.entity.Player;
 
 public class ChannelCommands {
+	private final WindChat plugin = WindChat.getInstance();
+
 	@Command(aliases = {"join", "j"}, desc = "Join a channel", min = 1, max = 2)
 	@CommandPermissions("windchat.command.channel.join")
 	public void join(CommandContext args, CommandSource source) throws CommandException {
@@ -42,13 +43,13 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chatter chatter = Chat.getChatter(player.getName());
+		Chatter chatter = plugin.getChatter(player.getName());
 		if (chatter == null) {
 			player.kick("Error: Chatter was null");
 			throw new CommandException("Chatter was null");
 		}
 
-		Channel channel = Chat.getChannel(args.getString(0));
+		Channel channel = plugin.getChannel(args.getString(0));
 		if (channel == null) {
 			throw new CommandException("Channel doesn't exist!");
 		}
@@ -80,13 +81,13 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chatter chatter = Chat.getChatter(player.getName());
+		Chatter chatter = plugin.getChatter(player.getName());
 		if (chatter == null) {
 			player.kick("Error: Chatter was null");
 			throw new CommandException("Chatter was null");
 		}
 
-		Channel channel = Chat.getChannel(args.getString(0));
+		Channel channel = plugin.getChannel(args.getString(0));
 		if (channel == null) {
 			throw new CommandException("Channel doesn't exist!");
 		}
@@ -95,7 +96,7 @@ public class ChannelCommands {
 			throw new CommandException("You may not leave the channel you are active in!");
 		}
 
-		if (!chatter.isIn(channel)) {
+		if (!chatter.getChannels().contains(channel)) {
 			throw new CommandException("You are not in " + channel.getName() + "!");
 		}
 		chatter.leave(channel);
