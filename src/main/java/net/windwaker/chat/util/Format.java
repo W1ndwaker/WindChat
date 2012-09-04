@@ -28,7 +28,6 @@ import org.spout.api.chat.ChatArguments;
 public enum Format {
 	CHAT("chat-format", ChatArguments.fromFormatString(ChatConfiguration.DEFAULT_CHAT_FORMAT.getString())),
 	JOIN_MESSAGE("join-message-format", ChatArguments.fromFormatString(ChatConfiguration.DEFAULT_JOIN_MESSAGE_FORMAT.getString()));
-
 	private final String node;
 	private final ChatArguments def;
 

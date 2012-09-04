@@ -61,18 +61,18 @@ public class ChatterConfiguration extends YamlConfiguration {
 	}
 
 	public void login(Player player) {
-		ChannelConfiguration channels = plugin.getChannels();
-		Set<Channel> channelSet = new HashSet<Channel>();
-		for (String c : getChannels(player.getName())) {
-			Channel ch = channels.get(c);
-			if (ch != null) {
-				channelSet.add(ch);
+		List<String> channelNames = getChannels(player.getName());
+		Set<Channel> channels = new HashSet<Channel>();
+		for (String s : channelNames) {
+			Channel channel = plugin.getChannels().get(s);
+			if (channel != null) {
+				channels.add(channel);
 			}
 		}
-		Chatter chatter = new Chatter(player, channelSet);
-		Channel activeChannel = channels.get(getNode("chatters." + player.getName() + ".active-channel").getString());
+		Chatter chatter = new Chatter(player, channels);
+		Channel activeChannel = plugin.getChannels().get(getActiveChannel(player.getName()));
 		if (activeChannel == null) {
-			activeChannel = channels.getDefault();
+			activeChannel = plugin.getChannels().getDefault();
 		}
 		chatter.join(activeChannel);
 		chatters.add(chatter);
@@ -80,6 +80,7 @@ public class ChatterConfiguration extends YamlConfiguration {
 
 	public void set(String path, Object value) {
 		getNode(path).setValue(value);
+		save();
 	}
 
 	public List<String> getChannels(String chatter) {
@@ -106,6 +107,10 @@ public class ChatterConfiguration extends YamlConfiguration {
 
 	public void setActiveChannel(String chatter, String channel) {
 		set("chatters." + chatter + ".active-channel", channel);
+	}
+
+	public String getActiveChannel(String chatter) {
+		return getNode("chatters." + chatter + ".active-channel").getString();
 	}
 
 	public Set<Chatter> get() {

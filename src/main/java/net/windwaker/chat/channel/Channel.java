@@ -23,13 +23,10 @@ package net.windwaker.chat.channel;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import net.windwaker.chat.WindChat;
 
 import org.spout.api.chat.ChatArguments;
-import org.spout.api.chat.Placeholder;
-import org.spout.api.chat.style.ChatStyle;
 
 public class Channel {
 	private final WindChat plugin = WindChat.getInstance();
@@ -101,9 +98,11 @@ public class Channel {
 	}
 
 	public void broadcast(ChatArguments message) {
+		System.out.println("Format: " + format.toFormatString());
 		if (format.hasPlaceholder(Chatter.MESSAGE)) {
 			format.setPlaceHolder(Chatter.MESSAGE, message);
 		}
+		System.out.println("Format: " + format.toFormatString());
 		for (String n : listeners) {
 			Chatter chatter = plugin.getChatters().get(n);
 			if (chatter != null) {

@@ -23,7 +23,6 @@ package net.windwaker.chat.command.sub;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.channel.Channel;
@@ -35,8 +34,8 @@ import org.spout.api.command.CommandContext;
 import org.spout.api.command.CommandSource;
 import org.spout.api.command.annotated.Command;
 import org.spout.api.command.annotated.CommandPermissions;
-import org.spout.api.exception.CommandException;
 import org.spout.api.entity.Player;
+import org.spout.api.exception.CommandException;
 
 public class ChannelCommands {
 	private final WindChat plugin = WindChat.getInstance();
@@ -108,8 +107,8 @@ public class ChannelCommands {
 		chatter.leave(channel);
 	}
 
-	@Command(aliases = {"list", "who", "players"}, usage = "[channel]", desc = "List all listeners in a channel", min = 0, max = 1)
-	@CommandPermissions("windchat.command.channel.list")
+	@Command(aliases = {"who", "players"}, usage = "[channel]", desc = "List all listeners in a channel", min = 0, max = 1)
+	@CommandPermissions("windchat.command.channel.who")
 	public void list(CommandContext args, CommandSource source) throws CommandException {
 		Channel channel = null;
 		if (args.length() == 0) {

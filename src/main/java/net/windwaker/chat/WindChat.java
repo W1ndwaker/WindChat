@@ -21,12 +21,10 @@
  */
 package net.windwaker.chat;
 
-import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.command.ChannelCommand;
+import net.windwaker.chat.util.Format;
 import net.windwaker.chat.util.config.ChannelConfiguration;
 import net.windwaker.chat.util.config.ChatConfiguration;
-import net.windwaker.chat.util.Format;
 import net.windwaker.chat.util.config.ChatterConfiguration;
 
 import org.spout.api.Spout;

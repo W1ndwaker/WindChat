@@ -22,7 +22,6 @@
 package net.windwaker.chat.util.config;
 
 import java.io.File;
-import java.util.logging.Logger;
 
 import net.windwaker.chat.WindChat;
 
