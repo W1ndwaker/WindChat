@@ -22,6 +22,7 @@
 package net.windwaker.chat;
 
 import net.windwaker.chat.command.ChannelCommand;
+import net.windwaker.chat.command.ChatCommands;
 import net.windwaker.chat.util.Format;
 import net.windwaker.chat.util.config.ChannelConfiguration;
 import net.windwaker.chat.util.config.ChatConfiguration;
@@ -74,6 +75,7 @@ public class WindChat extends CommonPlugin {
 		// Register commands
 		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
 		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
+		getEngine().getRootCommand().addSubCommands(this, ChatCommands.class, commandRegFactory);
 		getLogger().info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
 	}
 

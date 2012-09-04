@@ -40,6 +40,14 @@ import org.spout.api.exception.CommandException;
 public class ChannelCommands {
 	private final WindChat plugin = WindChat.getInstance();
 
+	@Command(aliases = "create", usage = "<channel>", desc = "Create a new channel.", min = 1, max = 1)
+	@CommandPermissions("windchat.command.channel.create")
+	public void create(CommandContext args, CommandSource source) throws CommandException {
+		String channelName = args.getString(0);
+		plugin.getChannels().add(args.getString(0));
+		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Added channel '" + channelName + "'.");
+	}
+
 	@Command(aliases = {"join", "j"}, desc = "Join a channel", min = 1, max = 2)
 	@CommandPermissions("windchat.command.channel.join")
 	public void join(CommandContext args, CommandSource source) throws CommandException {
@@ -109,7 +117,7 @@ public class ChannelCommands {
 
 	@Command(aliases = {"who", "players"}, usage = "[channel]", desc = "List all listeners in a channel", min = 0, max = 1)
 	@CommandPermissions("windchat.command.channel.who")
-	public void list(CommandContext args, CommandSource source) throws CommandException {
+	public void who(CommandContext args, CommandSource source) throws CommandException {
 		Channel channel = null;
 		if (args.length() == 0) {
 			if (!(source instanceof Player)) {
@@ -145,43 +153,5 @@ public class ChannelCommands {
 			}
 		}
 		source.sendMessage(message);
-	}
-
-	@Command(aliases = "nick", usage = "<name|off>", desc = "Change your nickname.", min = 1, max = 1)
-	@CommandPermissions("windchat.command.nick")
-	public void nick(CommandContext args, CommandSource source) throws CommandException {
-		if (!(source instanceof Player)) {
-			throw new CommandException("You must be a player to perform this command.");
-		}
-
-		String name = args.getString(0);
-		Player player = (Player) source;
-		if (name.equalsIgnoreCase("off")) {
-			name = player.getName();
-		}
-		player.setDisplayName(name);
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Set nick to '", name, "'.");
-	}
-
-	@Command(aliases = "whois", usage = "<player>", desc = "Get more information about a player.", min = 1, max = 1)
-	@CommandPermissions("windchat.command.whois")
-	public void whoIs(CommandContext args, CommandSource source) throws CommandException {
-		Player player = args.getPlayer(0, false);
-		String playerName = player.getName();
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, playerName, " is ", ChatStyle.BLUE, playerName, ChatStyle.BRIGHT_GREEN, "@", ChatStyle.BLUE, player.getAddress().getHostAddress());
-		Chatter chatter = plugin.getChatters().get(playerName);
-		if (chatter == null) {
-			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-			throw new CommandException("Error: An internal error occurred.");
-		}
-
-		ChatArguments message = new ChatArguments(ChatStyle.BRIGHT_GREEN, player.getName(), " on ");
-		List<Channel> channels = new ArrayList<Channel>(chatter.getChannels());
-		for (int i = 0; i < channels.size(); i++) {
-			message.append(ChatStyle.BLUE, channels.get(i));
-			if (i != channels.size() - 1) {
-				message.append(ChatStyle.WHITE, ",");
-			}
-		}
 	}
 }

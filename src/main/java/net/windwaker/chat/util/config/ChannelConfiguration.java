@@ -54,17 +54,21 @@ public class ChannelConfiguration extends YamlConfiguration {
 				save();
 			}
 			for (String name : getNode("channels").getKeys(false)) {
-				Channel channel = new Channel(name);
-				String path = "channels." + name;
-				channel.setPassword(getNode(path + ".password").getString());
-				channel.setJoinMessage(ChatArguments.fromFormatString(getNode(path + ".join-message").getString()));
-				channel.setLeaveMessage(ChatArguments.fromFormatString(getNode(path + ".leave-message").getString()));
-				channel.setFormat(ChatArguments.fromFormatString(getNode(path + ".format").getString()));
-				channels.add(channel);
+				load(name);
 			}
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void load(String name) {
+		Channel channel = new Channel(name);
+		String path = "channels." + name;
+		channel.setPassword(getNode(path + ".password").getString());
+		channel.setJoinMessage(ChatArguments.fromFormatString(getNode(path + ".join-message").getString()));
+		channel.setLeaveMessage(ChatArguments.fromFormatString(getNode(path + ".leave-message").getString()));
+		channel.setFormat(ChatArguments.fromFormatString(getNode(path + ".format").getString()));
+		channels.add(channel);
 	}
 
 	@Override
@@ -121,6 +125,15 @@ public class ChannelConfiguration extends YamlConfiguration {
 
 	public Set<Channel> get() {
 		return channels;
+	}
+
+	public void add(String channel) {
+		String path = "channels." + channel;
+		getNode(path + ".format").setValue("[" + channel + "] {MESSAGE}");
+		getNode(path + ".join-message").setValue("{{BRIGHT_GREEN}}You have joined " + channel + ".");
+		getNode(path + ".leave-message").setValue("{{RED}}You have left " + channel + ".");
+		save();
+		load(channel);
 	}
 
 	public Channel getDefault() {
