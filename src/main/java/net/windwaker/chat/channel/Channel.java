@@ -27,13 +27,16 @@ import java.util.Set;
 import net.windwaker.chat.WindChat;
 
 import org.spout.api.chat.ChatArguments;
+import org.spout.api.chat.style.ChatStyle;
 
 public class Channel {
 	private final WindChat plugin = WindChat.getInstance();
 	private final String name;
 	private final Set<String> listeners = new HashSet<String>();
+	private final Set<String> banned = new HashSet<String>();
 	private String password;
-	private ChatArguments joinMessage, leaveMessage, format;
+	private boolean inviteOnly;
+	private ChatArguments joinMessage, leaveMessage, format, banMessage;
 
 	public Channel(String name) {
 		this.name = name;
@@ -41,6 +44,57 @@ public class Channel {
 
 	public String getName() {
 		return name;
+	}
+
+	public void ban(String name) {
+		ban(name, true);
+	}
+
+	public void ban(String name, boolean kick) {
+		ban(name, kick, ChatStyle.RED, "Banned from ", name);
+	}
+
+	public void ban(String name, boolean kick, Object... reason) {
+		if (kick) {
+			Chatter chatter = plugin.getChatters().get(name);
+			if (chatter == null) {
+				return;
+			}
+			chatter.kick(this, reason);
+		}
+		plugin.getChannels().addBanned(this.name, name);
+		banned.add(name);
+	}
+
+	public void unban(String name) {
+		plugin.getChannels().removeBanned(this.name, name);
+		banned.remove(name);
+	}
+
+	public Set<String> getBanned() {
+		return banned;
+	}
+
+	public boolean isBanned(String name) {
+		return banned.contains(name);
+	}
+
+	public ChatArguments getBanMessage() {
+		return banMessage;
+	}
+
+	public void setBanMessage(ChatArguments banMessage) {
+		plugin.getChannels().setBanMessage(name, banMessage);
+		this.banMessage = banMessage;
+	}
+
+	public boolean isInviteOnly() {
+		return inviteOnly;
+	}
+
+	public void setInviteOnly(boolean inviteOnly) {
+		plugin.getChannels().setInviteOnly(name, inviteOnly);
+		this.inviteOnly = inviteOnly;
 	}
 
 	public ChatArguments getFormat() {
@@ -58,7 +112,7 @@ public class Channel {
 
 	public void setJoinMessage(ChatArguments joinMessage) {
 		plugin.getChannels().setJoinMessage(name, joinMessage);
-		this.joinMessage = new ChatArguments(joinMessage);
+		this.joinMessage = joinMessage;
 	}
 
 	public ChatArguments getLeaveMessage() {
@@ -67,7 +121,7 @@ public class Channel {
 
 	public void setLeaveMessage(ChatArguments leaveMessage) {
 		plugin.getChannels().setLeaveMessage(name, leaveMessage);
-		this.leaveMessage = new ChatArguments(leaveMessage);
+		this.leaveMessage = leaveMessage;
 	}
 
 	public String getPassword() {
@@ -83,26 +137,28 @@ public class Channel {
 		return password != null;
 	}
 
+	public boolean isListening(String name) {
+		return listeners.contains(name);
+	}
+
 	public Set<String> getListeners() {
 		return listeners;
 	}
 
-	public boolean addListener(Chatter chatter) {
-		plugin.getChannels().addListener(name, chatter.getParent().getName());
-		return listeners.add(chatter.getParent().getName());
+	public boolean addListener(String chatterName) {
+		plugin.getChannels().addListener(name, chatterName);
+		return listeners.add(chatterName);
 	}
 
-	public boolean removeListener(Chatter chatter) {
-		plugin.getChannels().removeListener(name, chatter.getParent().getName());
-		return listeners.remove(chatter.getParent().getName());
+	public boolean removeListener(String chatterName) {
+		plugin.getChannels().removeListener(name, chatterName);
+		return listeners.remove(chatterName);
 	}
 
 	public void broadcast(ChatArguments message) {
-		System.out.println("Format: " + format.toFormatString());
 		if (format.hasPlaceholder(Chatter.MESSAGE)) {
 			format.setPlaceHolder(Chatter.MESSAGE, message);
 		}
-		System.out.println("Format: " + format.toFormatString());
 		for (String n : listeners) {
 			Chatter chatter = plugin.getChatters().get(n);
 			if (chatter != null) {

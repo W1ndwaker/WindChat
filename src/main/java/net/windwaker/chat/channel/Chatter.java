@@ -21,6 +21,7 @@
  */
 package net.windwaker.chat.channel;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
@@ -28,6 +29,8 @@ import net.windwaker.chat.util.Format;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.Placeholder;
+import org.spout.api.chat.style.ChatStyle;
+import org.spout.api.data.ValueHolder;
 import org.spout.api.entity.Player;
 
 public class Chatter {
@@ -35,6 +38,7 @@ public class Chatter {
 	private final WindChat plugin = WindChat.getInstance();
 	private final Player parent; // TODO: Make Chatter a component of Player
 	private final Set<Channel> channels;
+	private final Set<Channel> invites = new HashSet<Channel>();
 	private Channel activeChannel;
 
 	public Chatter(Player parent, Set<Channel> channels) {
@@ -46,8 +50,22 @@ public class Chatter {
 		return parent;
 	}
 
+	public void sendInvite(Channel channel) {
+		plugin.getChatters().addInvite(parent.getName(), channel.getName());
+		invites.add(channel);
+	}
+
+	public void revokeInvite(Channel channel) {
+		plugin.getChatters().removeInvite(parent.getName(), channel.getName());
+		invites.remove(channel);
+	}
+
+	public boolean isInvitedTo(Channel channel) {
+		return invites.contains(channel);
+	}
+
 	public void chat(ChatArguments message) {
-		ChatArguments template = plugin.getFormat(Format.CHAT, parent);
+		ChatArguments template = getFormat(Format.CHAT);
 		if (template.hasPlaceholder(NAME)) {
 			template.setPlaceHolder(NAME, new ChatArguments(parent.getDisplayName()));
 		}
@@ -58,22 +76,59 @@ public class Chatter {
 	}
 
 	public void join(Channel channel) {
+		join(channel, channel.getJoinMessage());
+	}
+
+	public void join(Channel channel, Object... message) {
 		plugin.getChatters().addChannel(parent.getName(), channel.getName());
 		plugin.getChatters().setActiveChannel(parent.getName(), channel.getName());
 		channels.add(channel);
-		channel.addListener(this);
+		channel.addListener(parent.getName());
 		activeChannel = channel;
-		parent.sendMessage(channel.getJoinMessage());
+		parent.sendMessage(message);
 	}
 
 	public void leave(Channel channel) {
+		leave(channel, channel.getLeaveMessage());
+	}
+
+	public void leave(Channel channel, Object... message) {
 		if (channel.equals(activeChannel)) {
 			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
 		}
 		plugin.getChatters().removeChannel(parent.getName(), channel.getName());
-		channel.removeListener(this);
+		channel.removeListener(parent.getName());
 		channels.remove(channel);
-		parent.sendMessage(channel.getLeaveMessage());
+		parent.sendMessage(message);
+	}
+
+	public void ban() {
+		ban(activeChannel);
+	}
+
+	public void ban(Channel channel) {
+		ban(channel, ChatStyle.RED, "Banned from ", channel.getName());
+	}
+
+	public void ban(Channel channel, Object... reason) {
+		channel.ban(parent.getName(), true, reason);
+	}
+
+	public void kick(Channel channel) {
+		kick(channel, ChatStyle.RED, "Kicked from ", channel.getName());
+	}
+
+	public void kick(Channel channel, Object... reason) {
+		leave(channel, ChatStyle.RED, "Kicked from ", channel.getName(), ": ", reason);
+	}
+
+	public ChatArguments getFormat(Format format) {
+		ChatArguments def = format.getDefault();
+		ValueHolder data = parent.getData(format.toString());
+		if (data != null && data.getString() != null) {
+			def = ChatArguments.fromFormatString(data.getString());
+		}
+		return def;
 	}
 
 	public Channel getActiveChannel() {

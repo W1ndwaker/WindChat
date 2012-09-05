@@ -61,6 +61,7 @@ public class ChatterConfiguration extends YamlConfiguration {
 	}
 
 	public void login(Player player) {
+		// get channels
 		List<String> channelNames = getChannels(player.getName());
 		Set<Channel> channels = new HashSet<Channel>();
 		for (String s : channelNames) {
@@ -74,6 +75,7 @@ public class ChatterConfiguration extends YamlConfiguration {
 		if (activeChannel == null) {
 			activeChannel = plugin.getChannels().getDefault();
 		}
+		// join active channel
 		chatter.join(activeChannel);
 		chatters.add(chatter);
 	}
@@ -81,6 +83,28 @@ public class ChatterConfiguration extends YamlConfiguration {
 	public void set(String path, Object value) {
 		getNode(path).setValue(value);
 		save();
+	}
+
+	public List<String> getInvites(String chatter) {
+		return getNode("chatters." + chatter + ".invites").getStringList();
+	}
+
+	public void setInvites(String chatter, List<String> invites) {
+		set("chatters." + chatter + ".invites", invites);
+	}
+
+	public void addInvite(String chatter, String invite) {
+		List<String> invites = getInvites(chatter);
+		if (!invites.contains(invite)) {
+			invites.add(invite);
+		}
+		setInvites(chatter, invites);
+	}
+
+	public void removeInvite(String chatter, String invite) {
+		List<String> invites = getInvites(chatter);
+		invites.remove(invite);
+		setInvites(chatter, invites);
 	}
 
 	public List<String> getChannels(String chatter) {

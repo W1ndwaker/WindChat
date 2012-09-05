@@ -41,12 +41,11 @@ public class ChatCommands {
 	private final WindChat plugin = WindChat.getInstance();
 
 	@Command(aliases = "nick", usage = "<name|off>", desc = "Change your nickname.", min = 1, max = 1)
-	@CommandPermissions("windchat.command.nick")
+	@CommandPermissions("windchat.nick")
 	public void nick(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
 			throw new CommandException("You must be a player to perform this command.");
 		}
-
 		String name = args.getString(0);
 		Player player = (Player) source;
 		if (name.equalsIgnoreCase("off")) {
@@ -57,7 +56,7 @@ public class ChatCommands {
 	}
 
 	@Command(aliases = "whois", usage = "<player>", desc = "Get more information about a player.", min = 1, max = 1)
-	@CommandPermissions("windchat.command.whois")
+	@CommandPermissions("windchat.whois")
 	public void whoIs(CommandContext args, CommandSource source) throws CommandException {
 		Player player = args.getPlayer(0, false);
 		String playerName = player.getName();
@@ -70,7 +69,7 @@ public class ChatCommands {
 		ChatArguments message = new ChatArguments(ChatStyle.BRIGHT_GREEN, player.getName(), " on ");
 		List<Channel> channels = new ArrayList<Channel>(chatter.getChannels());
 		for (int i = 0; i < channels.size(); i++) {
-			message.append(ChatStyle.BLUE, channels.get(i));
+			message.append(ChatStyle.BLUE, channels.get(i).getName());
 			if (i != channels.size() - 1) {
 				message.append(ChatStyle.WHITE, ",");
 			}

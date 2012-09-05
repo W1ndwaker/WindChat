@@ -23,19 +23,16 @@ package net.windwaker.chat;
 
 import net.windwaker.chat.command.ChannelCommand;
 import net.windwaker.chat.command.ChatCommands;
-import net.windwaker.chat.util.Format;
 import net.windwaker.chat.util.config.ChannelConfiguration;
 import net.windwaker.chat.util.config.ChatConfiguration;
 import net.windwaker.chat.util.config.ChatterConfiguration;
 
 import org.spout.api.Spout;
-import org.spout.api.chat.ChatArguments;
 import org.spout.api.command.CommandRegistrationsFactory;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
 import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
-import org.spout.api.data.ValueHolder;
-import org.spout.api.entity.Player;
+import org.spout.api.permissions.DefaultPermissions;
 import org.spout.api.plugin.CommonPlugin;
 
 /**
@@ -76,6 +73,10 @@ public class WindChat extends CommonPlugin {
 		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
 		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 		getEngine().getRootCommand().addSubCommands(this, ChatCommands.class, commandRegFactory);
+		// Add default permissions
+		DefaultPermissions.addDefaultPermission("windchat.join.*");
+		DefaultPermissions.addDefaultPermission("windchat.leave.*");
+		DefaultPermissions.addDefaultPermission("windchat.chat.*");
 		getLogger().info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
 	}
 
@@ -86,15 +87,6 @@ public class WindChat extends CommonPlugin {
 
 	public static WindChat getInstance() {
 		return instance;
-	}
-
-	public ChatArguments getFormat(Format format, Player player) {
-		ChatArguments def = format.getDefault();
-		ValueHolder data = player.getData(format.toString());
-		if (data != null && data.getString() != null) {
-			def = ChatArguments.fromFormatString(data.getString());
-		}
-		return def;
 	}
 
 	public ChatterConfiguration getChatters() {

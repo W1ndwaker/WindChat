@@ -32,6 +32,7 @@ import org.spout.api.event.Listener;
 import org.spout.api.event.Order;
 import org.spout.api.event.player.PlayerChatEvent;
 import org.spout.api.event.player.PlayerJoinEvent;
+import org.spout.api.event.player.PlayerLeaveEvent;
 
 /**
  * Handles formatting of messages from players.
@@ -49,17 +50,40 @@ public class ChatListener implements Listener {
 			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
 			return;
 		}
+		if (!player.hasPermission("windchat.chat." + chatter.getActiveChannel().getName())) {
+			player.sendMessage(ChatStyle.RED, "You don't have permission to chat in this channel!");
+			return;
+		}
 		chatter.chat(event.getMessage());
 	}
 
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		ChatArguments template = plugin.getFormat(Format.JOIN_MESSAGE, player);
+		plugin.getChatters().login(player);
+		Chatter chatter = plugin.getChatters().get(player.getName());
+		if (chatter == null) {
+			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
+			return;
+		}
+		ChatArguments template = chatter.getFormat(Format.JOIN_MESSAGE);
 		if (template.hasPlaceholder(Chatter.NAME)) {
 			template.setPlaceHolder(Chatter.NAME, new ChatArguments(player.getDisplayName()));
 		}
 		event.setMessage(template);
-		plugin.getChatters().login(player);
+	}
+
+	@EventHandler
+	public void playerLeave(PlayerLeaveEvent event) {
+		Player player = event.getPlayer();
+		Chatter chatter = plugin.getChatters().get(player.getName());
+		if (chatter == null) {
+			return;
+		}
+		ChatArguments template = chatter.getFormat(Format.LEAVE_MESSAGE);
+		if (template.hasPlaceholder(Chatter.NAME)) {
+			template.setPlaceHolder(Chatter.NAME, new ChatArguments(player.getDisplayName()));
+		}
+		event.setMessage(template);
 	}
 }
