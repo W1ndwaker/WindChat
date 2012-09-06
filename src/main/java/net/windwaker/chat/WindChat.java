@@ -21,6 +21,12 @@
  */
 package net.windwaker.chat;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 import net.windwaker.chat.command.ChannelCommand;
 import net.windwaker.chat.command.ChatCommands;
 import net.windwaker.chat.util.config.ChannelConfiguration;
@@ -44,6 +50,8 @@ public class WindChat extends CommonPlugin {
 	private ChatConfiguration config;
 	private ChatterConfiguration chatters;
 	private ChannelConfiguration channels;
+	private DateFormat dateFormat;
+	private DateFormat timeFormat;
 
 	public WindChat() {
 		instance = this;
@@ -67,6 +75,9 @@ public class WindChat extends CommonPlugin {
 		// Load chatters
 		chatters = new ChatterConfiguration();
 		chatters.load();
+		// Load date formats
+		dateFormat = new SimpleDateFormat(ChatConfiguration.DATE_FORMAT.getString());
+		timeFormat = new SimpleDateFormat(ChatConfiguration.TIME_FORMAT.getString());
 		// Register events
 		Spout.getEventManager().registerEvents(new ChatListener(), this);
 		// Register commands
@@ -95,5 +106,25 @@ public class WindChat extends CommonPlugin {
 
 	public ChannelConfiguration getChannels() {
 		return channels;
+	}
+
+	public String getFormattedDate() {
+		return dateFormat.format(getTime());
+	}
+
+	public String getFormattedTime() {
+		return timeFormat.format(getTime());
+	}
+
+	public TimeZone getTimeZone() {
+		return TimeZone.getTimeZone(ChatConfiguration.TIME_ZONE.getString());
+	}
+
+	public Calendar getCalendar() {
+		return Calendar.getInstance(getTimeZone());
+	}
+
+	public Date getTime() {
+		return getCalendar().getTime();
 	}
 }

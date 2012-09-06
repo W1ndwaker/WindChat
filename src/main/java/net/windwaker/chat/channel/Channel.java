@@ -51,10 +51,10 @@ public class Channel {
 	}
 
 	public void ban(String name, boolean kick) {
-		ban(name, kick, ChatStyle.RED, "Banned from ", name);
+		ban(name, kick, new ChatArguments(ChatStyle.RED, "Banned from ", name));
 	}
 
-	public void ban(String name, boolean kick, Object... reason) {
+	public void ban(String name, boolean kick, ChatArguments reason) {
 		if (kick) {
 			Chatter chatter = plugin.getChatters().get(name);
 			if (chatter == null) {

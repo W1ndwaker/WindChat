@@ -81,6 +81,17 @@ public class ChannelConfiguration extends YamlConfiguration {
 		channels.add(channel);
 	}
 
+	public void add(String channel) {
+		String path = "channels." + channel;
+		getNode(path + ".invite-only").setValue(false);
+		getNode(path + ".format").setValue("[" + channel + "] {MESSAGE}");
+		getNode(path + ".join-message").setValue("{{BRIGHT_GREEN}}You have joined " + channel + ".");
+		getNode(path + ".leave-message").setValue("{{RED}}You have left " + channel + ".");
+		getNode(path + ".ban-message").setValue("{{RED}}You have been {{BOLD}}banned{{RESET}}{{RED}} from " + channel + "!");
+		save();
+		load(channel);
+	}
+
 	@Override
 	public void save() {
 		try {
@@ -165,17 +176,6 @@ public class ChannelConfiguration extends YamlConfiguration {
 
 	public Set<Channel> get() {
 		return channels;
-	}
-
-	public void add(String channel) {
-		String path = "channels." + channel;
-		getNode(path + ".invite-only").setValue(false);
-		getNode(path + ".format").setValue("[" + channel + "] {MESSAGE}");
-		getNode(path + ".join-message").setValue("{{BRIGHT_GREEN}}You have joined " + channel + ".");
-		getNode(path + ".leave-message").setValue("{{RED}}You have left " + channel + ".");
-		getNode(path + ".ban-message").setValue("{{RED}}You have been {{BOLD}}banned{{RESET}}{{RED}} from " + channel + "!");
-		save();
-		load(channel);
 	}
 
 	public Channel getDefault() {

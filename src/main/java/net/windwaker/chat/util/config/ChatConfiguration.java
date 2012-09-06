@@ -34,7 +34,10 @@ public class ChatConfiguration extends ConfigurationHolderConfiguration {
 	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("spout", "default-channel");
 	public static final ConfigurationHolder DEFAULT_CHAT_FORMAT = new ConfigurationHolder("{NAME}: {MESSAGE}", "default-format");
 	public static final ConfigurationHolder DEFAULT_JOIN_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{NAME} {{GRAY}}has joined the game.", "default-join-message");
-	public static final ConfigurationHolder DEFAULT_LEAVE_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{NAME} {{GRAY}}has left the game.", "default-leave-message");
+	public static final ConfigurationHolder DEFAULT_LEAVE_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{NAME} {{GRAY}}has left the game. ({QUIT_MESSAGE})", "default-leave-message");
+	public static final ConfigurationHolder TIME_ZONE = new ConfigurationHolder("America/New_York", "time-zone");
+	public static final ConfigurationHolder DATE_FORMAT = new ConfigurationHolder("MM/dd/yyyy", "date-format");
+	public static final ConfigurationHolder TIME_FORMAT = new ConfigurationHolder("HH:mm:ss", "time-format");
 
 	public ChatConfiguration() {
 		super(new YamlConfiguration(new File(WindChat.getInstance().getDataFolder(), "config.yml")));

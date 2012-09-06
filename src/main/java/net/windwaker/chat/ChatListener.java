@@ -84,6 +84,11 @@ public class ChatListener implements Listener {
 		if (template.hasPlaceholder(Chatter.NAME)) {
 			template.setPlaceHolder(Chatter.NAME, new ChatArguments(player.getDisplayName()));
 		}
+		ChatArguments quitMessage = chatter.getQuitMessage();
+		String reason = event.isKick() ? "Kicked" : "Quit";
+		if (template.hasPlaceholder(Chatter.QUIT_MESSAGE)) {
+			template.setPlaceHolder(Chatter.QUIT_MESSAGE, quitMessage == null ? new ChatArguments(reason) : quitMessage);
+		}
 		event.setMessage(template);
 	}
 }

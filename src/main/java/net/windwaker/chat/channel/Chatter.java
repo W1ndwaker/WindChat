@@ -26,6 +26,7 @@ import java.util.Set;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.util.Format;
+import net.windwaker.chat.util.config.ChatConfiguration;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.Placeholder;
@@ -34,12 +35,13 @@ import org.spout.api.data.ValueHolder;
 import org.spout.api.entity.Player;
 
 public class Chatter {
-	public static final Placeholder NAME = new Placeholder("name"), MESSAGE = new Placeholder("message");
+	public static final Placeholder NAME = new Placeholder("name"), MESSAGE = new Placeholder("message"), QUIT_MESSAGE = new Placeholder("quit_message");
 	private final WindChat plugin = WindChat.getInstance();
 	private final Player parent; // TODO: Make Chatter a component of Player
 	private final Set<Channel> channels;
 	private final Set<Channel> invites = new HashSet<Channel>();
 	private Channel activeChannel;
+	private ChatArguments quitMessage;
 
 	public Chatter(Player parent, Set<Channel> channels) {
 		this.parent = parent;
@@ -48,6 +50,14 @@ public class Chatter {
 
 	public Player getParent() {
 		return parent;
+	}
+
+	public void setQuitMessage(ChatArguments quitMessage) {
+		this.quitMessage = quitMessage;
+	}
+
+	public ChatArguments getQuitMessage() {
+		return quitMessage;
 	}
 
 	public void sendInvite(Channel channel) {
@@ -79,7 +89,7 @@ public class Chatter {
 		join(channel, channel.getJoinMessage());
 	}
 
-	public void join(Channel channel, Object... message) {
+	public void join(Channel channel, ChatArguments message) {
 		plugin.getChatters().addChannel(parent.getName(), channel.getName());
 		plugin.getChatters().setActiveChannel(parent.getName(), channel.getName());
 		channels.add(channel);
@@ -92,7 +102,7 @@ public class Chatter {
 		leave(channel, channel.getLeaveMessage());
 	}
 
-	public void leave(Channel channel, Object... message) {
+	public void leave(Channel channel, ChatArguments message) {
 		if (channel.equals(activeChannel)) {
 			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
 		}
@@ -107,19 +117,26 @@ public class Chatter {
 	}
 
 	public void ban(Channel channel) {
-		ban(channel, ChatStyle.RED, "Banned from ", channel.getName());
+		ban(channel, new ChatArguments(ChatStyle.RED, "Banned from ", channel.getName()));
 	}
 
-	public void ban(Channel channel, Object... reason) {
+	public void ban(Channel channel, ChatArguments reason) {
 		channel.ban(parent.getName(), true, reason);
 	}
 
 	public void kick(Channel channel) {
-		kick(channel, ChatStyle.RED, "Kicked from ", channel.getName());
+		kick(channel, new ChatArguments(ChatStyle.RED, "Kicked from ", channel.getName()));
 	}
 
-	public void kick(Channel channel, Object... reason) {
-		leave(channel, ChatStyle.RED, "Kicked from ", channel.getName(), ": ", reason);
+	public void kick(Channel channel, ChatArguments reason) {
+		Channel def = plugin.getChannels().getDefault();
+		if (channel.equals(def)) {
+			throw new IllegalStateException("You cannot kick a player from the default channel.");
+		}
+		if (channel.equals(activeChannel)) {
+			join(def);
+		}
+		leave(channel, new ChatArguments(ChatStyle.RED, "Kicked from ", channel.getName(), ": ", reason));
 	}
 
 	public ChatArguments getFormat(Format format) {
