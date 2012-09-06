@@ -25,19 +25,47 @@ import net.windwaker.chat.util.config.ChatConfiguration;
 
 import org.spout.api.chat.ChatArguments;
 
+/**
+ * Represents the Format type of a message.
+ * @see {@link net.windwaker.chat.channel.Chatter#getFormat(Format)}
+ */
 public enum Format {
+	/**
+	 * The standard format for chat messages.
+	 */
 	CHAT("chat-format", ChatArguments.fromFormatString(ChatConfiguration.DEFAULT_CHAT_FORMAT.getString())),
+	/**
+	 * The standard format for messages when joining the game.
+	 */
 	JOIN_MESSAGE("join-message-format", ChatArguments.fromFormatString(ChatConfiguration.DEFAULT_JOIN_MESSAGE_FORMAT.getString())),
+	/**
+	 * The standard format for messages when leaving the game.
+	 */
 	LEAVE_MESSAGE("leave-message-format", ChatArguments.fromFormatString(ChatConfiguration.DEFAULT_LEAVE_MESSAGE_FORMAT.getString()));
-
+	/**
+	 * The node to get the player's data with.
+	 * @see {@link net.windwaker.chat.channel.Chatter#getFormat(Format)}
+	 */
 	private final String node;
+	/**
+	 * Gets the default format should the data retrieve fail.
+	 */
 	private final ChatArguments def;
 
+	/**
+	 * Constructs a new Format enum.
+	 * @param node to query.
+	 * @param def default value if fail
+	 */
 	private Format(String node, ChatArguments def) {
 		this.node = node;
 		this.def = def;
 	}
 
+	/**
+	 * Gets the default value of the Format.
+	 * @return default value
+	 */
 	public ChatArguments getDefault() {
 		return def;
 	}

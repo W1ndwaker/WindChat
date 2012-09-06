@@ -37,6 +37,9 @@ import org.spout.api.command.annotated.CommandPermissions;
 import org.spout.api.entity.Player;
 import org.spout.api.exception.CommandException;
 
+/**
+ * A collection of general chat commands.
+ */
 public class ChatCommands {
 	private final WindChat plugin = WindChat.getInstance();
 

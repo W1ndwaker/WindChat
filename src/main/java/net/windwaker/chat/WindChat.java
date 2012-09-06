@@ -42,19 +42,104 @@ import org.spout.api.permissions.DefaultPermissions;
 import org.spout.api.plugin.CommonPlugin;
 
 /**
- * Chat plugin for the Spout voxel software.
+ * Chat plugin for the Spout platform.
  * @author Windwaker
  */
 public class WindChat extends CommonPlugin {
+	/**
+	 * Static instance of the plugin. {@link net.windwaker.chat.WindChat#getInstance()} is not safe until {@link net.windwaker.chat.WindChat#onEnable()} is called.
+	 */
 	private static WindChat instance;
+	/**
+	 * Represents the general configuration of the plugin.
+	 */
 	private ChatConfiguration config;
+	/**
+	 * Represents the collection of {@link net.windwaker.chat.channel.Chatter}s in the plugin.
+	 */
 	private ChatterConfiguration chatters;
+	/**
+	 * Represents the collection of {@link net.windwaker.chat.channel.Channel}s in the plugin.
+	 */
 	private ChannelConfiguration channels;
+	/**
+	 * The configured {@link DateFormat} for the date in {@link ChatConfiguration}.
+	 */
 	private DateFormat dateFormat;
+	/**
+	 * The configured {@link DateFormat} for the time in {@link ChatConfiguration}.
+	 */
 	private DateFormat timeFormat;
 
+	/**
+	 * Constructs a new WindChat object.
+	 */
 	public WindChat() {
 		instance = this;
+	}
+
+	/**
+	 * Gets the static instance of {@link WindChat}. Note: this method is only safe after {@link net.windwaker.chat.WindChat#onEnable()} has been called.
+	 * @return singleton instance
+	 */
+	public static WindChat getInstance() {
+		return instance;
+	}
+
+	/**
+	 * Gets the collection of {@link net.windwaker.chat.channel.Chatter}s on the plugin.
+	 * @return collection of chatters
+	 */
+	public ChatterConfiguration getChatters() {
+		return chatters;
+	}
+
+	/**
+	 * Gets the collection of {@link net.windwaker.chat.channel.Channel}s on the plugin.
+	 * @return collection of channels
+	 */
+	public ChannelConfiguration getChannels() {
+		return channels;
+	}
+
+	/**
+	 * Gets the formatted date as configured in {@link ChatConfiguration}.
+	 * @return configured formatted date
+	 */
+	public String getFormattedDate() {
+		return dateFormat.format(getTime());
+	}
+
+	/**
+	 * Gets the formatted time as configured in {@link ChatConfiguration}.
+	 * @return configured formatted time
+	 */
+	public String getFormattedTime() {
+		return timeFormat.format(getTime());
+	}
+
+	/**
+	 * Gets the configured {@link TimeZone} of the plugin.
+	 * @return time zone
+	 */
+	public TimeZone getTimeZone() {
+		return TimeZone.getTimeZone(ChatConfiguration.TIME_ZONE.getString());
+	}
+
+	/**
+	 * Gets an instance of a calendar from the configured {@link TimeZone}
+	 * @return calendar from time zone
+	 */
+	public Calendar getCalendar() {
+		return Calendar.getInstance(getTimeZone());
+	}
+
+	/**
+	 * Gets the current time of the configured {@link TimeZone}.
+	 * @return
+	 */
+	public Date getTime() {
+		return getCalendar().getTime();
 	}
 
 	@Override
@@ -94,37 +179,5 @@ public class WindChat extends CommonPlugin {
 	@Override
 	public void onDisable() {
 		getLogger().info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
-	}
-
-	public static WindChat getInstance() {
-		return instance;
-	}
-
-	public ChatterConfiguration getChatters() {
-		return chatters;
-	}
-
-	public ChannelConfiguration getChannels() {
-		return channels;
-	}
-
-	public String getFormattedDate() {
-		return dateFormat.format(getTime());
-	}
-
-	public String getFormattedTime() {
-		return timeFormat.format(getTime());
-	}
-
-	public TimeZone getTimeZone() {
-		return TimeZone.getTimeZone(ChatConfiguration.TIME_ZONE.getString());
-	}
-
-	public Calendar getCalendar() {
-		return Calendar.getInstance(getTimeZone());
-	}
-
-	public Date getTime() {
-		return getCalendar().getTime();
 	}
 }

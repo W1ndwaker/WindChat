@@ -30,15 +30,45 @@ import org.spout.api.util.config.ConfigurationHolder;
 import org.spout.api.util.config.ConfigurationHolderConfiguration;
 import org.spout.api.util.config.yaml.YamlConfiguration;
 
+/**
+ * Represents the general settings of the plugin.
+ */
 public class ChatConfiguration extends ConfigurationHolderConfiguration {
+	/**
+	 * The default channel for players to join.
+	 */
 	public static final ConfigurationHolder DEFAULT_CHANNEL = new ConfigurationHolder("spout", "default-channel");
+	/**
+	 * The default chat format to fall back on
+	 * @see {@link net.windwaker.chat.util.Format#CHAT}
+	 */
 	public static final ConfigurationHolder DEFAULT_CHAT_FORMAT = new ConfigurationHolder("{NAME}: {MESSAGE}", "default-format");
+	/**
+	 * The default join message to fall back on
+	 * @see {@link net.windwaker.chat.util.Format#JOIN_MESSAGE}
+	 */
 	public static final ConfigurationHolder DEFAULT_JOIN_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{NAME} {{GRAY}}has joined the game.", "default-join-message");
+	/**
+	 * The default leave message to fall back on
+	 * @see {@link net.windwaker.chat.util.Format#LEAVE_MESSAGE}
+	 */
 	public static final ConfigurationHolder DEFAULT_LEAVE_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{NAME} {{GRAY}}has left the game. ({QUIT_MESSAGE})", "default-leave-message");
+	/**
+	 * The time zone to use with the 'date' command.
+	 */
 	public static final ConfigurationHolder TIME_ZONE = new ConfigurationHolder("America/New_York", "time-zone");
+	/**
+	 * The date format.
+	 */
 	public static final ConfigurationHolder DATE_FORMAT = new ConfigurationHolder("MM/dd/yyyy", "date-format");
+	/**
+	 * The time format.
+	 */
 	public static final ConfigurationHolder TIME_FORMAT = new ConfigurationHolder("HH:mm:ss", "time-format");
 
+	/**
+	 * Constructs a new ChatConfiguration at 'plugins/WindChat/config.yml'
+	 */
 	public ChatConfiguration() {
 		super(new YamlConfiguration(new File(WindChat.getInstance().getDataFolder(), "config.yml")));
 	}

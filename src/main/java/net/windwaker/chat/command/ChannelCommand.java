@@ -30,6 +30,9 @@ import org.spout.api.command.annotated.CommandPermissions;
 import org.spout.api.command.annotated.NestedCommand;
 import org.spout.api.exception.CommandException;
 
+/**
+ * Parent command for {@link ChannelCommands}.
+ */
 public class ChannelCommand {
 	@Command(aliases = {"channel", "ch"}, desc = "Parent command for WindChat")
 	@CommandPermissions("windchat.command.channel")

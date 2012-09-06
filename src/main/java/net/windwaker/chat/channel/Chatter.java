@@ -35,45 +35,101 @@ import org.spout.api.data.ValueHolder;
 import org.spout.api.entity.Player;
 
 public class Chatter {
+	/**
+	 * The placeholders for the format of messages.
+	 */
 	public static final Placeholder NAME = new Placeholder("name"), MESSAGE = new Placeholder("message"), QUIT_MESSAGE = new Placeholder("quit_message");
+	/**
+	 * Singleton instance of the plugin
+	 */
 	private final WindChat plugin = WindChat.getInstance();
-	private final Player parent; // TODO: Make Chatter a component of Player
+	/**
+	 * Parent of the Chatter
+	 * TODO: Make Chatter a component of Player
+	 */
+	private final Player parent;
+	/**
+	 * The channels the chatter is listening to
+	 */
 	private final Set<Channel> channels;
+	/**
+	 * Set of invitations for invite only channels.
+	 */
 	private final Set<Channel> invites = new HashSet<Channel>();
+	/**
+	 * The channel the chatter is currently speaking in.
+	 */
 	private Channel activeChannel;
+	/**
+	 * The message to displayer with the QUIT_MESSAGE placeholder.
+	 */
 	private ChatArguments quitMessage;
 
+	/**
+	 * Constructs a new chatter object
+	 * @param parent
+	 * @param channels
+	 */
 	public Chatter(Player parent, Set<Channel> channels) {
 		this.parent = parent;
 		this.channels = channels;
 	}
 
+	/**
+	 * Gets the parent of the chatter.
+	 * @return parent
+	 */
 	public Player getParent() {
 		return parent;
 	}
 
+	/**
+	 * Sets the quit message of the chatter
+	 * @param quitMessage
+	 */
 	public void setQuitMessage(ChatArguments quitMessage) {
 		this.quitMessage = quitMessage;
 	}
 
+	/**
+	 * Gets the quit message of the chatter
+	 * @return
+	 */
 	public ChatArguments getQuitMessage() {
 		return quitMessage;
 	}
 
-	public void sendInvite(Channel channel) {
+	/**
+	 * Invites the chatter to a channel
+	 * @param channel
+	 */
+	public void invite(Channel channel) {
 		plugin.getChatters().addInvite(parent.getName(), channel.getName());
 		invites.add(channel);
 	}
 
+	/**
+	 * Revokes an invitation to a channel
+	 * @param channel
+	 */
 	public void revokeInvite(Channel channel) {
 		plugin.getChatters().removeInvite(parent.getName(), channel.getName());
 		invites.remove(channel);
 	}
 
+	/**
+	 * Whether or not the chatter is invited to the specified channel
+	 * @param channel
+	 * @return true if invited
+	 */
 	public boolean isInvitedTo(Channel channel) {
 		return invites.contains(channel);
 	}
 
+	/**
+	 * Sends a chat message to the chatters active channel.
+	 * @param message
+	 */
 	public void chat(ChatArguments message) {
 		ChatArguments template = getFormat(Format.CHAT);
 		if (template.hasPlaceholder(NAME)) {
@@ -85,10 +141,19 @@ public class Chatter {
 		activeChannel.broadcast(template);
 	}
 
+	/**
+	 * Joins a channel
+	 * @param channel
+	 */
 	public void join(Channel channel) {
 		join(channel, channel.getJoinMessage());
 	}
 
+	/**
+	 * Joins a channel
+	 * @param channel
+	 * @param message
+	 */
 	public void join(Channel channel, ChatArguments message) {
 		plugin.getChatters().addChannel(parent.getName(), channel.getName());
 		plugin.getChatters().setActiveChannel(parent.getName(), channel.getName());
@@ -98,10 +163,19 @@ public class Chatter {
 		parent.sendMessage(message);
 	}
 
+	/**
+	 * Leaves a channel
+	 * @param channel
+	 */
 	public void leave(Channel channel) {
 		leave(channel, channel.getLeaveMessage());
 	}
 
+	/**
+	 * Leaves a channel
+	 * @param channel
+	 * @param message
+	 */
 	public void leave(Channel channel, ChatArguments message) {
 		if (channel.equals(activeChannel)) {
 			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
@@ -112,22 +186,43 @@ public class Chatter {
 		parent.sendMessage(message);
 	}
 
+	/**
+	 * Bans the chatter from their active channel; they will join the default channel.
+	 */
 	public void ban() {
 		ban(activeChannel);
 	}
 
+	/**
+	 * Bans the chatter from the specified channel.
+	 * @param channel
+	 */
 	public void ban(Channel channel) {
 		ban(channel, new ChatArguments(ChatStyle.RED, "Banned from ", channel.getName()));
 	}
 
+	/**
+	 * Bans the chatter from the specified channel.
+	 * @param channel
+	 * @param reason
+	 */
 	public void ban(Channel channel, ChatArguments reason) {
 		channel.ban(parent.getName(), true, reason);
 	}
 
+	/**
+	 * Kicks the chatter from the specified channel
+	 * @param channel
+	 */
 	public void kick(Channel channel) {
 		kick(channel, new ChatArguments(ChatStyle.RED, "Kicked from ", channel.getName()));
 	}
 
+	/**
+	 * Kicks the chatter from the specified channel
+	 * @param channel
+	 * @param reason
+	 */
 	public void kick(Channel channel, ChatArguments reason) {
 		Channel def = plugin.getChannels().getDefault();
 		if (channel.equals(def)) {
@@ -139,6 +234,11 @@ public class Chatter {
 		leave(channel, new ChatArguments(ChatStyle.RED, "Kicked from ", channel.getName(), ": ", reason));
 	}
 
+	/**
+	 * Gets the format of a certain {@link Format} type.
+	 * @param format
+	 * @return format
+	 */
 	public ChatArguments getFormat(Format format) {
 		ChatArguments def = format.getDefault();
 		ValueHolder data = parent.getData(format.toString());
@@ -148,10 +248,17 @@ public class Chatter {
 		return def;
 	}
 
+	/**
+	 * Gets the channel the chatter is currently chatting in.
+	 * @return active channel.
+	 */
 	public Channel getActiveChannel() {
 		return activeChannel;
 	}
 
+	/**
+	 * Gets all listening channels.
+	 */
 	public Set<Channel> getChannels() {
 		return channels;
 	}

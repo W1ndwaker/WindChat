@@ -23,7 +23,6 @@ package net.windwaker.chat.command.sub;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.channel.Channel;
@@ -38,6 +37,9 @@ import org.spout.api.command.annotated.CommandPermissions;
 import org.spout.api.entity.Player;
 import org.spout.api.exception.CommandException;
 
+/**
+ * A collection of general channel commands.
+ */
 public class ChannelCommands {
 	private final WindChat plugin = WindChat.getInstance();
 
@@ -224,7 +226,7 @@ public class ChannelCommands {
 		}
 
 		if (channel.isInviteOnly()) {
-			chatter.sendInvite(channel);
+			chatter.invite(channel);
 		}
 		String channelName = channel.getName();
 		player.sendMessage(ChatStyle.BRIGHT_GREEN, "You have been invited to channel '", channelName, "'. Use '/join ", channelName, "' to join.");
