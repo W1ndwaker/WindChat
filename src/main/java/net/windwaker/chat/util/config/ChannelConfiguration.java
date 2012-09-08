@@ -69,6 +69,9 @@ public class ChannelConfiguration extends YamlConfiguration {
 		for (String b : getNode(path + ".banned").getStringList()) {
 			channel.ban(b, false);
 		}
+		for (String m : getNode(path + ".muted").getStringList()) {
+			channel.mute(m);
+		}
 		channels.add(channel);
 	}
 
@@ -95,6 +98,48 @@ public class ChannelConfiguration extends YamlConfiguration {
 	public void set(String path, Object value) {
 		getNode(path).setValue(value);
 		save();
+	}
+
+	/**
+	 * Gets a list of muted names in the specified channel
+	 * @param channel
+	 * @return list of muted names
+	 */
+	public List<String> getMuted(String channel) {
+		return getNode("channels." + channel + ".muted").getStringList();
+	}
+
+	/**
+	 * Sets the list of muted names in the specified channel
+	 * @param channel
+	 * @param muted
+	 */
+	public void setMuted(String channel, List<String> muted) {
+		set("channels." + channel + ".muted", muted);
+	}
+
+	/**
+	 * Adds a muted name to the list from the specified channel
+	 * @param channel
+	 * @param name
+	 */
+	public void addMuted(String channel, String name) {
+		List<String> muted = getMuted(channel);
+		if (!muted.contains(name)) {
+			muted.add(name);
+		}
+		setMuted(channel, muted);
+	}
+
+	/**
+	 * Removes a muted name from the list in the channel
+	 * @param channel
+	 * @param name
+	 */
+	public void removeMuted(String channel, String name) {
+		List<String> muted = getMuted(channel);
+		muted.remove(name);
+		setMuted(channel, muted);
 	}
 
 	/**

@@ -51,6 +51,10 @@ public class Channel implements Named {
 	 */
 	private final Set<String> banned = new HashSet<String>();
 	/**
+	 * Set off muted names in the channel
+	 */
+	private final Set<String> muted = new HashSet<String>();
+	/**
 	 * Password for the channel.
 	 */
 	private String password;
@@ -69,6 +73,41 @@ public class Channel implements Named {
 	 */
 	public Channel(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Stops a chatter from being able to chat in the channel.
+	 * @param name
+	 */
+	public void mute(String name) {
+		plugin.getChannels().addMuted(this.name, name);
+		muted.add(name);
+	}
+
+	/**
+	 * Allows the chatter to chat in the channel.
+	 * @param name
+	 */
+	public void unmute(String name) {
+		plugin.getChannels().removeMuted(this.name, name);
+		muted.remove(name);
+	}
+
+	/**
+	 * Gets the names of all muted chatters.
+	 * @return all muted
+	 */
+	public Set<String> getMuted() {
+		return muted;
+	}
+
+	/**
+	 * Whether or not the name is muted.
+	 * @param name
+	 * @return true if muted
+	 */
+	public boolean isMuted(String name) {
+		return muted.contains(name);
 	}
 
 	/**
@@ -297,5 +336,15 @@ public class Channel implements Named {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Channel && ((Channel) obj).getName().equalsIgnoreCase(name);
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 }

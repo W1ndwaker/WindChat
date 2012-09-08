@@ -26,7 +26,6 @@ import java.util.Set;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.util.Format;
-import net.windwaker.chat.util.config.ChatConfiguration;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.Placeholder;
@@ -131,6 +130,9 @@ public class Chatter {
 	 * @param message
 	 */
 	public void chat(ChatArguments message) {
+		if (activeChannel.isMuted(getParent().getName())) {
+			return;
+		}
 		ChatArguments template = getFormat(Format.CHAT);
 		if (template.hasPlaceholder(NAME)) {
 			template.setPlaceHolder(NAME, new ChatArguments(parent.getDisplayName()));
@@ -261,5 +263,15 @@ public class Chatter {
 	 */
 	public Set<Channel> getChannels() {
 		return channels;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Chatter && ((Chatter) obj).getParent().equals(parent);
+	}
+
+	@Override
+	public int hashCode() {
+		return parent.hashCode();
 	}
 }                                    
