@@ -55,6 +55,10 @@ public class Channel implements Named {
 	 */
 	private final Set<String> muted = new HashSet<String>();
 	/**
+	 * The radius that the channel can be heard from.
+	 */
+	private int radius;
+	/**
 	 * Password for the channel.
 	 */
 	private String password;
@@ -73,6 +77,23 @@ public class Channel implements Named {
 	 */
 	public Channel(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Gets the radius (in blocks) that the channel can be heard from the original sender.
+	 * @return radius
+	 */
+	public int getRadius() {
+		return radius;
+	}
+
+	/**
+	 * Sets the radius (in blocks) that the channel can be heard from the original sender.
+	 * @param radius
+	 */
+	public void setRadius(int radius) {
+		plugin.getChannels().setRadius(name, radius);
+		this.radius = radius;
 	}
 
 	/**
@@ -320,15 +341,20 @@ public class Channel implements Named {
 	 * Broadcasts a message to all listeners of the channel.
 	 * @param message
 	 */
-	public void broadcast(ChatArguments message) {
+	public void broadcast(Chatter sender, ChatArguments message) {
 		if (format.hasPlaceholder(Chatter.MESSAGE)) {
 			format.setPlaceHolder(Chatter.MESSAGE, message);
 		}
 		for (String n : listeners) {
 			Chatter chatter = plugin.getChatters().get(n);
-			if (chatter != null) {
-				chatter.getParent().sendMessage(format);
+			if (chatter == null) {
+				continue;
 			}
+			// out of range
+			if (sender.getParent().getPosition().getDistance(chatter.getParent().getPosition()) > radius && radius != 0) {
+				continue;
+			}
+			chatter.getParent().sendMessage(format);
 		}
 		plugin.getLogger().info(format.getPlainString());
 	}

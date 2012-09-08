@@ -50,10 +50,6 @@ public class ChatListener implements Listener {
 			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
 			return;
 		}
-		if (!player.hasPermission("windchat.chat." + chatter.getActiveChannel().getName())) {
-			player.sendMessage(ChatStyle.RED, "You don't have permission to chat in this channel!");
-			return;
-		}
 		chatter.chat(event.getMessage());
 	}
 

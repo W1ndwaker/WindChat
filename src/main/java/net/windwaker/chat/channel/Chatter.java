@@ -130,6 +130,10 @@ public class Chatter {
 	 * @param message
 	 */
 	public void chat(ChatArguments message) {
+		if (!parent.hasPermission("windchat.chat." + activeChannel.getName())) {
+			parent.sendMessage(ChatStyle.RED, "You don't have permission to chat in this channel!");
+			return;
+		}
 		if (activeChannel.isMuted(getParent().getName())) {
 			return;
 		}
@@ -140,7 +144,7 @@ public class Chatter {
 		if (template.hasPlaceholder(MESSAGE)) {
 			template.setPlaceHolder(MESSAGE, message);
 		}
-		activeChannel.broadcast(template);
+		activeChannel.broadcast(this, template);
 	}
 
 	/**

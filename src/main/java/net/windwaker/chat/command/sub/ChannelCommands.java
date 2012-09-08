@@ -51,6 +51,38 @@ public class ChannelCommands {
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Added channel '", channelName, "'.");
 	}
 
+	@Command(aliases = {"radius", "distance", "range"}, usage = "<#> [channel]",desc = "Set the radius of the channel.", min = 1, max = 2)
+	public void radius(CommandContext args, CommandSource source) throws CommandException {
+		int radius = args.getInteger(0);
+		Channel channel = null;
+		if (args.length() == 1) {
+			if (!(source instanceof Player)) {
+				throw new CommandException("Please specify a channel to mute the player in.");
+			}
+			Player p = (Player) source;
+			Chatter chatter = plugin.getChatters().get(p.getName());
+			if (chatter == null) {
+				p.kick(ChatStyle.RED, "Error: An internal error occurred.");
+				throw new CommandException("Error: Chatter was null!");
+			}
+			channel = chatter.getActiveChannel();
+		}
+
+		if (args.length() == 2) {
+			channel = plugin.getChannels().get(args.getString(1));
+		}
+
+		if (channel == null) {
+			throw new CommandException("Channel not found!");
+		}
+
+		if (!source.hasPermission("windchat.radius." + channel.getName())) {
+			throw new CommandException("You don't have permission to set the radius in this channel.");
+		}
+		channel.setRadius(radius);
+		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Set radius of channel '" + channel.getName() + "' to " + radius);
+	}
+
 	@Command(aliases = "mute", usage = "<player> [channel]", desc = "Mute a player in a channel.", min = 1, max = 2)
 	public void mute(CommandContext args, CommandSource source) throws CommandException {
 		String playerName = args.getString(0);

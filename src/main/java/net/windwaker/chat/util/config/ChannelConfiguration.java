@@ -57,6 +57,7 @@ public class ChannelConfiguration extends YamlConfiguration {
 	public void load(String name) {
 		Channel channel = new Channel(name);
 		String path = "channels." + name;
+		channel.setRadius(getNode(path + ".radius").getInt());
 		channel.setInviteOnly(getNode(path + ".invite-only").getBoolean());
 		channel.setPassword(getNode(path + ".password").getString());
 		channel.setJoinMessage(ChatArguments.fromFormatString(getNode(path + ".join-message").getString()));
@@ -81,6 +82,7 @@ public class ChannelConfiguration extends YamlConfiguration {
 	 */
 	public void add(String channel) {
 		String path = "channels." + channel;
+		getNode(path + ".radius").setValue(0);
 		getNode(path + ".invite-only").setValue(false);
 		getNode(path + ".format").setValue("[" + channel + "] {MESSAGE}");
 		getNode(path + ".join-message").setValue("{{BRIGHT_GREEN}}You have joined " + channel + ".");
@@ -98,6 +100,15 @@ public class ChannelConfiguration extends YamlConfiguration {
 	public void set(String path, Object value) {
 		getNode(path).setValue(value);
 		save();
+	}
+
+	/**
+	 * Sets the radius of the specified channel
+	 * @param channel
+	 * @param radius
+	 */
+	public void setRadius(String channel, int radius) {
+		set("channels." + channel + ".radius", radius);
 	}
 
 	/**
