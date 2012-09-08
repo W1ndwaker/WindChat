@@ -26,18 +26,14 @@ import java.util.Set;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.util.Format;
+import net.windwaker.chat.util.Placeholders;
 
 import org.spout.api.chat.ChatArguments;
-import org.spout.api.chat.Placeholder;
 import org.spout.api.chat.style.ChatStyle;
 import org.spout.api.data.ValueHolder;
 import org.spout.api.entity.Player;
 
 public class Chatter {
-	/**
-	 * The placeholders for the format of messages.
-	 */
-	public static final Placeholder NAME = new Placeholder("name"), MESSAGE = new Placeholder("message"), QUIT_MESSAGE = new Placeholder("quit_message");
 	/**
 	 * Singleton instance of the plugin
 	 */
@@ -142,11 +138,11 @@ public class Chatter {
 			return;
 		}
 		ChatArguments template = getFormat(Format.CHAT);
-		if (template.hasPlaceholder(NAME)) {
-			template.setPlaceHolder(NAME, new ChatArguments(parent.getDisplayName()));
+		if (template.hasPlaceholder(Placeholders.NAME)) {
+			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(parent.getDisplayName()));
 		}
-		if (template.hasPlaceholder(MESSAGE)) {
-			template.setPlaceHolder(MESSAGE, message);
+		if (template.hasPlaceholder(Placeholders.MESSAGE)) {
+			template.setPlaceHolder(Placeholders.MESSAGE, message);
 		}
 		channel.broadcast(this, template);
 	}

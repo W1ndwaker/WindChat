@@ -27,8 +27,10 @@ import java.util.List;
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.channel.Chatter;
+import net.windwaker.chat.util.Placeholders;
 
 import org.spout.api.chat.ChatArguments;
+import org.spout.api.chat.Placeholder;
 import org.spout.api.chat.style.ChatStyle;
 import org.spout.api.command.CommandContext;
 import org.spout.api.command.CommandSource;
@@ -110,7 +112,25 @@ public class ChatCommands {
 
 	@Command(aliases = {"date", "cal", "calendar"}, desc = "Gets the time of the hosted server.", min = 0, max = 0)
 	@CommandPermissions("windchat.date")
-	public void time(CommandContext args, CommandSource source) throws CommandException {
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, "The time is ", plugin.getFormattedDate(), " ", plugin.getFormattedTime(), " ", plugin.getTimeZone().getDisplayName());
+	public void date(CommandContext args, CommandSource source) throws CommandException {
+		source.sendMessage(ChatStyle.BRIGHT_GREEN, "The date is ", plugin.getFormattedDate(), " ", plugin.getFormattedTime(), " ", plugin.getTimeZone().getDisplayName());
+	}
+
+	@Command(aliases = "styles", desc = "List all chat styles.", min = 0, max = 0)
+	@CommandPermissions("windchat.styles")
+	public void styles(CommandContext args, CommandSource source) throws CommandException {
+		source.sendMessage(ChatStyle.YELLOW, "Tip: ", ChatStyle.ITALIC, " Styles are always surrounded by two sets of curly brackets. (ie {{DARK_AQUA}})");
+		for (ChatStyle style : ChatStyle.getValues()) {
+			source.sendMessage(style, style.getLookupName());
+		}
+	}
+
+	@Command(aliases = "placeholders", desc = "List all the placeholders.", min = 0, max = 0)
+	@CommandPermissions("windchat.placeholders")
+	public void placeholders(CommandContext args, CommandSource source) throws CommandException {
+		source.sendMessage(ChatStyle.YELLOW, "Tip: ", ChatStyle.ITALIC, " Placeholders are always surrounded by one set of curly brackets. (ie {NAME})");
+		for (Placeholder placeholder : Placeholders.getValues()) {
+			source.sendMessage(placeholder.getName());
+		}
 	}
 }

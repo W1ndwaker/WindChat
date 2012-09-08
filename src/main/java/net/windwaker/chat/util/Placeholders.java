@@ -21,11 +21,47 @@
  */
 package net.windwaker.chat.util;
 
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 
-public class DefaultPermissionNodes {
-	public List<String> get() {
-		return Arrays.asList("windchat.join.*", "windchat.leave.*", "windchat.chat.*", "windchat.who.*", "windchat.qm.*", "windchat.list", "windchat.whois", "windchat.ping", "windchat.quit", "windchat.date", "windchat.styles", "windchat.placeholders");
+import org.spout.api.chat.Placeholder;
+
+public class Placeholders {
+	/**
+	 * Placeholder to be replaced by a players name
+	 */
+	public static final Placeholder NAME = new Placeholder("name");
+	/**
+	 * Placeholder to be replaced by a message
+	 */
+	public static final Placeholder MESSAGE = new Placeholder("message");
+	/**
+	 * Placeholder to be replaced by a quit message
+	 */
+	public static final Placeholder QUIT_MESSAGE = new Placeholder("quit_message");
+	/**
+	 * Collection of Placeholders
+	 */
+	private static final Set<Placeholder> VALUES = new HashSet<Placeholder>();
+
+	/**
+	 * Add the placeholders to the value set
+	 */
+	static {
+		for (Field field : Placeholders.class.getFields()) {
+			try {
+				Object obj = field.get(null);
+				if (obj instanceof Placeholder) {
+					VALUES.add((Placeholder) obj);
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static Set<Placeholder> getValues() {
+		return VALUES;
 	}
 }

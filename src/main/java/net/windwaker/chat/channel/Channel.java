@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
+import net.windwaker.chat.util.Placeholders;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
@@ -342,8 +343,8 @@ public class Channel implements Named {
 	 * @param message
 	 */
 	public void broadcast(Chatter sender, ChatArguments message) {
-		if (format.hasPlaceholder(Chatter.MESSAGE)) {
-			format.setPlaceHolder(Chatter.MESSAGE, message);
+		if (format.hasPlaceholder(Placeholders.MESSAGE)) {
+			format.setPlaceHolder(Placeholders.MESSAGE, message);
 		}
 		for (String n : listeners) {
 			Chatter chatter = plugin.getChatters().get(n);

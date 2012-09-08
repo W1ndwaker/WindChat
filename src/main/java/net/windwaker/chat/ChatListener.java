@@ -23,6 +23,7 @@ package net.windwaker.chat;
 
 import net.windwaker.chat.channel.Chatter;
 import net.windwaker.chat.util.Format;
+import net.windwaker.chat.util.Placeholders;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
@@ -63,8 +64,8 @@ public class ChatListener implements Listener {
 			return;
 		}
 		ChatArguments template = chatter.getFormat(Format.JOIN_MESSAGE);
-		if (template.hasPlaceholder(Chatter.NAME)) {
-			template.setPlaceHolder(Chatter.NAME, new ChatArguments(player.getDisplayName()));
+		if (template.hasPlaceholder(Placeholders.NAME)) {
+			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(player.getDisplayName()));
 		}
 		event.setMessage(template);
 	}
@@ -77,13 +78,13 @@ public class ChatListener implements Listener {
 			return;
 		}
 		ChatArguments template = chatter.getFormat(Format.LEAVE_MESSAGE);
-		if (template.hasPlaceholder(Chatter.NAME)) {
-			template.setPlaceHolder(Chatter.NAME, new ChatArguments(player.getDisplayName()));
+		if (template.hasPlaceholder(Placeholders.NAME)) {
+			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(player.getDisplayName()));
 		}
 		ChatArguments quitMessage = chatter.getQuitMessage();
 		String reason = event.isKick() ? "Kicked" : "Quit";
-		if (template.hasPlaceholder(Chatter.QUIT_MESSAGE)) {
-			template.setPlaceHolder(Chatter.QUIT_MESSAGE, quitMessage == null ? new ChatArguments(reason) : quitMessage);
+		if (template.hasPlaceholder(Placeholders.QUIT_MESSAGE)) {
+			template.setPlaceHolder(Placeholders.QUIT_MESSAGE, quitMessage == null ? new ChatArguments(reason) : quitMessage);
 		}
 		event.setMessage(template);
 	}

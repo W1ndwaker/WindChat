@@ -44,7 +44,7 @@ public class ChannelCommands {
 	private final WindChat plugin = WindChat.getInstance();
 
 	@Command(aliases = "create", usage = "<channel>", desc = "Create a new channel.", min = 1, max = 1)
-	@CommandPermissions("windchat.channel.create")
+	@CommandPermissions("windchat.create")
 	public void create(CommandContext args, CommandSource source) throws CommandException {
 		String channelName = args.getString(0);
 		plugin.getChannels().add(args.getString(0));
@@ -57,6 +57,7 @@ public class ChannelCommands {
 			throw new CommandException("Only players can perform this command!");
 		}
 		Channel channel = getChannel(args, 0);
+		checkPermission(source, "windchat.qm." + channel.getName());
 		Chatter chatter = getChatter((Player) source);
 		chatter.chat(channel, args.getJoinedString(1));
 	}
