@@ -173,6 +173,8 @@ public class WindChat extends CommonPlugin {
 		DefaultPermissions.addDefaultPermission("windchat.join.*");
 		DefaultPermissions.addDefaultPermission("windchat.leave.*");
 		DefaultPermissions.addDefaultPermission("windchat.chat.*");
+		DefaultPermissions.addDefaultPermission("windchat.who.*");
+		DefaultPermissions.addDefaultPermission("windchat.list");
 		getLogger().info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
 	}
 

@@ -54,31 +54,8 @@ public class ChannelCommands {
 	@Command(aliases = {"radius", "distance", "range"}, usage = "<#> [channel]",desc = "Set the radius of the channel.", min = 1, max = 2)
 	public void radius(CommandContext args, CommandSource source) throws CommandException {
 		int radius = args.getInteger(0);
-		Channel channel = null;
-		if (args.length() == 1) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to mute the player in.");
-			}
-			Player p = (Player) source;
-			Chatter chatter = plugin.getChatters().get(p.getName());
-			if (chatter == null) {
-				p.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Error: Chatter was null!");
-			}
-			channel = chatter.getActiveChannel();
-		}
-
-		if (args.length() == 2) {
-			channel = plugin.getChannels().get(args.getString(1));
-		}
-
-		if (channel == null) {
-			throw new CommandException("Channel not found!");
-		}
-
-		if (!source.hasPermission("windchat.radius." + channel.getName())) {
-			throw new CommandException("You don't have permission to set the radius in this channel.");
-		}
+		Channel channel = getChannel(args, source, 1);
+		checkPermission(source, "windchat.radius." + channel.getName());
 		channel.setRadius(radius);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Set radius of channel '" + channel.getName() + "' to " + radius);
 	}
@@ -86,31 +63,8 @@ public class ChannelCommands {
 	@Command(aliases = "mute", usage = "<player> [channel]", desc = "Mute a player in a channel.", min = 1, max = 2)
 	public void mute(CommandContext args, CommandSource source) throws CommandException {
 		String playerName = args.getString(0);
-		Channel channel = null;
-		if (args.length() == 1) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to mute the player in.");
-			}
-			Player p = (Player) source;
-			Chatter chatter = plugin.getChatters().get(p.getName());
-			if (chatter == null) {
-				p.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Error: Chatter was null!");
-			}
-			channel = chatter.getActiveChannel();
-		}
-
-		if (args.length() == 2) {
-			channel = plugin.getChannels().get(args.getString(1));
-		}
-
-		if (channel == null) {
-			throw new CommandException("Channel not found!");
-		}
-
-		if (!source.hasPermission("windchat.mute" + channel.getName())) {
-			throw new CommandException("You don't have permission to mute player's in this channel!");
-		}
+		Channel channel = getChannel(args, source, 1);
+		checkPermission(source, "windchat.mute." + channel.getName());
 		channel.mute(playerName);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Muted player '", playerName, "' from channel '", channel.getName(), "'.");
 	}
@@ -118,31 +72,8 @@ public class ChannelCommands {
 	@Command(aliases = "unmute", usage = "<player> [channel]", desc = "Unmute a player in a channel.", min = 1, max = 2)
 	public void unmute(CommandContext args, CommandSource source) throws CommandException {
 		String playerName = args.getString(0);
-		Channel channel = null;
-		if (args.length() == 1) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to unmute the player in.");
-			}
-			Player p = (Player) source;
-			Chatter chatter = plugin.getChatters().get(p.getName());
-			if (chatter == null) {
-				p.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Error: Chatter was null!");
-			}
-			channel = chatter.getActiveChannel();
-		}
-
-		if (args.length() == 2) {
-			channel = plugin.getChannels().get(args.getString(1));
-		}
-
-		if (channel == null) {
-			throw new CommandException("Channel not found!");
-		}
-
-		if (!source.hasPermission("windchat.umute" + channel.getName())) {
-			throw new CommandException("You don't have permission to unmute player's in this channel!");
-		}
+		Channel channel = getChannel(args, source, 1);
+		checkPermission(source, "windchat.unmute." + channel.getName());
 		channel.unmute(playerName);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Unmuted player '", playerName, "' from channel '", channel.getName(), "'.");
 	}
@@ -152,16 +83,7 @@ public class ChannelCommands {
 		String playerName = args.getString(0);
 		Channel channel = null;
 		if (args.length() == 1) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to ban the player from.");
-			}
-			Player player = (Player) source;
-			Chatter chatter = plugin.getChatters().get(player.getName());
-			if (chatter == null) {
-				player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Error: Chatter was null!");
-			}
-			channel = chatter.getActiveChannel();
+			channel = getActiveChannel(source);
 		}
 
 		ChatArguments reason = null;
@@ -190,10 +112,7 @@ public class ChannelCommands {
 		if (channel.equals(plugin.getChannels().getDefault())) {
 			throw new CommandException("You cannot ban a player from the default channel.");
 		}
-
-		if (!source.hasPermission("windchat.ban." + channel.getName())) {
-			throw new CommandException("You don't have permission to ban from this channel!");
-		}
+		checkPermission(source, "windchat.ban." + channel.getName());
 		channel.ban(playerName, true, message);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Player '", playerName, "' banned from channel '", channel.getName(), "'.");
 	}
@@ -201,31 +120,8 @@ public class ChannelCommands {
 	@Command(aliases = "unban", usage = "<player> [channel]", desc = "Unban a player from a channel.", min = 1, max = 2)
 	public void unban(CommandContext args, CommandSource source) throws CommandException {
 		String playerName = args.getString(0);
-		Channel channel = null;
-		if (args.length() == 1) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to unban the player from.");
-			}
-			Player player = (Player) source;
-			Chatter chatter = plugin.getChatters().get(player.getName());
-			if (chatter == null) {
-				player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Error: Chatter was null!");
-			}
-			channel = chatter.getActiveChannel();
-		}
-
-		if (args.length() == 2) {
-			channel = plugin.getChannels().get(args.getString(1));
-		}
-
-		if (channel == null) {
-			throw new CommandException("Channel not found!");
-		}
-
-		if (!source.hasPermission("windchat.unban." + channel.getName())) {
-			throw new CommandException("You don't have permission to unban players from this channel!");
-		}
+		Channel channel = getChannel(args, source, 1);
+		checkPermission(source, "windchat.unban." + channel.getName());
 		channel.unban(playerName);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Player '", playerName, "' unbanned from channel '", channel.getName(), "'.");
 	}
@@ -233,23 +129,10 @@ public class ChannelCommands {
 	@Command(aliases = "kick", usage = "<player> [channel|reason] [reason]", desc = "Kick a player from a channel.", min = 1)
 	public void kick(CommandContext args, CommandSource source) throws CommandException {
 		Player player = args.getPlayer(0, false);
-		Chatter chatter = plugin.getChatters().get(player.getName());
-		if (chatter == null) {
-			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-			throw new CommandException("Error: Chatter was null!");
-		}
+		Chatter chatter = getChatter(player);
 		Channel channel = null;
 		if (args.length() == 1) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to kick the player from.");
-			}
-			Player p = (Player) source;
-			Chatter c = plugin.getChatters().get(p.getName());
-			if (c == null) {
-				p.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Error: Chatter was null!");
-			}
-			channel = c.getActiveChannel();
+			channel = getActiveChannel(source);
 		}
 
 		ChatArguments reason = null;
@@ -278,49 +161,17 @@ public class ChannelCommands {
 		if (channel.equals(plugin.getChannels().getDefault())) {
 			throw new CommandException("You cannot kick a player from the default channel.");
 		}
-
-		if (!source.hasPermission("windchat.kick." + channel.getName())) {
-			throw new CommandException("You don't have permission to kick from this channel!");
-		}
+		checkPermission(source, "windchat.kick." + channel.getName());
 		chatter.kick(channel, message);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Kicked player '", player.getName(), "' from channel '", channel.getName(), "'.");
 	}
 
 	@Command(aliases = "invite", usage = "<player> [channel]", desc = "Invite a player to a channel.", min = 1, max = 2)
 	public void invite(CommandContext args, CommandSource source) throws CommandException {
-		Channel channel = null;
-		if (args.length() == 1) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to invite the player to.");
-			}
-			Player player = (Player) source;
-			Chatter chatter = plugin.getChatters().get(player.getName());
-			if (chatter == null) {
-				player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Error: Chatter was null!");
-			}
-			channel = chatter.getActiveChannel();
-		}
-
-		if (args.length() == 2) {
-			channel = plugin.getChannels().get(args.getString(1));
-		}
-
-		if (channel == null) {
-			throw new CommandException("Channel not found!");
-		}
-
+		Channel channel = getChannel(args, source, 1);
 		Player player = args.getPlayer(0, false);
-		Chatter chatter = plugin.getChatters().get(player.getName());
-		if (chatter == null) {
-			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-			throw new CommandException("Error: Chatter was null");
-		}
-
-		if (!source.hasPermission("windchat.invite." + channel.getName())) {
-			throw new CommandException("You don't have permission to invite people to this channel!");
-		}
-
+		Chatter chatter = getChatter(player);
+		checkPermission(source, "windchat.invite." + channel.getName());
 		if (channel.isInviteOnly()) {
 			chatter.invite(channel);
 		}
@@ -336,17 +187,8 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chatter chatter = plugin.getChatters().get(player.getName());
-		if (chatter == null) {
-			player.kick(ChatStyle.RED, "Error: An internal error occurred");
-			throw new CommandException("Error: Chatter was null");
-		}
-
-		Channel channel = plugin.getChannels().get(args.getString(0));
-		if (channel == null) {
-			throw new CommandException("Channel doesn't exist!");
-		}
-
+		Chatter chatter = getChatter(player);
+		Channel channel = getChannel(args, 0);
 		if (channel.equals(chatter.getActiveChannel())) {
 			throw new CommandException("You are already in " + channel.getName() + "!");
 		}
@@ -360,10 +202,7 @@ public class ChannelCommands {
 			throw new CommandException("Channel '" + channel.getName() + "' is by invite only!");
 		}
 
-		if (!player.hasPermission("windchat.join." + channel.getName())) {
-			throw new CommandException("You don't have permission to join " + channel.getName() + "!");
-		}
-
+		checkPermission(source, "windchat.join." + channel.getName());
 		if (args.length() == 1) {
 			if (channel.hasPassword()) {
 				throw new CommandException(channel.getName() + " requires a password for entrance!");
@@ -386,17 +225,8 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chatter chatter = plugin.getChatters().get(player.getName());
-		if (chatter == null) {
-			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-			throw new CommandException("Chatter was null");
-		}
-
-		Channel channel = plugin.getChannels().get(args.getString(0));
-		if (channel == null) {
-			throw new CommandException("Channel doesn't exist!");
-		}
-
+		Chatter chatter = getChatter(player);
+		Channel channel = getChannel(args, 0);
 		if (channel.equals(chatter.getActiveChannel())) {
 			throw new CommandException("You may not leave the channel you are active in!");
 		}
@@ -404,45 +234,14 @@ public class ChannelCommands {
 		if (!chatter.getChannels().contains(channel)) {
 			throw new CommandException("You are not in " + channel.getName() + "!");
 		}
-
-		if (!player.hasPermission("windchat.leave." + channel.getName())) {
-			throw new CommandException("You don't have permission to leave " + channel.getName() + "!");
-		}
+		checkPermission(source, "windchat.leave." + channel.getName());
 		chatter.leave(channel);
 	}
 
 	@Command(aliases = {"who", "players", "users"}, usage = "[channel]", desc = "List all listeners in a channel", min = 0, max = 1)
 	public void who(CommandContext args, CommandSource source) throws CommandException {
-		Channel channel = null;
-		if (args.length() == 0) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to list.");
-			}
-			Player player = (Player) source;
-			Chatter chatter = plugin.getChatters().get(player.getName());
-			if (chatter == null) {
-				player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Chatter was null");
-			}
-			channel = chatter.getActiveChannel();
-		}
-
-		if (args.length() == 1) {
-			String channelName = args.getString(0);
-			channel = plugin.getChannels().get(channelName);
-			if (channel == null) {
-				throw new CommandException("Unknown channel '" + channelName + "'.");
-			}
-		}
-
-		if (channel == null) {
-			throw new CommandException("Channel not found.");
-		}
-
-		if (!source.hasPermission("windchat.who" + channel.getName())) {
-			throw new CommandException("You don't have permission to view the player list in this channel!");
-		}
-
+		Channel channel = getChannel(args, source, 0);
+		checkPermission(source, "windchat.who." + channel.getName());
 		List<String> listeners = new ArrayList<String>(channel.getListeners());
 		ChatArguments message = new ChatArguments(ChatStyle.BRIGHT_GREEN, channel.getName(), " (", ChatStyle.BLUE, listeners.size(), ChatStyle.BRIGHT_GREEN, "): ");
 		for (int i = 0; i < listeners.size(); i++) {
@@ -460,31 +259,8 @@ public class ChannelCommands {
 		if (pass.equalsIgnoreCase("off")) {
 			pass = null;
 		}
-		Channel channel = null;
-		if (args.length() == 1) {
-			if (!(source instanceof Player)) {
-				throw new CommandException("Please specify a channel to set the password of.");
-			}
-			Player player = (Player) source;
-			Chatter chatter = plugin.getChatters().get(player.getName());
-			if (chatter == null) {
-				player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-				throw new CommandException("Chatter was null");
-			}
-			channel = chatter.getActiveChannel();
-		}
-
-		if (args.length() == 2) {
-			channel = plugin.getChannels().get(args.getString(1));
-		}
-
-		if (channel == null) {
-			throw new CommandException("Channel not found.");
-		}
-
-		if (!source.hasPermission("windchat.pass." + channel.getName())) {
-			throw new CommandException("You don't have permission to set the password on this channel.");
-		}
+		Channel channel = getChannel(args, source, 1);
+		checkPermission(source, "windchat.pass." + channel.getName());
 		channel.setPassword(pass);
 		ChatArguments message = new ChatArguments();
 		if (pass != null) {
@@ -510,6 +286,57 @@ public class ChannelCommands {
 				return;
 			}
 			source.sendMessage(ChatStyle.BLUE, channels.get(i).getName());
+		}
+	}
+
+	private Chatter getChatter(Player player) throws CommandException {
+		Chatter chatter = plugin.getChatters().get(player.getName());
+		if (chatter == null) {
+			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
+			throw new CommandException("Error: Chatter was null!");
+		}
+		return chatter;
+	}
+
+	private Channel getChannel(CommandContext args, CommandSource source, int length) throws CommandException {
+		Channel channel = null;
+		if (args.length() == length) {
+			channel = getActiveChannel(source);
+		}
+		if (args.length() == length + 1) {
+			channel = getChannel(args, 1);
+		}
+		return channel;
+	}
+
+	private Channel getChannel(CommandContext args, int index) throws CommandException {
+		Channel channel = plugin.getChannels().get(args.getString(index));
+		if (channel == null) {
+			throw new CommandException("Channel not found!");
+		}
+		return channel;
+	}
+
+	private Channel getActiveChannel(CommandSource source) throws CommandException {
+		if (!(source instanceof Player)) {
+			throw new CommandException("Please specify a channel to mute the player in.");
+		}
+		Player p = (Player) source;
+		Chatter chatter = plugin.getChatters().get(p.getName());
+		if (chatter == null) {
+			p.kick(ChatStyle.RED, "Error: An internal error occurred.");
+			throw new CommandException("Error: Chatter was null!");
+		}
+		Channel channel = chatter.getActiveChannel();
+		if (channel == null) {
+			throw new CommandException("Channel not found!");
+		}
+		return channel;
+	}
+
+	private void checkPermission(CommandSource source, String node) throws CommandException {
+		if (!source.hasPermission(node)) {
+			throw new CommandException("You don't have permission to do that!");
 		}
 	}
 }
