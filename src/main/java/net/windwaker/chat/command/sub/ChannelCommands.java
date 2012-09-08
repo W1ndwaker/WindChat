@@ -51,6 +51,16 @@ public class ChannelCommands {
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Added channel '", channelName, "'.");
 	}
 
+	@Command(aliases = {"quickmessage", "qm"}, usage = "<channel> <message>", desc = "Message a channel without changing your active channel.", min = 2)
+	public void quickMessage(CommandContext args, CommandSource source) throws CommandException {
+		if (!(source instanceof Player)) {
+			throw new CommandException("Only players can perform this command!");
+		}
+		Channel channel = getChannel(args, 0);
+		Chatter chatter = getChatter((Player) source);
+		chatter.chat(channel, args.getJoinedString(1));
+	}
+
 	@Command(aliases = {"radius", "distance", "range"}, usage = "<#> [channel]",desc = "Set the radius of the channel.", min = 1, max = 2)
 	public void radius(CommandContext args, CommandSource source) throws CommandException {
 		int radius = args.getInteger(0);

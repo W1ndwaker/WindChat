@@ -125,11 +125,15 @@ public class Chatter {
 		return invites.contains(channel);
 	}
 
+	public void chat(ChatArguments message) {
+		chat(activeChannel, message);
+	}
+
 	/**
 	 * Sends a chat message to the chatters active channel.
 	 * @param message
 	 */
-	public void chat(ChatArguments message) {
+	public void chat(Channel channel, ChatArguments message) {
 		if (!parent.hasPermission("windchat.chat." + activeChannel.getName())) {
 			parent.sendMessage(ChatStyle.RED, "You don't have permission to chat in this channel!");
 			return;
@@ -144,7 +148,7 @@ public class Chatter {
 		if (template.hasPlaceholder(MESSAGE)) {
 			template.setPlaceHolder(MESSAGE, message);
 		}
-		activeChannel.broadcast(this, template);
+		channel.broadcast(this, template);
 	}
 
 	/**
