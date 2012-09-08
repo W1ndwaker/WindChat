@@ -29,6 +29,7 @@ import java.util.TimeZone;
 
 import net.windwaker.chat.command.ChannelCommand;
 import net.windwaker.chat.command.ChatCommands;
+import net.windwaker.chat.util.DefaultPermissionNodes;
 import net.windwaker.chat.util.config.ChannelConfiguration;
 import net.windwaker.chat.util.config.ChatConfiguration;
 import net.windwaker.chat.util.config.ChatterConfiguration;
@@ -170,11 +171,10 @@ public class WindChat extends CommonPlugin {
 		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 		getEngine().getRootCommand().addSubCommands(this, ChatCommands.class, commandRegFactory);
 		// Add default permissions
-		DefaultPermissions.addDefaultPermission("windchat.join.*");
-		DefaultPermissions.addDefaultPermission("windchat.leave.*");
-		DefaultPermissions.addDefaultPermission("windchat.chat.*");
-		DefaultPermissions.addDefaultPermission("windchat.who.*");
-		DefaultPermissions.addDefaultPermission("windchat.list");
+		DefaultPermissionNodes nodes = new DefaultPermissionNodes();
+		for (String node : nodes.get()) {
+			DefaultPermissions.addDefaultPermission(node);
+		}
 		getLogger().info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
 	}
 

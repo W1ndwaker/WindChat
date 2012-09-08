@@ -109,7 +109,7 @@ public class ChatCommands {
 	}
 
 	@Command(aliases = {"date", "cal", "calendar"}, desc = "Gets the time of the hosted server.", min = 0, max = 0)
-	@CommandPermissions("windchat.time")
+	@CommandPermissions("windchat.date")
 	public void time(CommandContext args, CommandSource source) throws CommandException {
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "The time is ", plugin.getFormattedDate(), " ", plugin.getFormattedTime(), " ", plugin.getTimeZone().getDisplayName());
 	}
