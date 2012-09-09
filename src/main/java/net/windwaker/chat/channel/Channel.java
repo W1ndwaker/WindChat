@@ -417,7 +417,7 @@ public class Channel implements Named {
 		String str = args.asString();
 		for (String word : str.split(" ")) {
 			if (censoredWords.containsKey(word.toLowerCase())) {
-				str = str.replaceAll(word, censoredWords.get(word.toLowerCase()));
+				str = str.replace(word, censoredWords.get(word.toLowerCase()));
 			}
 		}
 		return ChatArguments.fromString(str);
