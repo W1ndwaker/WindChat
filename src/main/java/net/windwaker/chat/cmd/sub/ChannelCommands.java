@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.command.sub;
+package net.windwaker.chat.cmd.sub;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +90,7 @@ public class ChannelCommands {
 	@Command(aliases = {"quickmessage", "qm"}, usage = "<channel> <message>", desc = "Message a channel without changing your active channel.", min = 2)
 	public void quickMessage(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
-			throw new CommandException("Only players can perform this command!");
+			throw new CommandException("Only players can perform this cmd!");
 		}
 		Channel channel = getChannel(args, 0);
 		checkPermission(source, "windchat.qm." + channel.getName());
@@ -230,7 +230,7 @@ public class ChannelCommands {
 	@Command(aliases = {"join", "j"}, usage = "<channel>", desc = "Join a channel", min = 1, max = 2)
 	public void join(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
-			throw new CommandException("You must be a player to perform this command!");
+			throw new CommandException("You must be a player to perform this cmd!");
 		}
 
 		Player player = (Player) source;
@@ -268,7 +268,7 @@ public class ChannelCommands {
 	@Command(aliases = {"leave", "l"}, usage = "<channel>", desc = "Leave a channel", min = 1, max = 1)
 	public void leave(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
-			throw new CommandException("You must be a player to perform this command!");
+			throw new CommandException("You must be a player to perform this cmd!");
 		}
 
 		Player player = (Player) source;

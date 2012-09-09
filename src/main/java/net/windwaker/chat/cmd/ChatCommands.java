@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.command;
+package net.windwaker.chat.cmd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class ChatCommands {
 	@CommandPermissions("windchat.nick")
 	public void nick(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
-			throw new CommandException("You must be a player to perform this command.");
+			throw new CommandException("You must be a player to perform this cmd.");
 		}
 		String name = args.getString(0);
 		Player player = (Player) source;
@@ -100,7 +100,7 @@ public class ChatCommands {
 	@CommandPermissions("windchat.quit")
 	public void quit(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
-			throw new CommandException("You can only perform this command as a player.");
+			throw new CommandException("You can only perform this cmd as a player.");
 		}
 		Player player = (Player) source;
 		Chatter chatter = plugin.getChatters().get(player.getName());

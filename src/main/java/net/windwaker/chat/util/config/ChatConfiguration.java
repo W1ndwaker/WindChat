@@ -54,7 +54,7 @@ public class ChatConfiguration extends ConfigurationHolderConfiguration {
 	 */
 	public static final ConfigurationHolder DEFAULT_LEAVE_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{NAME} {{GRAY}}has left the game. ({QUIT_MESSAGE})", "default-leave-message");
 	/**
-	 * The time zone to use with the 'date' command.
+	 * The time zone to use with the 'date' cmd.
 	 */
 	public static final ConfigurationHolder TIME_ZONE = new ConfigurationHolder("America/New_York", "time-zone");
 	/**

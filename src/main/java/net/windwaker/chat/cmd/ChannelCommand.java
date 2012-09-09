@@ -19,9 +19,9 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.command;
+package net.windwaker.chat.cmd;
 
-import net.windwaker.chat.command.sub.ChannelCommands;
+import net.windwaker.chat.cmd.sub.ChannelCommands;
 
 import org.spout.api.command.CommandContext;
 import org.spout.api.command.CommandSource;
@@ -31,11 +31,11 @@ import org.spout.api.command.annotated.NestedCommand;
 import org.spout.api.exception.CommandException;
 
 /**
- * Parent command for {@link ChannelCommands}.
+ * Parent cmd for {@link ChannelCommands}.
  */
 public class ChannelCommand {
-	@Command(aliases = {"channel", "ch"}, desc = "Parent command for WindChat")
-	@CommandPermissions("windchat.command.channel")
+	@Command(aliases = {"channel", "ch"}, desc = "Parent cmd for WindChat")
+	@CommandPermissions("windchat.cmd.channel")
 	@NestedCommand(ChannelCommands.class)
 	public void channel(CommandContext args, CommandSource source) throws CommandException {
 	}

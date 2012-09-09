@@ -27,8 +27,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import net.windwaker.chat.command.ChannelCommand;
-import net.windwaker.chat.command.ChatCommands;
+import net.windwaker.chat.cmd.ChannelCommand;
+import net.windwaker.chat.cmd.ChatCommands;
 import net.windwaker.chat.util.DefaultPermissionNodes;
 import net.windwaker.chat.util.config.ChannelConfiguration;
 import net.windwaker.chat.util.config.ChatConfiguration;
