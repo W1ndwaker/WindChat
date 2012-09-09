@@ -21,7 +21,9 @@
  */
 package net.windwaker.chat.channel;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
@@ -55,6 +57,10 @@ public class Channel implements Named {
 	 * Set off muted names in the channel
 	 */
 	private final Set<String> muted = new HashSet<String>();
+	/**
+	 * A map of censored words mapped to their replacements
+	 */
+	private final Map<String, String> censoredWords = new HashMap<String, String>();
 	/**
 	 * The radius that the channel can be heard from.
 	 */
@@ -95,6 +101,45 @@ public class Channel implements Named {
 	public void setRadius(int radius) {
 		plugin.getChannels().setRadius(name, radius);
 		this.radius = radius;
+	}
+
+	/**
+	 * Censors a word in the channel
+	 * @param word to censor
+	 */
+	public void censor(String word) {
+		String replacement = "";
+		for (int i = 0; i < word.length(); i++) {
+			replacement += "*";
+		}
+		censor(word, replacement);
+	}
+
+	/**
+	 * Censors a word in the channel
+	 * @param word
+	 * @param replacement
+	 */
+	public void censor(String word, String replacement) {
+		plugin.getChannels().addCensoredWord(name, word, replacement);
+		censoredWords.put(word, replacement);
+	}
+
+	/**
+	 * Gets the censored words
+	 * @return censored words
+	 */
+	public Set<String> getCensoredWords() {
+		return censoredWords.keySet();
+	}
+
+	/**
+	 * Whether the specified word is censored
+	 * @param word
+	 * @return true if censored
+	 */
+	public boolean isCensored(String word) {
+		return censoredWords.containsKey(word);
 	}
 
 	/**
@@ -343,6 +388,7 @@ public class Channel implements Named {
 	 * @param message
 	 */
 	public void broadcast(Chatter sender, ChatArguments message) {
+		message = censor(message);
 		if (format.hasPlaceholder(Placeholders.MESSAGE)) {
 			format.setPlaceHolder(Placeholders.MESSAGE, message);
 		}
@@ -352,12 +398,29 @@ public class Channel implements Named {
 				continue;
 			}
 			// out of range
-			if (sender.getParent().getPosition().getDistance(chatter.getParent().getPosition()) > radius && radius != 0) {
+			if (!chatter.canHear(sender, this)) {
 				continue;
 			}
 			chatter.getParent().sendMessage(format);
 		}
 		plugin.getLogger().info(format.getPlainString());
+	}
+
+	/**
+	 * Censors a message from the censored word list.
+	 * @param args
+	 * @return censored message
+	 */
+	public ChatArguments censor(ChatArguments args) {
+		String str = args.asString();
+		for (String word : str.split(" ")) {
+			System.out.println("For: " + word);
+			if (censoredWords.containsKey(word)) {
+				System.out.println("Censoring: " + word);
+				str = str.replaceAll(word, censoredWords.get(word));
+			}
+		}
+		return ChatArguments.fromString(str);
 	}
 
 	@Override

@@ -51,6 +51,42 @@ public class ChannelCommands {
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Added channel '", channelName, "'.");
 	}
 
+	@Command(aliases = "censor", usage = "<word> [replacement|channel] [channel]", desc = "Censor a word from a channel.", min = 1, max = 3)
+	public void censor(CommandContext args, CommandSource source) throws CommandException {
+		String word = args.getString(0);
+		Channel channel = null;
+		if (args.length() == 1) {
+			channel = getActiveChannel(source);
+		}
+
+		String replacement = null;
+		if (args.length() == 2) {
+			String arg2 = args.getString(1);
+			Channel c = plugin.getChannels().get(arg2);
+			if (c == null) {
+				replacement = arg2;
+			} else {
+				channel = c;
+			}
+		}
+
+		if (args.length() == 3) {
+			channel = getChannel(args, 2);
+		}
+
+		if (channel == null) {
+			throw new CommandException("Channel not found!");
+		}
+
+		checkPermission(source, "windchat.censor." + channel.getName());
+		if (replacement == null) {
+			channel.censor(word);
+		} else {
+			channel.censor(word, replacement);
+		}
+		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Censored word '", word, "'.");
+	}
+
 	@Command(aliases = {"quickmessage", "qm"}, usage = "<channel> <message>", desc = "Message a channel without changing your active channel.", min = 2)
 	public void quickMessage(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {

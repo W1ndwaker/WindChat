@@ -73,6 +73,13 @@ public class ChannelConfiguration extends YamlConfiguration {
 		for (String m : getNode(path + ".muted").getStringList()) {
 			channel.mute(m);
 		}
+		System.out.println("All keys: " + getNode(path).getKeys(false));
+		System.out.println("Loading " + name);
+		System.out.println("Keys: " + getNode(path + ".censored-words").getKeys(false));
+		for (String c : getNode(path + ".censored-words").getKeys(false)) {
+			System.out.println("Loading censor: " + c);
+			channel.censor(c, getNode(path + ".censored-words." + c).getString());
+		}
 		channels.add(channel);
 	}
 
@@ -100,6 +107,16 @@ public class ChannelConfiguration extends YamlConfiguration {
 	public void set(String path, Object value) {
 		getNode(path).setValue(value);
 		save();
+	}
+
+	/**
+	 * Adds a censored word to the channel
+	 * @param channel
+	 * @param word
+	 * @param replacement
+	 */
+	public void addCensoredWord(String channel, String word, String replacement) {
+		set("channels." + channel + ".censored-words." + word, replacement);
 	}
 
 	/**

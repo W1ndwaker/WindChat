@@ -79,6 +79,16 @@ public class Chatter {
 	}
 
 	/**
+	 * Whether the chatter can hear the sender
+	 * @param sender
+	 * @return true if can hear
+	 */
+	public boolean canHear(Chatter sender, Channel channel) {
+		int radius = channel.getRadius();
+		return parent.getPosition().getDistance(sender.getParent().getPosition()) < radius || radius <= 0;
+	}
+
+	/**
 	 * Sets the quit message of the chatter
 	 * @param quitMessage
 	 */
@@ -190,13 +200,6 @@ public class Chatter {
 		channel.removeListener(parent.getName());
 		channels.remove(channel);
 		parent.sendMessage(message);
-	}
-
-	/**
-	 * Bans the chatter from their active channel; they will join the default channel.
-	 */
-	public void ban() {
-		ban(activeChannel);
 	}
 
 	/**
