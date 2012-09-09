@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.util.Placeholders;
@@ -121,6 +122,7 @@ public class Channel implements Named {
 	 * @param replacement
 	 */
 	public void censor(String word, String replacement) {
+		word = word.toLowerCase();
 		plugin.getChannels().addCensoredWord(name, word, replacement);
 		censoredWords.put(word, replacement);
 	}
@@ -414,8 +416,8 @@ public class Channel implements Named {
 	public ChatArguments censor(ChatArguments args) {
 		String str = args.asString();
 		for (String word : str.split(" ")) {
-			if (censoredWords.containsKey(word)) {
-				str = str.replaceAll(word, censoredWords.get(word));
+			if (censoredWords.containsKey(word.toLowerCase())) {
+				str = str.replaceAll(word, censoredWords.get(word.toLowerCase()));
 			}
 		}
 		return ChatArguments.fromString(str);
