@@ -414,9 +414,7 @@ public class Channel implements Named {
 	public ChatArguments censor(ChatArguments args) {
 		String str = args.asString();
 		for (String word : str.split(" ")) {
-			System.out.println("For: " + word);
 			if (censoredWords.containsKey(word)) {
-				System.out.println("Censoring: " + word);
 				str = str.replaceAll(word, censoredWords.get(word));
 			}
 		}
