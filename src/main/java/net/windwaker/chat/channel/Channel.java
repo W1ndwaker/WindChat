@@ -390,7 +390,6 @@ public class Channel implements Named {
 	 * @param message
 	 */
 	public void broadcast(Chatter sender, ChatArguments message) {
-		message = censor(message);
 		if (format.hasPlaceholder(Placeholders.MESSAGE)) {
 			format.setPlaceHolder(Placeholders.MESSAGE, message);
 		}
@@ -420,7 +419,7 @@ public class Channel implements Named {
 				str = str.replace(word, censoredWords.get(word.toLowerCase()));
 			}
 		}
-		return ChatArguments.fromString(str);
+		return ChatArguments.fromFormatString(str);
 	}
 
 	@Override

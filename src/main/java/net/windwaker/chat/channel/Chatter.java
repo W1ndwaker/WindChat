@@ -147,6 +147,7 @@ public class Chatter {
 		if (activeChannel.isMuted(getParent().getName())) {
 			return;
 		}
+		message = channel.censor(message);
 		ChatArguments template = getFormat(Format.CHAT);
 		if (template.hasPlaceholder(Placeholders.NAME)) {
 			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(parent.getDisplayName()));
