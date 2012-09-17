@@ -85,7 +85,7 @@ public class Chatter {
 	 */
 	public boolean canHear(Chatter sender, Channel channel) {
 		int radius = channel.getRadius();
-		return parent.getPosition().getDistance(sender.getParent().getPosition()) < radius || radius <= 0;
+		return parent.getTransform().getPosition().getDistance(sender.getParent().getTransform().getPosition()) < radius || radius <= 0;
 	}
 
 	/**
