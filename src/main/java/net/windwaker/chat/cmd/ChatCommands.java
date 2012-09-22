@@ -27,6 +27,7 @@ import java.util.List;
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.channel.Channel;
 import net.windwaker.chat.channel.Chatter;
+import net.windwaker.chat.util.DateHandler;
 import net.windwaker.chat.util.Placeholders;
 
 import org.spout.api.chat.ChatArguments;
@@ -43,7 +44,11 @@ import org.spout.api.exception.CommandException;
  * A collection of general chat commands.
  */
 public class ChatCommands {
-	private final WindChat plugin = WindChat.getInstance();
+	private final WindChat plugin;
+
+	public ChatCommands(WindChat plugin) {
+		this.plugin = plugin;
+	}
 
 	@Command(aliases = "nick", usage = "<name|off>", desc = "Change your nickname.", min = 1, max = 1)
 	@CommandPermissions("windchat.nick")
@@ -85,15 +90,7 @@ public class ChatCommands {
 	@Command(aliases = "ping", desc = "Test your connection.", min = 0, max = 0)
 	@CommandPermissions("windchat.ping")
 	public void ping(CommandContext args, CommandSource source) throws CommandException {
-		source.sendMessage(ChatStyle.BLUE, ChatStyle.BOLD, "ping");
-		source.sendMessage(ChatStyle.GRAY, ChatStyle.ITALIC, "noun");
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, "1. ", ChatStyle.WHITE, "a short high-pitched resonant sound, as of a bullet striking metal or a sonar echo");
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, "2. ", ChatStyle.WHITE, "computing  a system for testing whether internet systems are responding and how long in milliseconds it takes them to respond");
-		source.sendMessage(ChatStyle.GRAY, ChatStyle.ITALIC, "verb");
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, "3. ", ChatStyle.WHITE, "to make such a noise");
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, "4. ", ChatStyle.WHITE, "computing  to send a test message to (a computer or server) in order to check whether it is responding or how long it takes it to respond");
-		source.sendMessage(ChatStyle.GRAY, ChatStyle.ITALIC, "origin");
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, "1850-55; imitative.");
+		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Pong!");
 	}
 
 	@Command(aliases = "quit", usage = "[message]", desc = "Disconnect from the server.", min = 0)
@@ -113,7 +110,8 @@ public class ChatCommands {
 	@Command(aliases = {"date", "cal", "calendar"}, desc = "Gets the time of the hosted server.", min = 0, max = 0)
 	@CommandPermissions("windchat.date")
 	public void date(CommandContext args, CommandSource source) throws CommandException {
-		source.sendMessage(ChatStyle.BRIGHT_GREEN, "The date is ", plugin.getFormattedDate(), " ", plugin.getFormattedTime(), " ", plugin.getTimeZone().getDisplayName());
+		DateHandler dateHandler = plugin.getDateHandler();
+		source.sendMessage(ChatStyle.BRIGHT_GREEN, "The date is ", dateHandler.getFormattedDate(), " ", dateHandler.getFormattedTime(), " ", dateHandler.getTimeZone().getDisplayName());
 	}
 
 	@Command(aliases = "styles", desc = "List all chat styles.", min = 0, max = 0)

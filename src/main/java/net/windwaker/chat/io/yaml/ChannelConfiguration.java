@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.util.config;
+package net.windwaker.chat.io.yaml;
 
 import java.io.File;
 import java.util.Arrays;
@@ -38,16 +38,15 @@ import org.spout.api.util.config.yaml.YamlConfiguration;
  * Represents a collection of channels.
  */
 public class ChannelConfiguration extends YamlConfiguration {
-	/**
-	 * The actual set of channels for the plugin.
-	 */
+	private final WindChat plugin;
 	private final Set<Channel> channels = new HashSet<Channel>();
 
 	/**
 	 * Constructs a new ChannelConfiguration at 'plugins/WindChat/channels.yml'.
 	 */
-	public ChannelConfiguration() {
-		super(new File(WindChat.getInstance().getDataFolder(), "channels.yml"));
+	public ChannelConfiguration(WindChat plugin) {
+		super(new File(plugin.getDataFolder(), "channels.yml"));
+		this.plugin = plugin;
 	}
 
 	/**
@@ -55,7 +54,7 @@ public class ChannelConfiguration extends YamlConfiguration {
 	 * @param name to load
 	 */
 	public void load(String name) {
-		Channel channel = new Channel(name);
+		Channel channel = new Channel(plugin, name);
 		String path = "channels." + name;
 		channel.setRadius(getNode(path + ".radius").getInt());
 		channel.setInviteOnly(getNode(path + ".invite-only").getBoolean());

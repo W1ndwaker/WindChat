@@ -21,6 +21,7 @@
  */
 package net.windwaker.chat.cmd;
 
+import net.windwaker.chat.WindChat;
 import net.windwaker.chat.cmd.sub.ChannelCommands;
 
 import org.spout.api.command.CommandContext;
@@ -34,6 +35,9 @@ import org.spout.api.exception.CommandException;
  * Parent cmd for {@link ChannelCommands}.
  */
 public class ChannelCommand {
+	public ChannelCommand(WindChat plugin) {
+	}
+
 	@Command(aliases = {"channel", "ch"}, desc = "Parent cmd for WindChat")
 	@CommandPermissions("windchat.cmd.channel")
 	@NestedCommand(ChannelCommands.class)

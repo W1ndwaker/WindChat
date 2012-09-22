@@ -40,14 +40,9 @@ public class Placeholders {
 	 * Placeholder to be replaced by a quit message
 	 */
 	public static final Placeholder QUIT_MESSAGE = new Placeholder("quit_message");
-	/**
-	 * Collection of Placeholders
-	 */
+
 	private static final Set<Placeholder> VALUES = new HashSet<Placeholder>();
 
-	/**
-	 * Add the placeholders to the value set
-	 */
 	static {
 		for (Field field : Placeholders.class.getFields()) {
 			try {
@@ -61,6 +56,10 @@ public class Placeholders {
 		}
 	}
 
+	/**
+	 * Gets all defined {@link Placeholder}s in this {@link Class}.
+	 * @return all placeholders
+	 */
 	public static Set<Placeholder> getValues() {
 		return VALUES;
 	}

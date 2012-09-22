@@ -34,30 +34,11 @@ import org.spout.api.data.ValueHolder;
 import org.spout.api.entity.Player;
 
 public class Chatter {
-	/**
-	 * Singleton instance of the plugin
-	 */
-	private final WindChat plugin = WindChat.getInstance();
-	/**
-	 * Parent of the Chatter
-	 * TODO: Make Chatter a component of Player
-	 */
+	private final WindChat plugin;
 	private final Player parent;
-	/**
-	 * The channels the chatter is listening to
-	 */
 	private final Set<Channel> channels;
-	/**
-	 * Set of invitations for invite only channels.
-	 */
 	private final Set<Channel> invites = new HashSet<Channel>();
-	/**
-	 * The channel the chatter is currently speaking in.
-	 */
 	private Channel activeChannel;
-	/**
-	 * The message to displayer with the QUIT_MESSAGE placeholder.
-	 */
 	private ChatArguments quitMessage;
 
 	/**
@@ -65,9 +46,10 @@ public class Chatter {
 	 * @param parent
 	 * @param channels
 	 */
-	public Chatter(Player parent, Set<Channel> channels) {
+	public Chatter(WindChat plugin, Player parent, Set<Channel> channels) {
 		this.parent = parent;
 		this.channels = channels;
+		this.plugin = plugin;
 	}
 
 	/**

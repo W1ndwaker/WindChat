@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.util.config;
+package net.windwaker.chat.io.yaml;
 
 import java.io.File;
 
@@ -56,7 +56,7 @@ public class ChatConfiguration extends ConfigurationHolderConfiguration {
 	/**
 	 * The time zone to use with the 'date' cmd.
 	 */
-	public static final ConfigurationHolder TIME_ZONE = new ConfigurationHolder("America/New_York", "time-zone");
+	public static final ConfigurationHolder TIME_ZONE = new ConfigurationHolder("default", "time-zone");
 	/**
 	 * The date format.
 	 */
@@ -69,8 +69,8 @@ public class ChatConfiguration extends ConfigurationHolderConfiguration {
 	/**
 	 * Constructs a new ChatConfiguration at 'plugins/WindChat/config.yml'
 	 */
-	public ChatConfiguration() {
-		super(new YamlConfiguration(new File(WindChat.getInstance().getDataFolder(), "config.yml")));
+	public ChatConfiguration(WindChat plugin) {
+		super(new YamlConfiguration(new File(plugin.getDataFolder(), "config.yml")));
 	}
 
 	@Override

@@ -26,6 +26,19 @@ import java.util.List;
 
 public class DefaultPermissionNodes {
 	public List<String> get() {
-		return Arrays.asList("windchat.join.*", "windchat.leave.*", "windchat.chat.*", "windchat.who.*", "windchat.qm.*", "windchat.list", "windchat.whois", "windchat.ping", "windchat.quit", "windchat.date", "windchat.styles", "windchat.placeholders");
+		return Arrays.asList(
+				  "windchat.join.*"
+				, "windchat.leave.*"
+				, "windchat.chat.*"
+				, "windchat.who.*"
+				, "windchat.qm.*"
+				, "windchat.list"
+				, "windchat.whois"
+				, "windchat.ping"
+				, "windchat.quit"
+				, "windchat.date"
+				, "windchat.styles"
+				, "windchat.placeholders"
+		);
 	}
 }

@@ -41,7 +41,11 @@ import org.spout.api.exception.CommandException;
  * A collection of general channel commands.
  */
 public class ChannelCommands {
-	private final WindChat plugin = WindChat.getInstance();
+	private final WindChat plugin;
+
+	public ChannelCommands(WindChat plugin) {
+		this.plugin = plugin;
+	}
 
 	@Command(aliases = "create", usage = "<channel>", desc = "Create a new channel.", min = 1, max = 1)
 	@CommandPermissions("windchat.create")

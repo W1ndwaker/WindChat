@@ -21,7 +21,7 @@
  */
 package net.windwaker.chat.util;
 
-import net.windwaker.chat.util.config.ChatConfiguration;
+import net.windwaker.chat.io.yaml.ChatConfiguration;
 
 import org.spout.api.chat.ChatArguments;
 
@@ -42,21 +42,10 @@ public enum Format {
 	 * The standard format for messages when leaving the game.
 	 */
 	LEAVE_MESSAGE("leave-message-format", ChatArguments.fromFormatString(ChatConfiguration.DEFAULT_LEAVE_MESSAGE_FORMAT.getString()));
-	/**
-	 * The node to get the player's data with.
-	 * @see {@link net.windwaker.chat.channel.Chatter#getFormat(Format)}
-	 */
+
 	private final String node;
-	/**
-	 * Gets the default format should the data retrieve fail.
-	 */
 	private final ChatArguments def;
 
-	/**
-	 * Constructs a new Format enum.
-	 * @param node to query.
-	 * @param def default value if fail
-	 */
 	private Format(String node, ChatArguments def) {
 		this.node = node;
 		this.def = def;

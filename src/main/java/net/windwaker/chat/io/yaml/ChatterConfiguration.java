@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.util.config;
+package net.windwaker.chat.io.yaml;
 
 import java.io.File;
 import java.util.HashSet;
@@ -38,20 +38,15 @@ import org.spout.api.util.config.yaml.YamlConfiguration;
  * Represents a collection of {@link Chatter}s
  */
 public class ChatterConfiguration extends YamlConfiguration {
-	/**
-	 * Singleton instance of the plugin.
-	 */
-	private final WindChat plugin = WindChat.getInstance();
-	/**
-	 * The actual set of chatters for the plugin
-	 */
+	private final WindChat plugin;
 	private final Set<Chatter> chatters = new HashSet<Chatter>();
 
 	/**
 	 * Constructs a new ChatterConfiguration at 'plugins/WindChat/chatters.yml'
 	 */
-	public ChatterConfiguration() {
-		super(new File(WindChat.getInstance().getDataFolder(), "chatters.yml"));
+	public ChatterConfiguration(WindChat plugin) {
+		super(new File(plugin.getDataFolder(), "chatters.yml"));
+		this.plugin = plugin;
 	}
 
 	/**
@@ -68,7 +63,7 @@ public class ChatterConfiguration extends YamlConfiguration {
 				channels.add(channel);
 			}
 		}
-		Chatter chatter = new Chatter(player, channels);
+		Chatter chatter = new Chatter(plugin, player, channels);
 		Channel activeChannel = plugin.getChannels().get(getActiveChannel(player.getName()));
 		if (activeChannel == null) {
 			activeChannel = plugin.getChannels().getDefault();

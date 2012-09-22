@@ -39,8 +39,12 @@ import org.spout.api.event.player.PlayerLeaveEvent;
  * Handles formatting of messages from players.
  * @author Windwaker
  */
-public class ChatListener implements Listener {
-	private final WindChat plugin = WindChat.getInstance();
+public class ChatHandler implements Listener {
+	private final WindChat plugin;
+
+	public ChatHandler(WindChat plugin) {
+		this.plugin = plugin;
+	}
 
 	@EventHandler(order = Order.LATEST)
 	public void playerChat(PlayerChatEvent event) {

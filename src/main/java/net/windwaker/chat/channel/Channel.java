@@ -38,53 +38,22 @@ import org.spout.api.util.Named;
  * Represents a channel of chat.
  */
 public class Channel implements Named {
-	/**
-	 * Singleton instance of the plugin
-	 */
-	private final WindChat plugin = WindChat.getInstance();
-	/**
-	 * Name of the channel
-	 */
+	private final WindChat plugin;
 	private final String name;
-	/**
-	 * Set of names of chatters who listen to the channel
-	 */
-	private final Set<String> listeners = new HashSet<String>();
-	/**
-	 * Set of banned names from the channel
-	 */
-	private final Set<String> banned = new HashSet<String>();
-	/**
-	 * Set off muted names in the channel
-	 */
-	private final Set<String> muted = new HashSet<String>();
-	/**
-	 * A map of censored words mapped to their replacements
-	 */
+	private final Set<String> listeners = new HashSet<String>(), banned = new HashSet<String>(), muted = new HashSet<String>();
 	private final Map<String, String> censoredWords = new HashMap<String, String>();
-	/**
-	 * The radius that the channel can be heard from.
-	 */
 	private int radius;
-	/**
-	 * Password for the channel.
-	 */
 	private String password;
-	/**
-	 * Whether the channel requires an invitation for entrance.
-	 */
 	private boolean inviteOnly;
-	/**
-	 * The join message, leave message, ban message, and general format of the channel.
-	 */
 	private ChatArguments joinMessage, leaveMessage, format, banMessage;
 
 	/**
 	 * Constructs a new channel object
 	 * @param name
 	 */
-	public Channel(String name) {
+	public Channel(WindChat plugin, String name) {
 		this.name = name;
+		this.plugin = plugin;
 	}
 
 	/**
@@ -404,7 +373,7 @@ public class Channel implements Named {
 			}
 			chatter.getParent().sendMessage(format);
 		}
-		plugin.getLogger().info(format.getPlainString());
+		plugin.getChatLogger().log(format.getPlainString());
 	}
 
 	/**

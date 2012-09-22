@@ -21,18 +21,14 @@
  */
 package net.windwaker.chat;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
 import net.windwaker.chat.cmd.ChannelCommand;
 import net.windwaker.chat.cmd.ChatCommands;
+import net.windwaker.chat.io.ChatLogger;
+import net.windwaker.chat.util.DateHandler;
 import net.windwaker.chat.util.DefaultPermissionNodes;
-import net.windwaker.chat.util.config.ChannelConfiguration;
-import net.windwaker.chat.util.config.ChatConfiguration;
-import net.windwaker.chat.util.config.ChatterConfiguration;
+import net.windwaker.chat.io.yaml.ChannelConfiguration;
+import net.windwaker.chat.io.yaml.ChatConfiguration;
+import net.windwaker.chat.io.yaml.ChatterConfiguration;
 
 import org.spout.api.Spout;
 import org.spout.api.command.CommandRegistrationsFactory;
@@ -47,45 +43,11 @@ import org.spout.api.plugin.CommonPlugin;
  * @author Windwaker
  */
 public class WindChat extends CommonPlugin {
-	/**
-	 * Static instance of the plugin. {@link net.windwaker.chat.WindChat#getInstance()} is not safe until {@link net.windwaker.chat.WindChat#onEnable()} is called.
-	 */
-	private static WindChat instance;
-	/**
-	 * Represents the general configuration of the plugin.
-	 */
+	private final DateHandler dateHandler = new DateHandler();
+	private final ChatLogger logger = new ChatLogger(this);
 	private ChatConfiguration config;
-	/**
-	 * Represents the collection of {@link net.windwaker.chat.channel.Chatter}s in the plugin.
-	 */
 	private ChatterConfiguration chatters;
-	/**
-	 * Represents the collection of {@link net.windwaker.chat.channel.Channel}s in the plugin.
-	 */
 	private ChannelConfiguration channels;
-	/**
-	 * The configured {@link DateFormat} for the date in {@link ChatConfiguration}.
-	 */
-	private DateFormat dateFormat;
-	/**
-	 * The configured {@link DateFormat} for the time in {@link ChatConfiguration}.
-	 */
-	private DateFormat timeFormat;
-
-	/**
-	 * Constructs a new WindChat object.
-	 */
-	public WindChat() {
-		instance = this;
-	}
-
-	/**
-	 * Gets the static instance of {@link WindChat}. Note: this method is only safe after {@link net.windwaker.chat.WindChat#onEnable()} has been called.
-	 * @return singleton instance
-	 */
-	public static WindChat getInstance() {
-		return instance;
-	}
 
 	/**
 	 * Gets the collection of {@link net.windwaker.chat.channel.Chatter}s on the plugin.
@@ -104,43 +66,19 @@ public class WindChat extends CommonPlugin {
 	}
 
 	/**
-	 * Gets the formatted date as configured in {@link ChatConfiguration}.
-	 * @return configured formatted date
+	 * Gets the {@link DateHandler} of the plugin which handles formatting dates.
+	 * @return date handler
 	 */
-	public String getFormattedDate() {
-		return dateFormat.format(getTime());
+	public DateHandler getDateHandler() {
+		return dateHandler;
 	}
 
 	/**
-	 * Gets the formatted time as configured in {@link ChatConfiguration}.
-	 * @return configured formatted time
+	 * Gets the {@link ChatLogger} of the plugin.
+	 * @return chat logger
 	 */
-	public String getFormattedTime() {
-		return timeFormat.format(getTime());
-	}
-
-	/**
-	 * Gets the configured {@link TimeZone} of the plugin.
-	 * @return time zone
-	 */
-	public TimeZone getTimeZone() {
-		return TimeZone.getTimeZone(ChatConfiguration.TIME_ZONE.getString());
-	}
-
-	/**
-	 * Gets an instance of a calendar from the configured {@link TimeZone}
-	 * @return calendar from time zone
-	 */
-	public Calendar getCalendar() {
-		return Calendar.getInstance(getTimeZone());
-	}
-
-	/**
-	 * Gets the current time of the configured {@link TimeZone}.
-	 * @return
-	 */
-	public Date getTime() {
-		return getCalendar().getTime();
+	public ChatLogger getChatLogger() {
+		return logger;
 	}
 
 	@Override
@@ -153,21 +91,22 @@ public class WindChat extends CommonPlugin {
 	@Override
 	public void onEnable() {
 		// Load config
-		config = new ChatConfiguration();
+		config = new ChatConfiguration(this);
 		config.load();
 		// Load channels
-		channels = new ChannelConfiguration();
+		channels = new ChannelConfiguration(this);
 		channels.load();
 		// Load chatters
-		chatters = new ChatterConfiguration();
+		chatters = new ChatterConfiguration(this);
 		chatters.load();
 		// Load date formats
-		dateFormat = new SimpleDateFormat(ChatConfiguration.DATE_FORMAT.getString());
-		timeFormat = new SimpleDateFormat(ChatConfiguration.TIME_FORMAT.getString());
+		dateHandler.init();
+		// Initialize chat logger
+		logger.start();
 		// Register events
-		Spout.getEventManager().registerEvents(new ChatListener(), this);
+		Spout.getEventManager().registerEvents(new ChatHandler(this), this);
 		// Register commands
-		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(), new SimpleAnnotatedCommandExecutorFactory());
+		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
 		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 		getEngine().getRootCommand().addSubCommands(this, ChatCommands.class, commandRegFactory);
 		// Add default permissions
@@ -180,6 +119,8 @@ public class WindChat extends CommonPlugin {
 
 	@Override
 	public void onDisable() {
+		// Save logged messages
+		logger.stop();
 		getLogger().info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
 	}
 }
