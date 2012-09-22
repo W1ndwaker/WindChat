@@ -23,11 +23,13 @@ package net.windwaker.chat;
 
 import net.windwaker.chat.cmd.ChannelCommand;
 import net.windwaker.chat.cmd.ChatCommands;
+import net.windwaker.chat.handler.DateHandler;
+import net.windwaker.chat.handler.LocalChatHandler;
 import net.windwaker.chat.io.ChatLogger;
+import net.windwaker.chat.io.yaml.BotConfiguration;
 import net.windwaker.chat.io.yaml.ChannelConfiguration;
 import net.windwaker.chat.io.yaml.ChatConfiguration;
 import net.windwaker.chat.io.yaml.ChatterConfiguration;
-import net.windwaker.chat.util.DateHandler;
 import net.windwaker.chat.util.DefaultPermissionNodes;
 
 import org.spout.api.Spout;
@@ -48,9 +50,10 @@ public class WindChat extends CommonPlugin {
 	private ChatConfiguration config;
 	private ChatterConfiguration chatters;
 	private ChannelConfiguration channels;
+	private BotConfiguration bots;
 
 	/**
-	 * Gets the collection of {@link net.windwaker.chat.channel.Chatter}s on the plugin.
+	 * Gets the collection of {@link net.windwaker.chat.chan.Chatter}s on the plugin.
 	 * @return collection of chatters
 	 */
 	public ChatterConfiguration getChatters() {
@@ -58,11 +61,19 @@ public class WindChat extends CommonPlugin {
 	}
 
 	/**
-	 * Gets the collection of {@link net.windwaker.chat.channel.Channel}s on the plugin.
+	 * Gets the collection of {@link net.windwaker.chat.chan.Channel}s on the plugin.
 	 * @return collection of channels
 	 */
 	public ChannelConfiguration getChannels() {
 		return channels;
+	}
+
+	/**
+	 * Gets the collection of loaded {@link net.windwaker.chat.chan.IrcBot}s on the plugin
+	 * @return loaded bots
+	 */
+	public BotConfiguration getBots() {
+		return bots;
 	}
 
 	/**
@@ -93,18 +104,23 @@ public class WindChat extends CommonPlugin {
 		// Load config
 		config = new ChatConfiguration(this);
 		config.load();
+		// Load bots
+		bots = new BotConfiguration(this);
+		bots.load();
 		// Load channels
 		channels = new ChannelConfiguration(this);
 		channels.load();
 		// Load chatters
 		chatters = new ChatterConfiguration(this);
 		chatters.load();
+		// Load rest of channel data
+		channels.postLoad();
 		// Load date formats
 		dateHandler.init();
 		// Initialize chat logger
 		logger.start();
 		// Register events
-		Spout.getEventManager().registerEvents(new ChatHandler(this), this);
+		Spout.getEventManager().registerEvents(new LocalChatHandler(this), this);
 		// Register commands
 		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
 		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);

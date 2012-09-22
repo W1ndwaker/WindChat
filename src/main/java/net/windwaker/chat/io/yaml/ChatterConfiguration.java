@@ -26,8 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.channel.Chatter;
+import net.windwaker.chat.chan.Channel;
+import net.windwaker.chat.chan.Chatter;
 
 import org.spout.api.entity.Player;
 import org.spout.api.exception.ConfigurationException;

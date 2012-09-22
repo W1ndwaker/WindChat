@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.util.DateHandler;
+import net.windwaker.chat.handler.DateHandler;
 
 public class ChatLogger {
 	private final WindChat plugin;

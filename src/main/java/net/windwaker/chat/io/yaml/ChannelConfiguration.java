@@ -22,13 +22,17 @@
 package net.windwaker.chat.io.yaml;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.channel.Channel;
+import net.windwaker.chat.chan.Channel;
+import net.windwaker.chat.chan.Chatter;
+import net.windwaker.chat.chan.IrcBot;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.exception.ConfigurationException;
@@ -67,8 +71,10 @@ public class ChannelConfiguration extends YamlConfiguration {
 		channel.setLeaveMessage(ChatArguments.fromFormatString(getNode(path + ".leave-message").getString()));
 		channel.setFormat(ChatArguments.fromFormatString(getNode(path + ".format").getString()));
 		channel.setBanMessage(ChatArguments.fromFormatString(getNode(path + ".ban-message").getString()));
-		for (String n : getNode(path + ".listeners").getStringList()) {
-			channel.addListener(n);
+		channel.setIrcEnabled(getNode(path + ".irc.enabled").getBoolean());
+		IrcBot bot = plugin.getBots().get(getNode(path + ".irc.bot").getString());
+		if (bot != null) {
+			channel.connectToIrc(bot);
 		}
 		for (String b : getNode(path + ".banned").getStringList()) {
 			channel.ban(b, false);
@@ -85,12 +91,33 @@ public class ChannelConfiguration extends YamlConfiguration {
 		return channel;
 	}
 
+	public void postLoad(Channel channel) {
+		String path = "channels." + channel.getName();
+		for (String n : getNode(path + ".listeners").getStringList()) {
+			Chatter chatter = plugin.getChatters().get(n);
+			if (chatter == null) {
+				continue;
+			}
+			channel.addListener(chatter);
+		}
+	}
+
+	public void postLoad() {
+		for (Channel channel : channels) {
+			postLoad(channel);
+		}
+	}
+
 	/**
 	 * Saves a channel to disk
 	 * @param channel to save
 	 */
 	public void save(Channel channel) {
 		String path = "channels." + channel.getName();
+		List<String> listeners = new ArrayList<String>();
+		for (Chatter chatter : channel.getListeners()) {
+			listeners.add(chatter.getParent().getName());
+		}
 		getNode(path + ".listeners").setValue(channel.getListeners());
 		getNode(path + ".banned").setValue(channel.getBanned());
 		getNode(path + ".muted").setValue(channel.getMuted());
@@ -104,6 +131,10 @@ public class ChannelConfiguration extends YamlConfiguration {
 		getNode(path + ".leave-message").setValue(channel.getLeaveMessage().toFormatString());
 		getNode(path + ".format").setValue(channel.getFormat().toFormatString());
 		getNode(path + ".ban-message").setValue(channel.getBanMessage().toFormatString());
+		getNode(path + ".irc.enabled").setValue(channel.isIrcEnabled());
+		getNode(path + ".irc.bot").setValue(channel.getBotName());
+		getNode(path + ".irc.server").setValue(channel.getBotServer());
+		getNode(path + ".irc.channel").setValue(channel.getBotChannel());
 		save();
 	}
 
@@ -119,6 +150,10 @@ public class ChannelConfiguration extends YamlConfiguration {
 		getNode(path + ".join-message").setValue("{{BRIGHT_GREEN}}You have joined " + channel + ".");
 		getNode(path + ".leave-message").setValue("{{RED}}You have left " + channel + ".");
 		getNode(path + ".ban-message").setValue("{{RED}}You have been {{BOLD}}banned{{RESET}}{{RED}} from " + channel + "!");
+		getNode(path + ".irc.enabled").setValue(false);
+		getNode(path + ".irc.bot").setValue("ChatterBot");
+		getNode(path + ".irc.server").setValue("irc.esper.net");
+		getNode(path + ".irc.channel").setValue("#windwaker");
 		save();
 		load(channel);
 	}
@@ -165,6 +200,10 @@ public class ChannelConfiguration extends YamlConfiguration {
 				getNode("channels.spout.leave-message").setValue("{{RED}}You have left Spout.");
 				getNode("channels.spout.ban-message").setValue("{{RED}}You have been {{BOLD}}banned{{RESET}}{{RED}} from Spout!");
 				getNode("channels.spout.listeners").setValue(Arrays.asList("Wulfspider", "Afforess", "alta189", "Top_Cat"));
+				getNode("channels.spout.irc.enabled").setValue(false);
+				getNode("channels.spout.irc.bot").setValue("ChatterBot");
+				getNode("channels.spout.irc.server").setValue("irc.esper.net");
+				getNode("channels.spout.irc.channel").setValue("#windwaker");
 				save();
 			}
 			for (String name : getNode("channels").getKeys(false)) {

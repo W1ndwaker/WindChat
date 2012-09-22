@@ -19,9 +19,10 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat;
+package net.windwaker.chat.handler;
 
-import net.windwaker.chat.channel.Chatter;
+import net.windwaker.chat.WindChat;
+import net.windwaker.chat.chan.Chatter;
 import net.windwaker.chat.util.Format;
 import net.windwaker.chat.util.Placeholders;
 
@@ -39,14 +40,14 @@ import org.spout.api.event.player.PlayerLeaveEvent;
  * Handles formatting of messages from players.
  * @author Windwaker
  */
-public class ChatHandler implements Listener {
+public class LocalChatHandler implements Listener {
 	private final WindChat plugin;
 
 	/**
-	 * Constructs a new ChatHandler
+	 * Constructs a new LocalChatHandler
 	 * @param plugin
 	 */
-	public ChatHandler(WindChat plugin) {
+	public LocalChatHandler(WindChat plugin) {
 		this.plugin = plugin;
 	}
 

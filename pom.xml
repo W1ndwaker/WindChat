@@ -30,6 +30,11 @@
 			<artifactId>spoutapi</artifactId>
 			<version>${spoutapi.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.pircbotx</groupId>
+			<artifactId>pircbotx</artifactId>
+			<version>1.7</version>
+		</dependency>
 	</dependencies>
 
 	<!-- Credits -->
@@ -63,7 +68,6 @@
 					<include>*.yml</include>
 				</includes>
 			</resource>
-
 			<resource>
 				<targetPath>.</targetPath>
 				<filtering>false</filtering>
@@ -73,5 +77,27 @@
 				</includes>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>org.pircbotx:pircbotx</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 </project>

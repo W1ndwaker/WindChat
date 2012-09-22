@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.channel;
+package net.windwaker.chat.chan;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,12 +30,13 @@ import net.windwaker.chat.util.Placeholders;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
+import org.spout.api.command.CommandSource;
 import org.spout.api.data.ValueHolder;
 import org.spout.api.entity.Player;
 
 public class Chatter {
 	private final WindChat plugin;
-	private final Player parent;
+	private final CommandSource parent;
 	private final Set<Channel> channels = new HashSet<Channel>(), invites = new HashSet<Channel>();
 	private Channel activeChannel;
 	private ChatArguments quitMessage;
@@ -45,7 +46,7 @@ public class Chatter {
 	 * Constructs a new chatter object
 	 * @param parent
 	 */
-	public Chatter(WindChat plugin, Player parent) {
+	public Chatter(WindChat plugin, CommandSource parent) {
 		this.parent = parent;
 		this.plugin = plugin;
 	}
@@ -70,7 +71,7 @@ public class Chatter {
 	 * Gets the parent of the chatter.
 	 * @return parent
 	 */
-	public Player getParent() {
+	public CommandSource getParent() {
 		return parent;
 	}
 
@@ -80,8 +81,11 @@ public class Chatter {
 	 * @return true if can hear
 	 */
 	public boolean canHear(Chatter sender, Channel channel) {
+		if (!(parent instanceof Player) || !(sender instanceof Player)) {
+			return true;
+		}
 		int radius = channel.getRadius();
-		return parent.getTransform().getPosition().getDistance(sender.getParent().getTransform().getPosition()) < radius || radius <= 0;
+		return ((Player) parent).getTransform().getPosition().getDistance(((Player) sender.getParent()).getTransform().getPosition()) < radius || radius <= 0;
 	}
 
 	/**
@@ -161,7 +165,7 @@ public class Chatter {
 		message = channel.censorMessage(message);
 		ChatArguments template = getFormat(Format.CHAT);
 		if (template.hasPlaceholder(Placeholders.NAME)) {
-			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(parent.getDisplayName()));
+			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(parent.getName()));
 		}
 		if (template.hasPlaceholder(Placeholders.MESSAGE)) {
 			template.setPlaceHolder(Placeholders.MESSAGE, message);
@@ -193,7 +197,7 @@ public class Chatter {
 	 */
 	public void join(Channel channel, ChatArguments message, boolean active) {
 		channels.add(channel);
-		channel.addListener(parent.getName());
+		channel.addListener(this);
 		if (active) {
 			activeChannel = channel;
 		}

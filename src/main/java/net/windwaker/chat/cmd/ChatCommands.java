@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.channel.Chatter;
-import net.windwaker.chat.util.DateHandler;
+import net.windwaker.chat.chan.Channel;
+import net.windwaker.chat.chan.Chatter;
+import net.windwaker.chat.handler.DateHandler;
 import net.windwaker.chat.util.Placeholders;
 
 import org.spout.api.chat.ChatArguments;

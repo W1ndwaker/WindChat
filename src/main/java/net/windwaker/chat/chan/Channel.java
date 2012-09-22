@@ -19,7 +19,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.channel;
+package net.windwaker.chat.chan;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,11 +39,13 @@ import org.spout.api.util.Named;
 public class Channel implements Named {
 	private final WindChat plugin;
 	private final String name;
-	private final Set<String> listeners = new HashSet<String>(), banned = new HashSet<String>(), muted = new HashSet<String>();
+	private final Set<String> banned = new HashSet<String>(), muted = new HashSet<String>();
+	private final Set<Chatter> listeners = new HashSet<Chatter>();
 	private final Map<String, String> censoredWords = new HashMap<String, String>();
+	private IrcBot bot;
 	private int radius;
 	private String password;
-	private boolean autoSave, inviteOnly;
+	private boolean autoSave, inviteOnly, ircEnabled;
 	private ChatArguments joinMessage, leaveMessage, format, banMessage;
 
 	/**
@@ -53,6 +55,52 @@ public class Channel implements Named {
 	public Channel(WindChat plugin, String name) {
 		this.name = name;
 		this.plugin = plugin;
+	}
+
+	public boolean isIrcEnabled() {
+		return ircEnabled;
+	}
+
+	public void setIrcEnabled(boolean ircEnabled) {
+		this.ircEnabled = ircEnabled;
+	}
+
+	public String getBotName() {
+		if (bot == null) {
+			return null;
+		}
+		return bot.getName();
+	}
+
+	public String getBotServer() {
+		if (bot == null) {
+			return null;
+		}
+		return bot.getServer();
+	}
+
+	public String getBotChannel() {
+		if (bot == null) {
+			return null;
+		}
+		return bot.getChannel();
+	}
+
+	public void connectToIrc(IrcBot bot) {
+		if (!ircEnabled) {
+			return;
+		}
+		if (this.bot != null && this.bot.isConnected()) {
+			bot.disconnect();
+		}
+		if (bot == null) {
+			throw new IllegalArgumentException("Cannot connect a null bot.");
+		}
+		if (bot.isConnected()) {
+			throw new IllegalStateException("Bot is already connected to IRC.");
+		}
+		this.bot = bot;
+		bot.connect(this);
 	}
 
 	/**
@@ -371,16 +419,16 @@ public class Channel implements Named {
 	 * Gets set of listeners
 	 * @return set of listeners
 	 */
-	public Set<String> getListeners() {
+	public Set<Chatter> getListeners() {
 		return listeners;
 	}
 
 	/**
 	 * Adds a listener to the channel
-	 * @param chatterName
+	 * @param chatter
 	 */
-	public void addListener(String chatterName) {
-		listeners.add(chatterName);
+	public void addListener(Chatter chatter) {
+		listeners.add(chatter);
 		if (autoSave) {
 			save();
 		}
@@ -405,11 +453,7 @@ public class Channel implements Named {
 		if (format.hasPlaceholder(Placeholders.MESSAGE)) {
 			format.setPlaceHolder(Placeholders.MESSAGE, message);
 		}
-		for (String n : listeners) {
-			Chatter chatter = plugin.getChatters().get(n);
-			if (chatter == null) {
-				continue;
-			}
+		for (Chatter chatter : listeners) {
 			// out of range
 			if (!chatter.canHear(sender, this)) {
 				continue;

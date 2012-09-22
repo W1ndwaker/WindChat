@@ -27,7 +27,7 @@ import org.spout.api.chat.ChatArguments;
 
 /**
  * Represents the Format type of a message.
- * @see {@link net.windwaker.chat.channel.Chatter#getFormat(Format)}
+ * @see {@link net.windwaker.chat.chan.Chatter#getFormat(Format)}
  */
 public enum Format {
 	/**

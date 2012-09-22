@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.channel.Channel;
-import net.windwaker.chat.channel.Chatter;
+import net.windwaker.chat.chan.Channel;
+import net.windwaker.chat.chan.Chatter;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
@@ -302,10 +302,10 @@ public class ChannelCommands {
 	public void who(CommandContext args, CommandSource source) throws CommandException {
 		Channel channel = getChannel(args, source, 0);
 		checkPermission(source, "windchat.who." + channel.getName());
-		List<String> listeners = new ArrayList<String>(channel.getListeners());
+		List<Chatter> listeners = new ArrayList<Chatter>(channel.getListeners());
 		ChatArguments message = new ChatArguments(ChatStyle.BRIGHT_GREEN, channel.getName(), " (", ChatStyle.BLUE, listeners.size(), ChatStyle.BRIGHT_GREEN, "): ");
 		for (int i = 0; i < listeners.size(); i++) {
-			message.append(ChatStyle.BRIGHT_GREEN, listeners.get(i));
+			message.append(ChatStyle.BRIGHT_GREEN, listeners.get(i).getParent().getName());
 			if (i != listeners.size() - 1) {
 				message.append(ChatStyle.WHITE, ",");
 			}
