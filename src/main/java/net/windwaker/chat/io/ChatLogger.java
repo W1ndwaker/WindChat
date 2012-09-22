@@ -65,7 +65,6 @@ public class ChatLogger {
 			fileName = fileName.replaceAll("[\\\\/]", "-").replaceAll(":", "\\.");
 			file = new File(plugin.getDataFolder(), "logs/" + fileName + ".txt");
 			if (!file.exists()) {
-				System.out.println("Creating new file at: " + fileName);
 				file.getParentFile().mkdirs();
 				file.createNewFile();
 			}

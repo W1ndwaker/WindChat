@@ -58,7 +58,6 @@ public class ChannelConfiguration extends YamlConfiguration {
 	 * @param name to load
 	 */
 	public Channel load(String name) {
-		System.out.println("Loading channel: " + name);
 		Channel channel = new Channel(plugin, name);
 		String path = "channels." + name;
 		// Don't write everything back to disk we are loading
