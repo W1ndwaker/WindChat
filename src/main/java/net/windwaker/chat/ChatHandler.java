@@ -42,6 +42,10 @@ import org.spout.api.event.player.PlayerLeaveEvent;
 public class ChatHandler implements Listener {
 	private final WindChat plugin;
 
+	/**
+	 * Constructs a new ChatHandler
+	 * @param plugin
+	 */
 	public ChatHandler(WindChat plugin) {
 		this.plugin = plugin;
 	}
@@ -61,8 +65,7 @@ public class ChatHandler implements Listener {
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		plugin.getChatters().login(player);
-		Chatter chatter = plugin.getChatters().get(player.getName());
+		Chatter chatter = plugin.getChatters().load(player);
 		if (chatter == null) {
 			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
 			return;

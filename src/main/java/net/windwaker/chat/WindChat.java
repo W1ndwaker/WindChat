@@ -24,11 +24,11 @@ package net.windwaker.chat;
 import net.windwaker.chat.cmd.ChannelCommand;
 import net.windwaker.chat.cmd.ChatCommands;
 import net.windwaker.chat.io.ChatLogger;
-import net.windwaker.chat.util.DateHandler;
-import net.windwaker.chat.util.DefaultPermissionNodes;
 import net.windwaker.chat.io.yaml.ChannelConfiguration;
 import net.windwaker.chat.io.yaml.ChatConfiguration;
 import net.windwaker.chat.io.yaml.ChatterConfiguration;
+import net.windwaker.chat.util.DateHandler;
+import net.windwaker.chat.util.DefaultPermissionNodes;
 
 import org.spout.api.Spout;
 import org.spout.api.command.CommandRegistrationsFactory;

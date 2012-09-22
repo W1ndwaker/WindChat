@@ -24,7 +24,7 @@ package net.windwaker.chat.io.yaml;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
@@ -53,9 +53,13 @@ public class ChannelConfiguration extends YamlConfiguration {
 	 * Loads a channel from the specified name.
 	 * @param name to load
 	 */
-	public void load(String name) {
+	public Channel load(String name) {
+		System.out.println("Loading channel: " + name);
 		Channel channel = new Channel(plugin, name);
 		String path = "channels." + name;
+		// Don't write everything back to disk we are loading
+		channel.setAutoSave(false);
+		// Set properties
 		channel.setRadius(getNode(path + ".radius").getInt());
 		channel.setInviteOnly(getNode(path + ".invite-only").getBoolean());
 		channel.setPassword(getNode(path + ".password").getString());
@@ -75,7 +79,32 @@ public class ChannelConfiguration extends YamlConfiguration {
 		for (String c : getNode(path + ".censored-words").getKeys(false)) {
 			channel.censor(c, getNode(path + ".censored-words." + c).getString());
 		}
+		// Turn auto-save back on
+		channel.setAutoSave(true);
 		channels.add(channel);
+		return channel;
+	}
+
+	/**
+	 * Saves a channel to disk
+	 * @param channel to save
+	 */
+	public void save(Channel channel) {
+		String path = "channels." + channel.getName();
+		getNode(path + ".listeners").setValue(channel.getListeners());
+		getNode(path + ".banned").setValue(channel.getBanned());
+		getNode(path + ".muted").setValue(channel.getMuted());
+		for (Entry<String, String> word : channel.getCensoredWords().entrySet()) {
+			getNode(path + ".censored-words." + word.getKey()).setValue(word.getValue());
+		}
+		getNode(path + ".radius").setValue(channel.getRadius());
+		getNode(path + ".password").setValue(channel.getPassword());
+		getNode(path + ".invite-only").setValue(channel.isInviteOnly());
+		getNode(path + ".join-message").setValue(channel.getJoinMessage().toFormatString());
+		getNode(path + ".leave-message").setValue(channel.getLeaveMessage().toFormatString());
+		getNode(path + ".format").setValue(channel.getFormat().toFormatString());
+		getNode(path + ".ban-message").setValue(channel.getBanMessage().toFormatString());
+		save();
 	}
 
 	/**
@@ -92,215 +121,6 @@ public class ChannelConfiguration extends YamlConfiguration {
 		getNode(path + ".ban-message").setValue("{{RED}}You have been {{BOLD}}banned{{RESET}}{{RED}} from " + channel + "!");
 		save();
 		load(channel);
-	}
-
-	/**
-	 * Sets a value in memory and saves to disk.
-	 * @param path to set
-	 * @param value to use
-	 */
-	public void set(String path, Object value) {
-		getNode(path).setValue(value);
-		save();
-	}
-
-	/**
-	 * Adds a censored word to the channel
-	 * @param channel
-	 * @param word
-	 * @param replacement
-	 */
-	public void addCensoredWord(String channel, String word, String replacement) {
-		set("channels." + channel + ".censored-words." + word, replacement);
-	}
-
-	/**
-	 * Sets the radius of the specified channel
-	 * @param channel
-	 * @param radius
-	 */
-	public void setRadius(String channel, int radius) {
-		set("channels." + channel + ".radius", radius);
-	}
-
-	/**
-	 * Gets a list of muted names in the specified channel
-	 * @param channel
-	 * @return list of muted names
-	 */
-	public List<String> getMuted(String channel) {
-		return getNode("channels." + channel + ".muted").getStringList();
-	}
-
-	/**
-	 * Sets the list of muted names in the specified channel
-	 * @param channel
-	 * @param muted
-	 */
-	public void setMuted(String channel, List<String> muted) {
-		set("channels." + channel + ".muted", muted);
-	}
-
-	/**
-	 * Adds a muted name to the list from the specified channel
-	 * @param channel
-	 * @param name
-	 */
-	public void addMuted(String channel, String name) {
-		List<String> muted = getMuted(channel);
-		if (!muted.contains(name)) {
-			muted.add(name);
-		}
-		setMuted(channel, muted);
-	}
-
-	/**
-	 * Removes a muted name from the list in the channel
-	 * @param channel
-	 * @param name
-	 */
-	public void removeMuted(String channel, String name) {
-		List<String> muted = getMuted(channel);
-		muted.remove(name);
-		setMuted(channel, muted);
-	}
-
-	/**
-	 * Saves the invite only status to disk.
-	 * @param channel
-	 * @param inviteOnly
-	 */
-	public void setInviteOnly(String channel, boolean inviteOnly) {
-		set("channels." + channel + ".invite-only", inviteOnly);
-	}
-
-	/**
-	 * Saves the format status to disk.
-	 * @param channel
-	 * @param format
-	 */
-	public void setFormat(String channel, ChatArguments format) {
-		set("channels." + channel + ".format", format.toFormatString());
-	}
-
-	/**
-	 * Saves the join message to disk.
-	 * @param channel
-	 * @param joinMessage
-	 */
-	public void setJoinMessage(String channel, ChatArguments joinMessage) {
-		set("channels." + channel + ".join-message", joinMessage.toFormatString());
-	}
-
-	/**
-	 * Saves the leave message to disk
-	 * @param channel
-	 * @param leaveMessage
-	 */
-	public void setLeaveMessage(String channel, ChatArguments leaveMessage) {
-		set("channels." + channel + ".leave-message", leaveMessage.toFormatString());
-	}
-
-	/**
-	 * Gets the banned names of a channel.
-	 * @param channel
-	 * @return ban list
-	 */
-	public List<String> getBanned(String channel) {
-		return getNode("channels." + channel + ".banned").getStringList();
-	}
-
-	/**
-	 * Sets the banned names of a channel.
-	 * @param channel
-	 * @param banned
-	 */
-	public void setBanned(String channel, List<String> banned) {
-		set("channels." + channel + ".banned", banned);
-	}
-
-	/**
-	 * Adds a banned name to the ban list of a channel
-	 * @param channel
-	 * @param name
-	 */
-	public void addBanned(String channel, String name) {
-		List<String> banned = getBanned(channel);
-		if (!banned.contains(name)) {
-			banned.add(name);
-		}
-		setBanned(channel, banned);
-	}
-
-	/**
-	 * Removes a banned name from the ban list of a channel
-	 * @param channel
-	 * @param name
-	 */
-	public void removeBanned(String channel, String name) {
-		List<String> banned = getBanned(channel);
-		banned.remove(name);
-		setBanned(channel, banned);
-	}
-
-	/**
-	 * Saves the ban message to disk.
-	 * @param channel
-	 * @param banMessage
-	 */
-	public void setBanMessage(String channel, ChatArguments banMessage) {
-		set("channels." + channel + ".ban-message", banMessage.toFormatString());
-	}
-
-	/**
-	 * Gets the list of listeners for a channel
-	 * @param channel
-	 * @return listener list
-	 */
-	public List<String> getListeners(String channel) {
-		return getNode("channels." + channel + ".listeners").getStringList();
-	}
-
-	/**
-	 * Sets the list of listeners for a channel
-	 * @param channel
-	 * @param listeners
-	 */
-	public void setListeners(String channel, List<String> listeners) {
-		set("channels." + channel + ".listeners", listeners);
-	}
-
-	/**
-	 * Saves the password of a channel.
-	 * @param channel
-	 * @param password
-	 */
-	public void setPassword(String channel, String password) {
-		set("channels." + channel + ".password", password);
-	}
-
-	/**
-	 * Adds a listener to the listener list of a channel.
-	 * @param channel
-	 * @param listener
-	 */
-	public void addListener(String channel, String listener) {
-		List<String> listeners = getListeners(channel);
-		if (!listeners.contains(listener)) {
-			listeners.add(listener);
-		}
-		setListeners(channel, listeners);
-	}
-
-	/**
-	 * Removes a listener from the listener list of a channel.
-	 * @param channel
-	 * @param listener
-	 */
-	public void removeListener(String channel, String listener) {
-		List<String> listeners = getListeners(channel);
-		listeners.remove(listener);
-		setListeners(channel, listeners);
 	}
 
 	/**

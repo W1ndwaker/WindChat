@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.io.yaml.ChatConfiguration;
 import net.windwaker.chat.util.DateHandler;
 
 public class ChatLogger {

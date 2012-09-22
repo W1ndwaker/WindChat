@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.util.Placeholders;
@@ -44,7 +43,7 @@ public class Channel implements Named {
 	private final Map<String, String> censoredWords = new HashMap<String, String>();
 	private int radius;
 	private String password;
-	private boolean inviteOnly;
+	private boolean autoSave, inviteOnly;
 	private ChatArguments joinMessage, leaveMessage, format, banMessage;
 
 	/**
@@ -54,6 +53,22 @@ public class Channel implements Named {
 	public Channel(WindChat plugin, String name) {
 		this.name = name;
 		this.plugin = plugin;
+	}
+
+	/**
+	 * Whether the channel saves every time a property is set
+	 * @return true if auto save
+	 */
+	public boolean isAutoSave() {
+		return autoSave;
+	}
+
+	/**
+	 * Sets whether the channel should save every time a property is set
+	 * @param autoSave
+	 */
+	public void setAutoSave(boolean autoSave) {
+		this.autoSave = autoSave;
 	}
 
 	/**
@@ -69,8 +84,10 @@ public class Channel implements Named {
 	 * @param radius
 	 */
 	public void setRadius(int radius) {
-		plugin.getChannels().setRadius(name, radius);
 		this.radius = radius;
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -92,16 +109,18 @@ public class Channel implements Named {
 	 */
 	public void censor(String word, String replacement) {
 		word = word.toLowerCase();
-		plugin.getChannels().addCensoredWord(name, word, replacement);
 		censoredWords.put(word, replacement);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
 	 * Gets the censored words
 	 * @return censored words
 	 */
-	public Set<String> getCensoredWords() {
-		return censoredWords.keySet();
+	public Map<String, String> getCensoredWords() {
+		return censoredWords;
 	}
 
 	/**
@@ -118,8 +137,10 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void mute(String name) {
-		plugin.getChannels().addMuted(this.name, name);
 		muted.add(name);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -127,8 +148,10 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void unmute(String name) {
-		plugin.getChannels().removeMuted(this.name, name);
 		muted.remove(name);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -179,8 +202,10 @@ public class Channel implements Named {
 			}
 			chatter.kick(this, reason);
 		}
-		plugin.getChannels().addBanned(this.name, name);
 		banned.add(name);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -188,8 +213,10 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void unban(String name) {
-		plugin.getChannels().removeBanned(this.name, name);
 		banned.remove(name);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -222,8 +249,10 @@ public class Channel implements Named {
 	 * @param banMessage
 	 */
 	public void setBanMessage(ChatArguments banMessage) {
-		plugin.getChannels().setBanMessage(name, banMessage);
 		this.banMessage = banMessage;
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -239,8 +268,10 @@ public class Channel implements Named {
 	 * @param inviteOnly
 	 */
 	public void setInviteOnly(boolean inviteOnly) {
-		plugin.getChannels().setInviteOnly(name, inviteOnly);
 		this.inviteOnly = inviteOnly;
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -256,8 +287,10 @@ public class Channel implements Named {
 	 * @param format
 	 */
 	public void setFormat(ChatArguments format) {
-		plugin.getChannels().setFormat(name, format);
 		this.format = format;
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -273,8 +306,10 @@ public class Channel implements Named {
 	 * @param joinMessage
 	 */
 	public void setJoinMessage(ChatArguments joinMessage) {
-		plugin.getChannels().setJoinMessage(name, joinMessage);
 		this.joinMessage = joinMessage;
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -290,8 +325,10 @@ public class Channel implements Named {
 	 * @param leaveMessage
 	 */
 	public void setLeaveMessage(ChatArguments leaveMessage) {
-		plugin.getChannels().setLeaveMessage(name, leaveMessage);
 		this.leaveMessage = leaveMessage;
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -307,8 +344,10 @@ public class Channel implements Named {
 	 * @param password
 	 */
 	public void setPassword(String password) {
-		plugin.getChannels().setPassword(name, password);
 		this.password = password;
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -341,8 +380,10 @@ public class Channel implements Named {
 	 * @param chatterName
 	 */
 	public void addListener(String chatterName) {
-		plugin.getChannels().addListener(name, chatterName);
 		listeners.add(chatterName);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -350,8 +391,10 @@ public class Channel implements Named {
 	 * @param chatterName
 	 */
 	public void removeListener(String chatterName) {
-		plugin.getChannels().removeListener(name, chatterName);
 		listeners.remove(chatterName);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -381,7 +424,7 @@ public class Channel implements Named {
 	 * @param args
 	 * @return censored message
 	 */
-	public ChatArguments censor(ChatArguments args) {
+	public ChatArguments censorMessage(ChatArguments args) {
 		String str = args.asString();
 		for (String word : str.split(" ")) {
 			if (censoredWords.containsKey(word.toLowerCase())) {
@@ -391,8 +434,20 @@ public class Channel implements Named {
 		return ChatArguments.fromFormatString(str);
 	}
 
+	/**
+	 * Saves the channel to disk
+	 */
+	public void save() {
+		plugin.getChannels().save(this);
+	}
+
 	@Override
 	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String toString() {
 		return name;
 	}
 

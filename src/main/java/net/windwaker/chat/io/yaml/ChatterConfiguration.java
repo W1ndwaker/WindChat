@@ -23,7 +23,6 @@ package net.windwaker.chat.io.yaml;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
@@ -53,136 +52,32 @@ public class ChatterConfiguration extends YamlConfiguration {
 	 * Handles the login process of the plugin for a player.
 	 * @param player to login
 	 */
-	public void login(Player player) {
-		// get channels
-		List<String> channelNames = getChannels(player.getName());
-		Set<Channel> channels = new HashSet<Channel>();
-		for (String s : channelNames) {
-			Channel channel = plugin.getChannels().get(s);
-			if (channel != null) {
-				channels.add(channel);
+	public Chatter load(Player player) {
+		Chatter chatter = new Chatter(plugin, player);
+		String path = "chatters." + player.getName();
+		chatter.setAutoSave(false);
+		ChannelConfiguration channels = plugin.getChannels();
+		for (String channel : getNode(path + ".channels").getStringList()) {
+			Channel c = channels.get(channel);
+			if (c != null) {
+				chatter.join(c, null, false);
 			}
 		}
-		Chatter chatter = new Chatter(plugin, player, channels);
-		Channel activeChannel = plugin.getChannels().get(getActiveChannel(player.getName()));
+		Channel activeChannel = channels.get(getNode(path + ".active-channel").getString());
 		if (activeChannel == null) {
-			activeChannel = plugin.getChannels().getDefault();
+			activeChannel = channels.getDefault();
 		}
-		// join active channel
 		chatter.join(activeChannel);
+		chatter.setAutoSave(true);
 		chatters.add(chatter);
+		return chatter;
 	}
 
-	/**
-	 * Saves a value at the path to disk.
-	 * @param path
-	 * @param value
-	 */
-	public void set(String path, Object value) {
-		getNode(path).setValue(value);
-		save();
-	}
-
-	/**
-	 * Gets the list of invites for a chatter
-	 * @param chatter
-	 * @return list of invites
-	 */
-	public List<String> getInvites(String chatter) {
-		return getNode("chatters." + chatter + ".invites").getStringList();
-	}
-
-	/**
-	 * Saves the list of invites to disk.
-	 * @param chatter
-	 * @param invites
-	 */
-	public void setInvites(String chatter, List<String> invites) {
-		set("chatters." + chatter + ".invites", invites);
-	}
-
-	/**
-	 * Adds a new invite to disk.
-	 * @param chatter
-	 * @param invite
-	 */
-	public void addInvite(String chatter, String invite) {
-		List<String> invites = getInvites(chatter);
-		if (!invites.contains(invite)) {
-			invites.add(invite);
-		}
-		setInvites(chatter, invites);
-	}
-
-	/**
-	 * Remove an invite from disk.
-	 * @param chatter
-	 * @param invite
-	 */
-	public void removeInvite(String chatter, String invite) {
-		List<String> invites = getInvites(chatter);
-		invites.remove(invite);
-		setInvites(chatter, invites);
-	}
-
-	/**
-	 * Gets all channels of a {@link Chatter}.
-	 * @param chatter
-	 * @return all channels
-	 */
-	public List<String> getChannels(String chatter) {
-		return getNode("chatters." + chatter + ".channels").getStringList();
-	}
-
-	/**
-	 * Saves channels of a {@link Chatter}
-	 * @param chatter
-	 * @param channels
-	 */
-	public void setChannels(String chatter, List<String> channels) {
-		set("chatters." + chatter + ".channels", channels);
-	}
-
-	/**
-	 * Adds a new channel
-	 * @param chatter
-	 * @param channel
-	 */
-	public void addChannel(String chatter, String channel) {
-		List<String> channels = getChannels(chatter);
-		if (!channels.contains(channel)) {
-			channels.add(channel);
-		}
-		setChannels(chatter, channels);
-	}
-
-	/**
-	 * Removes a channel
-	 * @param chatter
-	 * @param channel
-	 */
-	public void removeChannel(String chatter, String channel) {
-		List<String> channels = getChannels(chatter);
-		channels.remove(channel);
-		setChannels(chatter, channels);
-	}
-
-	/**
-	 * Saves the active channel to disk.
-	 * @param chatter
-	 * @param channel
-	 */
-	public void setActiveChannel(String chatter, String channel) {
-		set("chatters." + chatter + ".active-channel", channel);
-	}
-
-	/**
-	 * Gets the active channel from disk.
-	 * @param chatter
-	 * @return active channel
-	 */
-	public String getActiveChannel(String chatter) {
-		return getNode("chatters." + chatter + ".active-channel").getString();
+	public void save(Chatter chatter) {
+		String path = "chatters." + chatter;
+		getNode(path + ".channels").setValue(chatter.getChannels());
+		getNode(path + ".invites").setValue(chatter.getInvites());
+		getNode(path + ".active-channel").setValue(chatter.getActiveChannel().getName());
 	}
 
 	/**

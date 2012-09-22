@@ -36,20 +36,34 @@ import org.spout.api.entity.Player;
 public class Chatter {
 	private final WindChat plugin;
 	private final Player parent;
-	private final Set<Channel> channels;
-	private final Set<Channel> invites = new HashSet<Channel>();
+	private final Set<Channel> channels = new HashSet<Channel>(), invites = new HashSet<Channel>();
 	private Channel activeChannel;
 	private ChatArguments quitMessage;
+	private boolean autoSave;
 
 	/**
 	 * Constructs a new chatter object
 	 * @param parent
-	 * @param channels
 	 */
-	public Chatter(WindChat plugin, Player parent, Set<Channel> channels) {
+	public Chatter(WindChat plugin, Player parent) {
 		this.parent = parent;
-		this.channels = channels;
 		this.plugin = plugin;
+	}
+
+	/**
+	 * Whether or not the chatter is saved to disk after every property is set
+	 * @return true if auto save
+	 */
+	public boolean isAutoSave() {
+		return autoSave;
+	}
+
+	/**
+	 * Sets whether the chatter should save to disk every property set
+	 * @param autoSave
+	 */
+	public void setAutoSave(boolean autoSave) {
+		this.autoSave = autoSave;
 	}
 
 	/**
@@ -76,6 +90,9 @@ public class Chatter {
 	 */
 	public void setQuitMessage(ChatArguments quitMessage) {
 		this.quitMessage = quitMessage;
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -91,8 +108,10 @@ public class Chatter {
 	 * @param channel
 	 */
 	public void invite(Channel channel) {
-		plugin.getChatters().addInvite(parent.getName(), channel.getName());
 		invites.add(channel);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -100,8 +119,10 @@ public class Chatter {
 	 * @param channel
 	 */
 	public void revokeInvite(Channel channel) {
-		plugin.getChatters().removeInvite(parent.getName(), channel.getName());
 		invites.remove(channel);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -111,6 +132,14 @@ public class Chatter {
 	 */
 	public boolean isInvitedTo(Channel channel) {
 		return invites.contains(channel);
+	}
+
+	/**
+	 * Returns all the channels the chatter is invited to
+	 * @return invited channels
+	 */
+	public Set<Channel> getInvites() {
+		return invites;
 	}
 
 	public void chat(ChatArguments message) {
@@ -129,7 +158,7 @@ public class Chatter {
 		if (activeChannel.isMuted(getParent().getName())) {
 			return;
 		}
-		message = channel.censor(message);
+		message = channel.censorMessage(message);
 		ChatArguments template = getFormat(Format.CHAT);
 		if (template.hasPlaceholder(Placeholders.NAME)) {
 			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(parent.getDisplayName()));
@@ -154,12 +183,24 @@ public class Chatter {
 	 * @param message
 	 */
 	public void join(Channel channel, ChatArguments message) {
-		plugin.getChatters().addChannel(parent.getName(), channel.getName());
-		plugin.getChatters().setActiveChannel(parent.getName(), channel.getName());
+		join(channel, message, true);
+	}
+
+	/**
+	 * Joins a channel
+	 * @param channel
+	 * @param message
+	 */
+	public void join(Channel channel, ChatArguments message, boolean active) {
 		channels.add(channel);
 		channel.addListener(parent.getName());
-		activeChannel = channel;
+		if (active) {
+			activeChannel = channel;
+		}
 		parent.sendMessage(message);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -179,10 +220,12 @@ public class Chatter {
 		if (channel.equals(activeChannel)) {
 			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
 		}
-		plugin.getChatters().removeChannel(parent.getName(), channel.getName());
 		channel.removeListener(parent.getName());
 		channels.remove(channel);
 		parent.sendMessage(message);
+		if (autoSave) {
+			save();
+		}
 	}
 
 	/**
@@ -253,6 +296,18 @@ public class Chatter {
 	 */
 	public Set<Channel> getChannels() {
 		return channels;
+	}
+
+	/**
+	 * Saves the chatter to disk
+	 */
+	public void save() {
+		plugin.getChatters().save(this);
+	}
+
+	@Override
+	public String toString() {
+		return parent.getName();
 	}
 
 	@Override
