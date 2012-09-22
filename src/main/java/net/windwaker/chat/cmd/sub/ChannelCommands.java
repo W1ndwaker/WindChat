@@ -231,6 +231,15 @@ public class ChannelCommands {
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "You invited player '", player.getName(), "' to join channel '", channelName, "'.");
 	}
 
+	@Command(aliases = "invite-only", usage = "<channel> <bool>", desc = "Set whether a channel is invite only", min = 2, max = 2)
+	public void inviteOnly(CommandContext args, CommandSource source) throws CommandException {
+		Channel channel = getChannel(args, 0);
+		checkPermission(source, "windchat.invite-only." + channel.getName());
+		boolean value = Boolean.valueOf(args.getString(1));
+		channel.setInviteOnly(value);
+		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Set state of invite only of channel '" + channel.getName() + "' to " + value);
+	}
+
 	@Command(aliases = {"join", "j"}, usage = "<channel>", desc = "Join a channel", min = 1, max = 2)
 	public void join(CommandContext args, CommandSource source) throws CommandException {
 		if (!(source instanceof Player)) {
