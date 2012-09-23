@@ -45,12 +45,28 @@ import org.spout.api.plugin.CommonPlugin;
  * @author Windwaker
  */
 public class WindChat extends CommonPlugin {
+	private static WindChat instance;
 	private final DateHandler dateHandler = new DateHandler();
 	private final ChatLogger logger = new ChatLogger(this);
 	private ChatConfiguration config;
 	private ChatterConfiguration chatters;
 	private ChannelConfiguration channels;
 	private BotConfiguration bots;
+
+	/**
+	 * Constructs the WindChat plugin
+	 */
+	public WindChat() {
+		instance = this;
+	}
+
+	/**
+	 * Gets the singleton instance of the plugin.
+	 * @return instance of the plugin
+	 */
+	public static WindChat getInstance() {
+		return instance;
+	}
 
 	/**
 	 * Gets the collection of {@link net.windwaker.chat.chan.Chatter}s on the plugin.
@@ -69,7 +85,7 @@ public class WindChat extends CommonPlugin {
 	}
 
 	/**
-	 * Gets the collection of loaded {@link net.windwaker.chat.chan.IrcBot}s on the plugin
+	 * Gets the collection of loaded {@link net.windwaker.chat.chan.irc.IrcBot}s on the plugin
 	 * @return loaded bots
 	 */
 	public BotConfiguration getBots() {

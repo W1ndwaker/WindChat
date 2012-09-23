@@ -26,13 +26,13 @@
  */
 package net.windwaker.chat.handler;
 
-import net.windwaker.chat.chan.IrcBot;
+import net.windwaker.chat.chan.irc.IrcBot;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 public class IrcChatHandler extends ListenerAdapter<IrcBot> {
 	@Override
 	public void onMessage(MessageEvent<IrcBot> event) {
-		event.getBot().onMessage(event.getChannel().getName(), event.getUser().getNick(), event.getMessage());
+		event.getBot().onMessage(event.getUser().getNick(), event.getMessage());
 	}
 }

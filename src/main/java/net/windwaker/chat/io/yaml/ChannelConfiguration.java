@@ -32,7 +32,7 @@ import java.util.Set;
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.chan.Channel;
 import net.windwaker.chat.chan.Chatter;
-import net.windwaker.chat.chan.IrcBot;
+import net.windwaker.chat.chan.irc.IrcBot;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.exception.ConfigurationException;
@@ -132,8 +132,6 @@ public class ChannelConfiguration extends YamlConfiguration {
 		getNode(path + ".ban-message").setValue(channel.getBanMessage().toFormatString());
 		getNode(path + ".irc.enabled").setValue(channel.isIrcEnabled());
 		getNode(path + ".irc.bot").setValue(channel.getBotName());
-		getNode(path + ".irc.server").setValue(channel.getBotServer());
-		getNode(path + ".irc.channel").setValue(channel.getBotChannel());
 		save();
 	}
 
@@ -151,8 +149,6 @@ public class ChannelConfiguration extends YamlConfiguration {
 		getNode(path + ".ban-message").setValue("{{RED}}You have been {{BOLD}}banned{{RESET}}{{RED}} from " + channel + "!");
 		getNode(path + ".irc.enabled").setValue(false);
 		getNode(path + ".irc.bot").setValue("ChatterBot");
-		getNode(path + ".irc.server").setValue("irc.esper.net");
-		getNode(path + ".irc.channel").setValue("#windwaker");
 		save();
 		load(channel);
 	}
@@ -201,8 +197,6 @@ public class ChannelConfiguration extends YamlConfiguration {
 				getNode("channels.spout.listeners").setValue(Arrays.asList("Wulfspider", "Afforess", "alta189", "Top_Cat"));
 				getNode("channels.spout.irc.enabled").setValue(false);
 				getNode("channels.spout.irc.bot").setValue("ChatterBot");
-				getNode("channels.spout.irc.server").setValue("irc.esper.net");
-				getNode("channels.spout.irc.channel").setValue("#windwaker");
 				save();
 			}
 			for (String name : getNode("channels").getKeys(false)) {

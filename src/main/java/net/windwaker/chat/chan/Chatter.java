@@ -170,7 +170,7 @@ public class Chatter {
 		if (template.hasPlaceholder(Placeholders.MESSAGE)) {
 			template.setPlaceHolder(Placeholders.MESSAGE, message);
 		}
-		channel.broadcast(this, template);
+		channel.broadcast(template);
 	}
 
 	/**

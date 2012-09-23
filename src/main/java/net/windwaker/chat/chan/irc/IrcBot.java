@@ -19,9 +19,13 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.chan;
+package net.windwaker.chat.chan.irc;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import net.windwaker.chat.WindChat;
+import net.windwaker.chat.chan.Channel;
 import net.windwaker.chat.handler.IrcChatHandler;
 import org.pircbotx.PircBotX;
 
@@ -33,11 +37,10 @@ import org.spout.api.lang.Locale;
 import org.spout.api.plugin.PluginDescriptionFile;
 
 public class IrcBot extends PircBotX implements CommandSource {
-	private final Chatter chatter;
-	private String channel;
+	private final String channel;
+	private final Set<Channel> channels = new HashSet<Channel>();
 
 	public IrcBot(WindChat plugin, String name, boolean verbose, String server, String channel) {
-		this.chatter = new Chatter(plugin, this);
 		this.channel = channel;
 		this.name = name;
 		this.server = server;
@@ -49,23 +52,15 @@ public class IrcBot extends PircBotX implements CommandSource {
 		listenerManager.addListener(new IrcChatHandler());
 	}
 
-	public Chatter getChatter() {
-		return chatter;
-	}
-
 	public String getChannel() {
 		return channel;
 	}
 
-	public void setChannel(String channel) {
-		this.channel = channel;
-	}
-
 	public boolean connect(Channel chan) {
 		try {
+			channels.add(chan);
 			connect(server);
 			joinChannel(channel);
-			chatter.join(chan);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,8 +68,10 @@ public class IrcBot extends PircBotX implements CommandSource {
 		}
 	}
 
-	public void onMessage(String channel, String user, String message) {
-		chatter.chat(new ChatArguments(user, ": ", message));
+	public void onMessage(String user, String message) {
+		for (Channel channel : channels) {
+			channel.broadcast(new ChatArguments(user + ": " + message));
+		}
 	}
 
 	@Override

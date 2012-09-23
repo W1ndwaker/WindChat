@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
+import net.windwaker.chat.chan.irc.IrcBot;
 import net.windwaker.chat.util.Placeholders;
 
 import org.spout.api.chat.ChatArguments;
@@ -445,6 +446,10 @@ public class Channel implements Named {
 		}
 	}
 
+	public void broadcast(ChatArguments message) {
+		broadcast(null, message);
+	}
+
 	/**
 	 * Broadcasts a message to all listeners of the channel.
 	 * @param message
@@ -454,13 +459,16 @@ public class Channel implements Named {
 			format.setPlaceHolder(Placeholders.MESSAGE, message);
 		}
 		for (Chatter chatter : listeners) {
-			// out of range
-			if (!chatter.canHear(sender, this)) {
+			if (sender != null && !chatter.canHear(sender, this)) {
 				continue;
 			}
 			chatter.getParent().sendMessage(format);
 		}
-		plugin.getChatLogger().log(format.getPlainString());
+		String plainString = message.getPlainString();
+		if (bot != null && ircEnabled) {
+			bot.sendMessage(plainString);
+		}
+		plugin.getChatLogger().log(plainString);
 	}
 
 	/**
