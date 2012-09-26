@@ -45,7 +45,6 @@ import org.spout.api.plugin.CommonPlugin;
  * @author Windwaker
  */
 public class WindChat extends CommonPlugin {
-	private static WindChat instance;
 	private final DateHandler dateHandler = new DateHandler();
 	private final ChatLogger logger = new ChatLogger(this);
 	private ChatConfiguration config;
@@ -54,22 +53,9 @@ public class WindChat extends CommonPlugin {
 	private BotConfiguration bots;
 
 	/**
-	 * Constructs the WindChat plugin
-	 */
-	public WindChat() {
-		instance = this;
-	}
-
-	/**
-	 * Gets the singleton instance of the plugin.
-	 * @return instance of the plugin
-	 */
-	public static WindChat getInstance() {
-		return instance;
-	}
-
-	/**
-	 * Gets the collection of {@link net.windwaker.chat.chan.Chatter}s on the plugin.
+	 * Gets the collection of {@link net.windwaker.chat.chan.Chatter}s on the 
+	 * plugin.
+	 * 
 	 * @return collection of chatters
 	 */
 	public ChatterConfiguration getChatters() {
@@ -77,7 +63,9 @@ public class WindChat extends CommonPlugin {
 	}
 
 	/**
-	 * Gets the collection of {@link net.windwaker.chat.chan.Channel}s on the plugin.
+	 * Gets the collection of {@link net.windwaker.chat.chan.Channel}s on the 
+	 * plugin.
+	 * 
 	 * @return collection of channels
 	 */
 	public ChannelConfiguration getChannels() {
@@ -85,7 +73,9 @@ public class WindChat extends CommonPlugin {
 	}
 
 	/**
-	 * Gets the collection of loaded {@link net.windwaker.chat.chan.irc.IrcBot}s on the plugin
+	 * Gets the collection of loaded {@link net.windwaker.chat.chan.irc.IrcBot}
+	 * on the plugin
+	 * 
 	 * @return loaded bots
 	 */
 	public BotConfiguration getBots() {
@@ -93,7 +83,9 @@ public class WindChat extends CommonPlugin {
 	}
 
 	/**
-	 * Gets the {@link DateHandler} of the plugin which handles formatting dates.
+	 * Gets the {@link DateHandler} of the plugin which handles formatting 
+	 * dates.
+	 * 
 	 * @return date handler
 	 */
 	public DateHandler getDateHandler() {
@@ -102,6 +94,7 @@ public class WindChat extends CommonPlugin {
 
 	/**
 	 * Gets the {@link ChatLogger} of the plugin.
+	 * 
 	 * @return chat logger
 	 */
 	public ChatLogger getChatLogger() {
@@ -117,6 +110,7 @@ public class WindChat extends CommonPlugin {
 
 	@Override
 	public void onEnable() {
+		
 		// Load config
 		config = new ChatConfiguration(this);
 		config.load();
@@ -138,7 +132,7 @@ public class WindChat extends CommonPlugin {
 		// Register events
 		Spout.getEventManager().registerEvents(new LocalChatHandler(this), this);
 		// Register commands
-		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
+		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());	
 		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 		getEngine().getRootCommand().addSubCommands(this, ChatCommands.class, commandRegFactory);
 		// Add default permissions

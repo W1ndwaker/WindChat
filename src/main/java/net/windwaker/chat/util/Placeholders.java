@@ -24,6 +24,7 @@ package net.windwaker.chat.util;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
+import org.spout.api.chat.ChatArguments;
 
 import org.spout.api.chat.Placeholder;
 
@@ -62,5 +63,17 @@ public class Placeholders {
 	 */
 	public static Set<Placeholder> getValues() {
 		return VALUES;
+	}
+	
+	/**
+	 * Formats a message sent to a channel.
+	 * 
+	 * @param format to set
+	 * @param message to use for placeholder 
+	 */
+	public static void format(Placeholder placeholder, ChatArguments template, ChatArguments args) {
+		if (template.hasPlaceholder(placeholder)) {
+			template.setPlaceHolder(placeholder, args);
+		}
 	}
 }

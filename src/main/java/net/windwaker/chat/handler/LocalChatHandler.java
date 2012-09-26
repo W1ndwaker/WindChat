@@ -72,9 +72,7 @@ public class LocalChatHandler implements Listener {
 			return;
 		}
 		ChatArguments template = chatter.getFormat(Format.JOIN_MESSAGE);
-		if (template.hasPlaceholder(Placeholders.NAME)) {
-			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(player.getDisplayName()));
-		}
+		Placeholders.format(Placeholders.NAME, template, new ChatArguments(player.getDisplayName()));
 		event.setMessage(template);
 	}
 
@@ -86,14 +84,10 @@ public class LocalChatHandler implements Listener {
 			return;
 		}
 		ChatArguments template = chatter.getFormat(Format.LEAVE_MESSAGE);
-		if (template.hasPlaceholder(Placeholders.NAME)) {
-			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(player.getDisplayName()));
-		}
+		Placeholders.format(Placeholders.NAME, template, new ChatArguments(player.getDisplayName()));
 		ChatArguments quitMessage = chatter.getQuitMessage();
 		String reason = event.isKick() ? "Kicked" : "Quit";
-		if (template.hasPlaceholder(Placeholders.QUIT_MESSAGE)) {
-			template.setPlaceHolder(Placeholders.QUIT_MESSAGE, quitMessage == null ? new ChatArguments(reason) : quitMessage);
-		}
+		Placeholders.format(Placeholders.QUIT_MESSAGE, template, quitMessage == null ? new ChatArguments(reason) : quitMessage);
 		event.setMessage(template);
 	}
 }

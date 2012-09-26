@@ -33,6 +33,6 @@ import org.pircbotx.hooks.events.MessageEvent;
 public class IrcChatHandler extends ListenerAdapter<IrcBot> {
 	@Override
 	public void onMessage(MessageEvent<IrcBot> event) {
-		event.getBot().onMessage(event.getUser().getNick(), event.getMessage());
+		event.getBot().messageRecieved(event.getUser().getNick(), event.getMessage());
 	}
 }

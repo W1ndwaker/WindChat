@@ -51,6 +51,7 @@ public class Channel implements Named {
 
 	/**
 	 * Constructs a new channel object
+	 * 
 	 * @param name
 	 */
 	public Channel(WindChat plugin, String name) {
@@ -58,14 +59,29 @@ public class Channel implements Named {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Whether the channel allows IRC
+	 * 
+	 * @return true if allows IRC 
+	 */
 	public boolean isIrcEnabled() {
 		return ircEnabled;
 	}
 
+	/**
+	 * Set whether the channel allows IRC
+	 * 
+	 * @param ircEnabled 
+	 */
 	public void setIrcEnabled(boolean ircEnabled) {
 		this.ircEnabled = ircEnabled;
 	}
 
+	/**
+	 * The name of the {@link IrcBot} to use.
+	 * 
+	 * @return the bot name 
+	 */
 	public String getBotName() {
 		if (bot == null) {
 			return null;
@@ -73,39 +89,33 @@ public class Channel implements Named {
 		return bot.getName();
 	}
 
-	public String getBotServer() {
-		if (bot == null) {
-			return null;
-		}
-		return bot.getServer();
-	}
-
-	public String getBotChannel() {
-		if (bot == null) {
-			return null;
-		}
-		return bot.getChannel();
-	}
-
+	/**
+	 * Links the channel to the specified {@link IrcBot} all messages in this
+	 * channel will be sent to the bot, and all messages incoming in the bot
+	 * will be broadcast in this channel.
+	 * 
+	 * @param bot to link to 
+	 */
 	public void connectToIrc(IrcBot bot) {
 		if (!ircEnabled) {
 			return;
 		}
 		if (this.bot != null && this.bot.isConnected()) {
-			bot.disconnect();
+			this.bot.disconnect();
 		}
 		if (bot == null) {
 			throw new IllegalArgumentException("Cannot connect a null bot.");
 		}
-		if (bot.isConnected()) {
-			throw new IllegalStateException("Bot is already connected to IRC.");
+		if (!bot.isConnected()) {
+			bot.connect();
 		}
 		this.bot = bot;
-		bot.connect(this);
+		bot.joinLocal(this);
 	}
 
 	/**
 	 * Whether the channel saves every time a property is set
+	 * 
 	 * @return true if auto save
 	 */
 	public boolean isAutoSave() {
@@ -114,6 +124,7 @@ public class Channel implements Named {
 
 	/**
 	 * Sets whether the channel should save every time a property is set
+	 * 
 	 * @param autoSave
 	 */
 	public void setAutoSave(boolean autoSave) {
@@ -122,6 +133,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets the radius (in blocks) that the channel can be heard from the original sender.
+	 * 
 	 * @return radius
 	 */
 	public int getRadius() {
@@ -130,6 +142,7 @@ public class Channel implements Named {
 
 	/**
 	 * Sets the radius (in blocks) that the channel can be heard from the original sender.
+	 * 
 	 * @param radius
 	 */
 	public void setRadius(int radius) {
@@ -141,6 +154,7 @@ public class Channel implements Named {
 
 	/**
 	 * Censors a word in the channel
+	 * 
 	 * @param word to censor
 	 */
 	public void censor(String word) {
@@ -153,6 +167,7 @@ public class Channel implements Named {
 
 	/**
 	 * Censors a word in the channel
+	 * 
 	 * @param word
 	 * @param replacement
 	 */
@@ -166,6 +181,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets the censored words
+	 * 
 	 * @return censored words
 	 */
 	public Map<String, String> getCensoredWords() {
@@ -174,6 +190,7 @@ public class Channel implements Named {
 
 	/**
 	 * Whether the specified word is censored
+	 * 
 	 * @param word
 	 * @return true if censored
 	 */
@@ -183,6 +200,7 @@ public class Channel implements Named {
 
 	/**
 	 * Stops a chatter from being able to chat in the channel.
+	 * 
 	 * @param name
 	 */
 	public void mute(String name) {
@@ -194,6 +212,7 @@ public class Channel implements Named {
 
 	/**
 	 * Allows the chatter to chat in the channel.
+	 * 
 	 * @param name
 	 */
 	public void unmute(String name) {
@@ -205,6 +224,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets the names of all muted chatters.
+	 * 
 	 * @return all muted
 	 */
 	public Set<String> getMuted() {
@@ -213,6 +233,7 @@ public class Channel implements Named {
 
 	/**
 	 * Whether or not the name is muted.
+	 * 
 	 * @param name
 	 * @return true if muted
 	 */
@@ -222,6 +243,7 @@ public class Channel implements Named {
 
 	/**
 	 * Bans a name from the channel
+	 * 
 	 * @param name of chatter
 	 */
 	public void ban(String name) {
@@ -230,6 +252,7 @@ public class Channel implements Named {
 
 	/**
 	 * Bans a name from the channel
+	 * 
 	 * @param name of chatter
 	 * @param kick whether to kick if online
 	 */
@@ -239,6 +262,7 @@ public class Channel implements Named {
 
 	/**
 	 * Bans a name from the channel
+	 * 
 	 * @param name of chatter
 	 * @param kick whether to kick if online
 	 * @param reason for kick
@@ -259,6 +283,7 @@ public class Channel implements Named {
 
 	/**
 	 * Unbans a name from the channel.
+	 * 
 	 * @param name
 	 */
 	public void unban(String name) {
@@ -270,6 +295,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets a set of banned names from the channel.
+	 * 
 	 * @return name list
 	 */
 	public Set<String> getBanned() {
@@ -278,6 +304,7 @@ public class Channel implements Named {
 
 	/**
 	 * Whether or not a name is banned from the channel.
+	 * 
 	 * @param name
 	 * @return true if banned
 	 */
@@ -286,7 +313,9 @@ public class Channel implements Named {
 	}
 
 	/**
-	 * Gets the message displayed when being rejected from entering a server because of being banned.
+	 * Gets the message displayed when being rejected from entering a server 
+	 * because of being banned.
+	 * 
 	 * @return ban message
 	 */
 	public ChatArguments getBanMessage() {
@@ -294,7 +323,9 @@ public class Channel implements Named {
 	}
 
 	/**
-	 * Sets the message displayed when being rejected from entering a server because of being banned.
+	 * Sets the message displayed when being rejected from entering a server 
+	 * because of being banned.
+	 * 
 	 * @param banMessage
 	 */
 	public void setBanMessage(ChatArguments banMessage) {
@@ -306,6 +337,7 @@ public class Channel implements Named {
 
 	/**
 	 * Whether or not the channel requires an invitation to join.
+	 * 
 	 * @return true if by invitation only.
 	 */
 	public boolean isInviteOnly() {
@@ -314,6 +346,7 @@ public class Channel implements Named {
 
 	/**
 	 * Sets if the channel requires an invitation to join.
+	 * 
 	 * @param inviteOnly
 	 */
 	public void setInviteOnly(boolean inviteOnly) {
@@ -325,6 +358,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets the general format of the channel.
+	 * 
 	 * @return format
 	 */
 	public ChatArguments getFormat() {
@@ -333,6 +367,7 @@ public class Channel implements Named {
 
 	/**
 	 * Sets the general format of the channel.
+	 * 
 	 * @param format
 	 */
 	public void setFormat(ChatArguments format) {
@@ -344,6 +379,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets the message displayed when joining the channel
+	 * 
 	 * @return join message
 	 */
 	public ChatArguments getJoinMessage() {
@@ -352,6 +388,7 @@ public class Channel implements Named {
 
 	/**
 	 * Sets the message displayed when joining the channel
+	 * 
 	 * @param joinMessage
 	 */
 	public void setJoinMessage(ChatArguments joinMessage) {
@@ -363,6 +400,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets the message displayed when leaving the channel.
+	 * 
 	 * @return leave message
 	 */
 	public ChatArguments getLeaveMessage() {
@@ -371,6 +409,7 @@ public class Channel implements Named {
 
 	/**
 	 * Sets the message displayed when leaving the channel.
+	 * 
 	 * @param leaveMessage
 	 */
 	public void setLeaveMessage(ChatArguments leaveMessage) {
@@ -382,6 +421,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets the password of the server required to enter.
+	 * 
 	 * @return password
 	 */
 	public String getPassword() {
@@ -390,6 +430,7 @@ public class Channel implements Named {
 
 	/**
 	 * Sets the password required to enter. Set to null to disable password.
+	 * 
 	 * @param password
 	 */
 	public void setPassword(String password) {
@@ -401,6 +442,7 @@ public class Channel implements Named {
 
 	/**
 	 * Whether or not the channel requires a password for entrance.
+	 * 
 	 * @return true if requires password
 	 */
 	public boolean hasPassword() {
@@ -409,6 +451,7 @@ public class Channel implements Named {
 
 	/**
 	 * Whether or not a name is listening to the channel
+	 * 
 	 * @param name
 	 * @return true if in listening set
 	 */
@@ -418,6 +461,7 @@ public class Channel implements Named {
 
 	/**
 	 * Gets set of listeners
+	 * 
 	 * @return set of listeners
 	 */
 	public Set<Chatter> getListeners() {
@@ -426,6 +470,7 @@ public class Channel implements Named {
 
 	/**
 	 * Adds a listener to the channel
+	 * 
 	 * @param chatter
 	 */
 	public void addListener(Chatter chatter) {
@@ -437,6 +482,7 @@ public class Channel implements Named {
 
 	/**
 	 * Removes a listener from the channel.
+	 * 
 	 * @param chatterName
 	 */
 	public void removeListener(String chatterName) {
@@ -446,33 +492,37 @@ public class Channel implements Named {
 		}
 	}
 
+	/**
+	 * Broadcasts a message in the channel to all listeners.
+	 * 
+	 * @param message to send to all listeners 
+	 */
 	public void broadcast(ChatArguments message) {
 		broadcast(null, message);
 	}
 
 	/**
 	 * Broadcasts a message to all listeners of the channel.
+	 * 
 	 * @param message
 	 */
 	public void broadcast(Chatter sender, ChatArguments message) {
-		if (format.hasPlaceholder(Placeholders.MESSAGE)) {
-			format.setPlaceHolder(Placeholders.MESSAGE, message);
-		}
+		Placeholders.format(Placeholders.MESSAGE, format, message);
 		for (Chatter chatter : listeners) {
 			if (sender != null && !chatter.canHear(sender, this)) {
 				continue;
 			}
 			chatter.getParent().sendMessage(format);
 		}
-		String plainString = message.getPlainString();
 		if (bot != null && ircEnabled) {
-			bot.sendMessage(plainString);
+			bot.sendMessage(message);
 		}
-		plugin.getChatLogger().log(plainString);
+		plugin.getChatLogger().log(message);
 	}
 
 	/**
 	 * Censors a message from the censored word list.
+	 * 
 	 * @param args
 	 * @return censored message
 	 */

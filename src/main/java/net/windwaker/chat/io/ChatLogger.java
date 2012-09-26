@@ -30,6 +30,7 @@ import java.util.List;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.handler.DateHandler;
+import org.spout.api.chat.ChatArguments;
 
 public class ChatLogger {
 	private final WindChat plugin;
@@ -51,9 +52,10 @@ public class ChatLogger {
 	 * Caches a chat message to be saved and prints to console.
 	 * @param message to cache
 	 */
-	public void log(String message) {
-		messages.add("[" + dateHandler.getFormattedTime() + "] " + message);
-		plugin.getLogger().log(CHAT, message);
+	public void log(ChatArguments message) {
+		String str = message.getPlainString();
+		messages.add("[" + dateHandler.getFormattedTime() + "] " + str);
+		plugin.getLogger().log(CHAT, str);
 	}
 
 	/**
@@ -84,6 +86,9 @@ public class ChatLogger {
 				out.newLine();
 			}
 			out.close();
+			if (file.length() == 0) {
+				file.delete();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

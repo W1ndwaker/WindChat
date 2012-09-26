@@ -44,6 +44,7 @@ public class Chatter {
 
 	/**
 	 * Constructs a new chatter object
+	 * 
 	 * @param parent
 	 */
 	public Chatter(WindChat plugin, CommandSource parent) {
@@ -53,6 +54,7 @@ public class Chatter {
 
 	/**
 	 * Whether or not the chatter is saved to disk after every property is set
+	 * 
 	 * @return true if auto save
 	 */
 	public boolean isAutoSave() {
@@ -61,6 +63,7 @@ public class Chatter {
 
 	/**
 	 * Sets whether the chatter should save to disk every property set
+	 * 
 	 * @param autoSave
 	 */
 	public void setAutoSave(boolean autoSave) {
@@ -69,6 +72,7 @@ public class Chatter {
 
 	/**
 	 * Gets the parent of the chatter.
+	 * 
 	 * @return parent
 	 */
 	public CommandSource getParent() {
@@ -77,6 +81,7 @@ public class Chatter {
 
 	/**
 	 * Whether the chatter can hear the sender
+	 * 
 	 * @param sender
 	 * @return true if can hear
 	 */
@@ -90,6 +95,7 @@ public class Chatter {
 
 	/**
 	 * Sets the quit message of the chatter
+	 * 
 	 * @param quitMessage
 	 */
 	public void setQuitMessage(ChatArguments quitMessage) {
@@ -101,6 +107,7 @@ public class Chatter {
 
 	/**
 	 * Gets the quit message of the chatter
+	 * 
 	 * @return
 	 */
 	public ChatArguments getQuitMessage() {
@@ -109,6 +116,7 @@ public class Chatter {
 
 	/**
 	 * Invites the chatter to a channel
+	 * 
 	 * @param channel
 	 */
 	public void invite(Channel channel) {
@@ -120,6 +128,7 @@ public class Chatter {
 
 	/**
 	 * Revokes an invitation to a channel
+	 * 
 	 * @param channel
 	 */
 	public void revokeInvite(Channel channel) {
@@ -131,6 +140,7 @@ public class Chatter {
 
 	/**
 	 * Whether or not the chatter is invited to the specified channel
+	 * 
 	 * @param channel
 	 * @return true if invited
 	 */
@@ -140,18 +150,25 @@ public class Chatter {
 
 	/**
 	 * Returns all the channels the chatter is invited to
+	 * 
 	 * @return invited channels
 	 */
 	public Set<Channel> getInvites() {
 		return invites;
 	}
 
+	/**
+	 * Sends a chat message to the chatters active channel.
+	 * 
+	 * @param message 
+	 */
 	public void chat(ChatArguments message) {
 		chat(activeChannel, message);
 	}
 
 	/**
-	 * Sends a chat message to the chatters active channel.
+	 * Sends a chat message to the specified channel.
+	 * 
 	 * @param message
 	 */
 	public void chat(Channel channel, ChatArguments message) {
@@ -164,17 +181,14 @@ public class Chatter {
 		}
 		message = channel.censorMessage(message);
 		ChatArguments template = getFormat(Format.CHAT);
-		if (template.hasPlaceholder(Placeholders.NAME)) {
-			template.setPlaceHolder(Placeholders.NAME, new ChatArguments(parent.getName()));
-		}
-		if (template.hasPlaceholder(Placeholders.MESSAGE)) {
-			template.setPlaceHolder(Placeholders.MESSAGE, message);
-		}
+		Placeholders.format(Placeholders.NAME, template, new ChatArguments(parent.getName()));
+		Placeholders.format(Placeholders.MESSAGE, template, message);
 		channel.broadcast(template);
 	}
 
 	/**
 	 * Joins a channel
+	 * 
 	 * @param channel
 	 */
 	public void join(Channel channel) {
@@ -183,6 +197,7 @@ public class Chatter {
 
 	/**
 	 * Joins a channel
+	 * 
 	 * @param channel
 	 * @param message
 	 */
@@ -192,6 +207,7 @@ public class Chatter {
 
 	/**
 	 * Joins a channel
+	 * 
 	 * @param channel
 	 * @param message
 	 */
@@ -209,6 +225,7 @@ public class Chatter {
 
 	/**
 	 * Leaves a channel
+	 * 
 	 * @param channel
 	 */
 	public void leave(Channel channel) {
@@ -217,6 +234,7 @@ public class Chatter {
 
 	/**
 	 * Leaves a channel
+	 * 
 	 * @param channel
 	 * @param message
 	 */
@@ -234,6 +252,7 @@ public class Chatter {
 
 	/**
 	 * Bans the chatter from the specified channel.
+	 * 
 	 * @param channel
 	 */
 	public void ban(Channel channel) {
@@ -242,6 +261,7 @@ public class Chatter {
 
 	/**
 	 * Bans the chatter from the specified channel.
+	 * 
 	 * @param channel
 	 * @param reason
 	 */
@@ -251,6 +271,7 @@ public class Chatter {
 
 	/**
 	 * Kicks the chatter from the specified channel
+	 * 
 	 * @param channel
 	 */
 	public void kick(Channel channel) {
@@ -259,6 +280,7 @@ public class Chatter {
 
 	/**
 	 * Kicks the chatter from the specified channel
+	 * 
 	 * @param channel
 	 * @param reason
 	 */
@@ -275,6 +297,7 @@ public class Chatter {
 
 	/**
 	 * Gets the format of a certain {@link Format} type.
+	 * 
 	 * @param format
 	 * @return format
 	 */
@@ -289,6 +312,7 @@ public class Chatter {
 
 	/**
 	 * Gets the channel the chatter is currently chatting in.
+	 * 
 	 * @return active channel.
 	 */
 	public Channel getActiveChannel() {
@@ -297,6 +321,7 @@ public class Chatter {
 
 	/**
 	 * Gets all listening channels.
+	 * 
 	 */
 	public Set<Channel> getChannels() {
 		return channels;

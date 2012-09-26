@@ -30,18 +30,14 @@ import net.windwaker.chat.handler.IrcChatHandler;
 import org.pircbotx.PircBotX;
 
 import org.spout.api.chat.ChatArguments;
-import org.spout.api.command.CommandSource;
-import org.spout.api.data.ValueHolder;
-import org.spout.api.geo.World;
-import org.spout.api.lang.Locale;
 import org.spout.api.plugin.PluginDescriptionFile;
 
-public class IrcBot extends PircBotX implements CommandSource {
-	private final String channel;
-	private final Set<Channel> channels = new HashSet<Channel>();
+public class IrcBot extends PircBotX {
+	private final Set<Channel> localChannels = new HashSet<Channel>();
+	private final Set<String> ircChannels;
 
-	public IrcBot(WindChat plugin, String name, boolean verbose, String server, String channel) {
-		this.channel = channel;
+	public IrcBot(WindChat plugin, String name, boolean verbose, String server, Set<String> ircChannels) {
+		this.ircChannels = ircChannels;
 		this.name = name;
 		this.server = server;
 		this.verbose = verbose;
@@ -52,109 +48,37 @@ public class IrcBot extends PircBotX implements CommandSource {
 		listenerManager.addListener(new IrcChatHandler());
 	}
 
-	public String getChannel() {
-		return channel;
-	}
-
-	public boolean connect(Channel chan) {
+	public boolean connect() {
 		try {
-			channels.add(chan);
 			connect(server);
-			joinChannel(channel);
+			for (String chan : ircChannels) {
+				joinChannel(chan);
+			}
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
+	
+	public void joinLocal(Channel channel) {
+		localChannels.add(channel);
+	}
+	
+	public void leaveLocal(Channel channel) {
+		localChannels.remove(channel);
+	}
 
-	public void onMessage(String user, String message) {
-		for (Channel channel : channels) {
-			channel.broadcast(new ChatArguments(user + ": " + message));
+	public void messageRecieved(String user, String message) {
+		for (Channel chan : localChannels) {
+			chan.broadcast(new ChatArguments(user + ": " + message));
 		}
 	}
-
-	@Override
-	public boolean sendMessage(Object... message) {
-		return sendRawMessage(message);
-	}
-
-	@Override
-	public void sendCommand(String command, ChatArguments arguments) {
-	}
-
-	@Override
-	public void processCommand(String command, ChatArguments arguments) {
-	}
-
-	@Override
-	public boolean sendMessage(ChatArguments message) {
-		return sendRawMessage(message);
-	}
-
-	@Override
-	public boolean sendRawMessage(Object... message) {
-		return sendRawMessage(new ChatArguments(message));
-	}
-
-	@Override
-	public boolean sendRawMessage(ChatArguments message) {
-		sendMessage(channel, message.getPlainString());
-		return true;
-	}
-
-	@Override
-	public Locale getPreferredLocale() {
-		return null;
-	}
-
-	@Override
-	public boolean hasPermission(String node) {
-		return true;
-	}
-
-	@Override
-	public boolean hasPermission(World world, String node) {
-		return true;
-	}
-
-	@Override
-	public boolean isInGroup(String group) {
-		return false;
-	}
-
-	@Override
-	public boolean isInGroup(World world, String group) {
-		return false;
-	}
-
-	@Override
-	public String[] getGroups() {
-		return new String[0];
-	}
-
-	@Override
-	public String[] getGroups(World world) {
-		return new String[0];
-	}
-
-	@Override
-	public ValueHolder getData(String node) {
-		return null;
-	}
-
-	@Override
-	public ValueHolder getData(World world, String node) {
-		return null;
-	}
-
-	@Override
-	public boolean hasData(String node) {
-		return false;
-	}
-
-	@Override
-	public boolean hasData(World world, String node) {
-		return false;
+	
+	public void sendMessage(ChatArguments message) {
+		String str = message.getPlainString();
+		for (String chan : ircChannels) {
+			sendMessage(chan, str);
+		}
 	}
 }

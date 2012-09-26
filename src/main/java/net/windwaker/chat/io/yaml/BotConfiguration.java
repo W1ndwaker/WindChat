@@ -22,7 +22,9 @@
 package net.windwaker.chat.io.yaml;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
@@ -53,8 +55,8 @@ public class BotConfiguration extends YamlConfiguration {
 		String path = "bots." + botName;
 		boolean verbose = getNode(path + ".verbose").getBoolean();
 		String server = getNode(path + ".server").getString();
-		String channel = getNode(path + ".channel").getString();
-		IrcBot bot = new IrcBot(plugin, botName, verbose, server, channel);
+		List<String> channels = getNode(path + ".channel").getStringList();
+		IrcBot bot = new IrcBot(plugin, botName, verbose, server, new HashSet<String>(channels));
 		bots.add(bot);
 		return bot;
 	}
@@ -66,7 +68,7 @@ public class BotConfiguration extends YamlConfiguration {
 			if (!getNode("bots").isAttached()) {
 				getNode("bots.ChatterBot.verbose").setValue(false);
 				getNode("bots.ChatterBot.server").setValue("irc.esper.net");
-				getNode("bots.ChatterBot.channel").setValue("#windwaker");
+				getNode("bots.ChatterBot.channel").setValue(Arrays.asList("#windwaker"));
 				save();
 			}
 			for (String bot : getNode("bots").getKeys(false)) {
