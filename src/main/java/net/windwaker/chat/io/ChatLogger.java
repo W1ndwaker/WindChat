@@ -76,11 +76,11 @@ public class ChatLogger {
 	}
 
 	/**
-	 * Stops and the logger and writes all cached messages to disk.
+	 * Saves all cached messages to disk.
 	 */
 	public void stop() {
 		try {
-			if (file == null) {
+			if (file == null || !file.exists()) {
 				return;
 			}
 			BufferedWriter out = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
@@ -92,6 +92,8 @@ public class ChatLogger {
 			if (file.length() == 0) {
 				file.delete();
 			}
+			file = null;
+			messages.clear();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

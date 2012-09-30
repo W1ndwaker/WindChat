@@ -65,6 +65,10 @@ public class ChatConfiguration extends ConfigurationHolderConfiguration {
 	 * The time format.
 	 */
 	public static final ConfigurationHolder TIME_FORMAT = new ConfigurationHolder("HH:mm:ss", "time-format");
+	/**
+	 * Whether chat should be logged to disk
+	 */
+	public static final ConfigurationHolder LOG_CHAT = new ConfigurationHolder(true, "log-chat");
 
 	/**
 	 * Constructs a new ChatConfiguration at 'plugins/WindChat/config.yml'

@@ -130,8 +130,6 @@ public class WindChat extends CommonPlugin {
 		channels.postLoad();
 		// Load date formats
 		dateHandler.init();
-		// Initialize chat logger
-		logger.start();
 		// Load all online players
 		Engine engine = getEngine();
 		Platform platform = engine.getPlatform();
@@ -151,12 +149,17 @@ public class WindChat extends CommonPlugin {
 		bots.save();
 		channels.save();
 		chatters.save();
-		logger.stop();
 	}
 
 	@Override
 	public void onReload() {
+		// Load data from disk
 		load();
+		// Restart logger
+		logger.stop();
+		if (ChatConfiguration.LOG_CHAT.getBoolean()) {
+			logger.start();
+		}
 		getLogger().info("WindChat " + getDescription().getVersion() + " reloaded.");
 	}
 
@@ -164,6 +167,10 @@ public class WindChat extends CommonPlugin {
 	public void onEnable() {
 		// Load data
 		load();
+		// Initialize chat logger
+		if (ChatConfiguration.LOG_CHAT.getBoolean()) {
+			logger.start();
+		}
 		// Register events
 		Spout.getEventManager().registerEvents(new LocalChatHandler(this), this);
 		// Register commands
@@ -182,6 +189,8 @@ public class WindChat extends CommonPlugin {
 	public void onDisable() {
 		// Save data
 		save();
+		// Finalize logger
+		logger.stop();
 		getLogger().info("WindChat " + getDescription().getVersion() + " disabled.");
 	}
 }
