@@ -32,13 +32,17 @@ import net.windwaker.chat.io.yaml.ChatConfiguration;
 import net.windwaker.chat.io.yaml.ChatterConfiguration;
 import net.windwaker.chat.util.DefaultPermissionNodes;
 
+import org.spout.api.Engine;
+import org.spout.api.Server;
 import org.spout.api.Spout;
 import org.spout.api.command.CommandRegistrationsFactory;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
 import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
+import org.spout.api.entity.Player;
 import org.spout.api.permissions.DefaultPermissions;
 import org.spout.api.plugin.CommonPlugin;
+import org.spout.api.plugin.Platform;
 
 /**
  * Chat plugin for the Spout platform.
@@ -101,16 +105,15 @@ public class WindChat extends CommonPlugin {
 		return logger;
 	}
 
-	@Override
-	public void onReload() {
-		config.load();
-		chatters.load();
-		channels.load();
-	}
-
-	@Override
-	public void onEnable() {
-		
+	/**
+	 * Loads all data for the plugin
+	 */
+	public void load() {
+		// Set configs to null
+		config = null;
+		bots = null;
+		channels = null;
+		chatters = null;
 		// Load config
 		config = new ChatConfiguration(this);
 		config.load();
@@ -129,6 +132,38 @@ public class WindChat extends CommonPlugin {
 		dateHandler.init();
 		// Initialize chat logger
 		logger.start();
+		// Load all online players
+		Engine engine = getEngine();
+		Platform platform = engine.getPlatform();
+		if (platform == Platform.SERVER) {
+			for (Player player : ((Server) engine).getOnlinePlayers()) {
+				chatters.load(player);
+			}
+		}
+	}
+
+	/**
+	 * Saves all data for the plugin.
+	 */
+	public void save() {
+		// Save all data
+		config.save();
+		bots.save();
+		channels.save();
+		chatters.save();
+		logger.stop();
+	}
+
+	@Override
+	public void onReload() {
+		load();
+		getLogger().info("WindChat " + getDescription().getVersion() + " reloaded.");
+	}
+
+	@Override
+	public void onEnable() {
+		// Load data
+		load();
 		// Register events
 		Spout.getEventManager().registerEvents(new LocalChatHandler(this), this);
 		// Register commands
@@ -140,13 +175,13 @@ public class WindChat extends CommonPlugin {
 		for (String node : nodes.get()) {
 			DefaultPermissions.addDefaultPermission(node);
 		}
-		getLogger().info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " enabled!");
+		getLogger().info("WindChat " + getDescription().getVersion() + " enabled!");
 	}
 
 	@Override
 	public void onDisable() {
-		// Save logged messages
-		logger.stop();
-		getLogger().info("WindChat " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " disabled.");
+		// Save data
+		save();
+		getLogger().info("WindChat " + getDescription().getVersion() + " disabled.");
 	}
 }

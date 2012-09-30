@@ -80,6 +80,9 @@ public class ChatLogger {
 	 */
 	public void stop() {
 		try {
+			if (file == null) {
+				return;
+			}
 			BufferedWriter out = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
 			for (String message : messages) {
 				out.write(message);

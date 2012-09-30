@@ -117,7 +117,7 @@ public class ChannelConfiguration extends YamlConfiguration {
 		for (Chatter chatter : channel.getListeners()) {
 			listeners.add(chatter.getParent().getName());
 		}
-		getNode(path + ".listeners").setValue(channel.getListeners());
+		getNode(path + ".listeners").setValue(listeners);
 		getNode(path + ".banned").setValue(channel.getBanned());
 		getNode(path + ".muted").setValue(channel.getMuted());
 		for (Entry<String, String> word : channel.getCensoredWords().entrySet()) {
