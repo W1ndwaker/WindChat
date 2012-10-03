@@ -1,8 +1,9 @@
 WindChat
 ========
-[![Status]]
+![Status]
 
-[![GitHub Icon]] [![Jenkins Icon]]
+![GitHub Icon] ![Jenkins Icon]
+
 [Latest Build] | [Recommended Build]
 
 About
