@@ -41,6 +41,10 @@ public class Placeholders {
 	 * Placeholder to be replaced by a quit message
 	 */
 	public static final Placeholder QUIT_MESSAGE = new Placeholder("quit_message");
+	/**
+	 * Represents the address of a message.
+	 */
+	public static final Placeholder ADDRESS = new Placeholder("address");
 
 	private static final Set<Placeholder> VALUES = new HashSet<Placeholder>();
 
@@ -69,7 +73,7 @@ public class Placeholders {
 	 * Formats a message sent to a channel.
 	 * 
 	 * @param format to set
-	 * @param message to use for placeholder 
+	 * @param message to use for placeholder
 	 */
 	public static void format(Placeholder placeholder, ChatArguments template, ChatArguments args) {
 		if (template.hasPlaceholder(placeholder)) {

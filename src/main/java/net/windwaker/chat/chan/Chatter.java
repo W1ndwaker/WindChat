@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
+import net.windwaker.chat.io.yaml.ChatConfiguration;
 import net.windwaker.chat.util.Format;
 import net.windwaker.chat.util.Placeholders;
 
@@ -33,14 +34,16 @@ import org.spout.api.chat.style.ChatStyle;
 import org.spout.api.command.CommandSource;
 import org.spout.api.data.ValueHolder;
 import org.spout.api.entity.Player;
+import org.spout.api.util.Named;
 
-public class Chatter {
+public class Chatter implements Named {
 	private final WindChat plugin;
 	private final CommandSource parent;
 	private final Set<Channel> channels = new HashSet<Channel>(), invites = new HashSet<Channel>();
 	private Channel activeChannel;
 	private ChatArguments quitMessage;
 	private boolean autoSave;
+	private Chatter lastSender;
 
 	/**
 	 * Constructs a new chatter object
@@ -50,6 +53,50 @@ public class Chatter {
 	public Chatter(WindChat plugin, CommandSource parent) {
 		this.parent = parent;
 		this.plugin = plugin;
+	}
+
+	/**
+	 * Sends a private message to this chatter. Only this chatter can see the
+	 * specified message.
+	 *
+	 * @param sender of the message
+	 * @param message to send
+	 */
+	public void sendPrivateMessage(Chatter sender, ChatArguments message) {
+		lastSender = sender;
+		// Incoming
+		ChatArguments from = ChatArguments.fromFormatString(ChatConfiguration.PRIVATE_MESSAGE_FORMAT.getString());
+		Placeholders.format(Placeholders.NAME, from, new ChatArguments(sender.getParent().getName()));
+		Placeholders.format(Placeholders.MESSAGE, from, message);
+		Placeholders.format(Placeholders.ADDRESS, from, new ChatArguments("From"));
+		parent.sendMessage(from);
+		// Outgoing
+		ChatArguments to = ChatArguments.fromFormatString(ChatConfiguration.PRIVATE_MESSAGE_FORMAT.getString());
+		Placeholders.format(Placeholders.NAME, to, new ChatArguments(sender.getParent().getName()));
+		Placeholders.format(Placeholders.MESSAGE, to, message);
+		Placeholders.format(Placeholders.ADDRESS, to, new ChatArguments("To"));
+		sender.getParent().sendMessage(to);
+	}
+
+	/**
+	 * Replies to the last chatter to send a private message to this chatter.
+	 *
+	 * @param message
+	 */
+	public void reply(ChatArguments message) {
+		if (lastSender == null) {
+			throw new IllegalStateException("Cannot send message to null chatter.");
+		}
+		lastSender.sendPrivateMessage(this, message);
+	}
+
+	/**
+	 * Returns the last chatter to send a private message to this chatter.
+	 *
+	 * @return last sender of private message
+	 */
+	public Chatter getLastSender() {
+		return lastSender;
 	}
 
 	/**
@@ -348,4 +395,9 @@ public class Chatter {
 	public int hashCode() {
 		return parent.hashCode();
 	}
-}                                    
+
+	@Override
+	public String getName() {
+		return parent.getName();
+	}
+}

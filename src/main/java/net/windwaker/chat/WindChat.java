@@ -21,7 +21,6 @@
  */
 package net.windwaker.chat;
 
-import net.windwaker.chat.cmd.ChannelCommand;
 import net.windwaker.chat.cmd.ChatCommands;
 import net.windwaker.chat.handler.DateHandler;
 import net.windwaker.chat.handler.LocalChatHandler;
@@ -109,11 +108,6 @@ public class WindChat extends CommonPlugin {
 	 * Loads all data for the plugin
 	 */
 	public void load() {
-		// Set configs to null
-		config = null;
-		bots = null;
-		channels = null;
-		chatters = null;
 		// Load config
 		config = new ChatConfiguration(this);
 		config.load();
@@ -175,7 +169,6 @@ public class WindChat extends CommonPlugin {
 		Spout.getEventManager().registerEvents(new LocalChatHandler(this), this);
 		// Register commands
 		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());	
-		getEngine().getRootCommand().addSubCommands(this, ChannelCommand.class, commandRegFactory);
 		getEngine().getRootCommand().addSubCommands(this, ChatCommands.class, commandRegFactory);
 		// Add default permissions
 		DefaultPermissionNodes nodes = new DefaultPermissionNodes();

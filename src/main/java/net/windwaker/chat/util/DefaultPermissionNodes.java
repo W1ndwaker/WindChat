@@ -39,6 +39,8 @@ public class DefaultPermissionNodes {
 				, "windchat.date"
 				, "windchat.styles"
 				, "windchat.placeholders"
+				, "windchat.query"
+				, "windchat.reply"
 		);
 	}
 }

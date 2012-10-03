@@ -22,7 +22,9 @@
 package net.windwaker.chat.io.yaml;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
@@ -75,8 +77,8 @@ public class ChatterConfiguration extends YamlConfiguration {
 
 	public void save(Chatter chatter) {
 		String path = "chatters." + chatter;
-		getNode(path + ".channels").setValue(chatter.getChannels());
-		getNode(path + ".invites").setValue(chatter.getInvites());
+		getNode(path + ".channels").setValue(ChatConfiguration.getNames(chatter.getChannels()));
+		getNode(path + ".invites").setValue(ChatConfiguration.getNames(chatter.getInvites()));
 		getNode(path + ".active-channel").setValue(chatter.getActiveChannel().getName());
 	}
 

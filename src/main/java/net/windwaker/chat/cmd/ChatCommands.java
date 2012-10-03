@@ -27,6 +27,7 @@ import java.util.List;
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.chan.Channel;
 import net.windwaker.chat.chan.Chatter;
+import net.windwaker.chat.cmd.sub.ChannelCommands;
 import net.windwaker.chat.handler.DateHandler;
 import net.windwaker.chat.util.Placeholders;
 
@@ -37,6 +38,7 @@ import org.spout.api.command.CommandContext;
 import org.spout.api.command.CommandSource;
 import org.spout.api.command.annotated.Command;
 import org.spout.api.command.annotated.CommandPermissions;
+import org.spout.api.command.annotated.NestedCommand;
 import org.spout.api.entity.Player;
 import org.spout.api.exception.CommandException;
 
@@ -129,6 +131,87 @@ public class ChatCommands {
 		source.sendMessage(ChatStyle.YELLOW, "Tip: ", ChatStyle.ITALIC, " Placeholders are always surrounded by one set of curly brackets. (ie {NAME})");
 		for (Placeholder placeholder : Placeholders.getValues()) {
 			source.sendMessage(placeholder.getName());
+		}
+	}
+
+	@Command(aliases = {"query", "pm", "tell"}, usage = "<player> <message>", desc = "Sends a message to the specified player.", min = 2)
+	@CommandPermissions("windchat.query")
+	public void query(CommandContext args, CommandSource source) throws CommandException {
+		if (!(source instanceof Player)) {
+			throw new CommandException("You must be a player to perform this command.");
+		}
+		Chatter chatter = getChatter(plugin, args.getPlayer(0, false));
+		Chatter sender = getChatter(plugin, (Player) source);
+		chatter.sendPrivateMessage(sender, new ChatArguments(args.getJoinedString(1)));
+	}
+
+	@Command(aliases = {"reply", "r"}, usage = "<message>", desc = "Quickly reply to the last person you received a private message from.", min = 1)
+	@CommandPermissions("windchat.reply")
+	public void reply(CommandContext args, CommandSource source) throws CommandException {
+		if (!(source instanceof Player)) {
+			throw new CommandException("You must be a player to perform this command.");
+		}
+		Chatter sender = getChatter(plugin, (Player) source);
+		if (sender.getLastSender() == null) {
+			throw new CommandException("No one to send to.");
+		}
+		sender.reply(new ChatArguments(args.getJoinedString(0)));
+	}
+
+	@Command(aliases = {"channel", "ch"}, desc = "Parent cmd for WindChat")
+	@CommandPermissions("windchat.cmd.channel")
+	@NestedCommand(ChannelCommands.class)
+	public void channel(CommandContext args, CommandSource source) throws CommandException {
+	}
+
+	public static Chatter getChatter(WindChat plugin, Player player) throws CommandException {
+		Chatter chatter = plugin.getChatters().get(player.getName());
+		if (chatter == null) {
+			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
+			throw new CommandException("Error: Chatter was null!");
+		}
+		return chatter;
+	}
+
+	public static Channel getChannel(WindChat plugin, CommandContext args, CommandSource source, int length) throws CommandException {
+		Channel channel = null;
+		if (args.length() == length) {
+			channel = getActiveChannel(plugin, source);
+		}
+		if (args.length() == length + 1) {
+			channel = getChannel(plugin, args, 1);
+		}
+		return channel;
+	}
+
+	public static Channel getChannel(WindChat plugin, CommandContext args, int index) throws CommandException {
+		Channel channel = plugin.getChannels().get(args.getString(index));
+		if (channel == null) {
+			throw new CommandException("Channel not found!");
+		}
+		return channel;
+	}
+
+	public static Channel getActiveChannel(WindChat plugin, CommandSource source) throws CommandException {
+		if (!(source instanceof Player)) {
+			throw new CommandException("Please specify a channel to mute the player in.");
+		}
+		Player p = (Player) source;
+		Chatter chatter = plugin.getChatters().get(p.getName());
+		if (chatter == null) {
+			p.kick(ChatStyle.RED, "Error: An internal error occurred.");
+			throw new CommandException("Error: Chatter was null!");
+		}
+		Channel channel = chatter.getActiveChannel();
+		if (channel == null) {
+			throw new CommandException("Channel not found!");
+		}
+		return channel;
+	}
+
+	public static void checkPermission(CommandSource source, String node) throws CommandException {
+		if (!source.hasPermission(node)) {
+			throw new CommandException("You don't have permission to do that!");
 		}
 	}
 }

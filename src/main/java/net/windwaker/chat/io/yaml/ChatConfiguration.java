@@ -22,10 +22,16 @@
 package net.windwaker.chat.io.yaml;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import net.windwaker.chat.WindChat;
 
 import org.spout.api.exception.ConfigurationException;
+import org.spout.api.util.Named;
 import org.spout.api.util.config.ConfigurationHolder;
 import org.spout.api.util.config.ConfigurationHolderConfiguration;
 import org.spout.api.util.config.yaml.YamlConfiguration;
@@ -53,6 +59,10 @@ public class ChatConfiguration extends ConfigurationHolderConfiguration {
 	 * @see {@link net.windwaker.chat.util.Format#LEAVE_MESSAGE}
 	 */
 	public static final ConfigurationHolder DEFAULT_LEAVE_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{NAME} {{GRAY}}has left the game. ({QUIT_MESSAGE})", "default-leave-message");
+	/**
+	 * Teh default format to use in private conversations. The address being "To" or "From".
+	 */
+	public static final ConfigurationHolder PRIVATE_MESSAGE_FORMAT = new ConfigurationHolder("{{DARK_CYAN}}{ADDRESS} {NAME}{{GRAY}}: {MESSAGE}", "private-message-format");
 	/**
 	 * The time zone to use with the 'date' cmd.
 	 */
@@ -94,5 +104,14 @@ public class ChatConfiguration extends ConfigurationHolderConfiguration {
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static <T extends Named> List<String> getNames(Set<T> named) {
+		List<String> names = new ArrayList<String>();
+		Iterator<T> i = named.iterator();
+		while (i.hasNext()) {
+			names.add(i.next().getName());
+		}
+		return names;
 	}
 }

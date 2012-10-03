@@ -37,6 +37,11 @@ import org.spout.api.command.annotated.CommandPermissions;
 import org.spout.api.entity.Player;
 import org.spout.api.exception.CommandException;
 
+import static net.windwaker.chat.cmd.ChatCommands.getActiveChannel;
+import static net.windwaker.chat.cmd.ChatCommands.getChannel;
+import static net.windwaker.chat.cmd.ChatCommands.checkPermission;
+import static net.windwaker.chat.cmd.ChatCommands.getChatter;
+
 /**
  * A collection of general channel commands.
  */
@@ -60,7 +65,7 @@ public class ChannelCommands {
 		String word = args.getString(0);
 		Channel channel = null;
 		if (args.length() == 1) {
-			channel = getActiveChannel(source);
+			channel = getActiveChannel(plugin, source);
 		}
 
 		String replacement = null;
@@ -75,7 +80,7 @@ public class ChannelCommands {
 		}
 
 		if (args.length() == 3) {
-			channel = getChannel(args, 2);
+			channel = getChannel(plugin, args, 2);
 		}
 
 		if (channel == null) {
@@ -96,16 +101,16 @@ public class ChannelCommands {
 		if (!(source instanceof Player)) {
 			throw new CommandException("Only players can perform this cmd!");
 		}
-		Channel channel = getChannel(args, 0);
+		Channel channel = getChannel(plugin, args, 0);
 		checkPermission(source, "windchat.qm." + channel.getName());
-		Chatter chatter = getChatter((Player) source);
+		Chatter chatter = getChatter(plugin, (Player) source);
 		chatter.chat(channel, args.getJoinedString(1));
 	}
 
 	@Command(aliases = {"radius", "distance", "range"}, usage = "<#> [channel]",desc = "Set the radius of the channel.", min = 1, max = 2)
 	public void radius(CommandContext args, CommandSource source) throws CommandException {
 		int radius = args.getInteger(0);
-		Channel channel = getChannel(args, source, 1);
+		Channel channel = getChannel(plugin, args, source, 1);
 		checkPermission(source, "windchat.radius." + channel.getName());
 		channel.setRadius(radius);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Set radius of channel '" + channel.getName() + "' to " + radius);
@@ -114,7 +119,7 @@ public class ChannelCommands {
 	@Command(aliases = "mute", usage = "<player> [channel]", desc = "Mute a player in a channel.", min = 1, max = 2)
 	public void mute(CommandContext args, CommandSource source) throws CommandException {
 		String playerName = args.getString(0);
-		Channel channel = getChannel(args, source, 1);
+		Channel channel = getChannel(plugin, args, source, 1);
 		checkPermission(source, "windchat.mute." + channel.getName());
 		channel.mute(playerName);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Muted player '", playerName, "' from channel '", channel.getName(), "'.");
@@ -123,7 +128,7 @@ public class ChannelCommands {
 	@Command(aliases = "unmute", usage = "<player> [channel]", desc = "Unmute a player in a channel.", min = 1, max = 2)
 	public void unmute(CommandContext args, CommandSource source) throws CommandException {
 		String playerName = args.getString(0);
-		Channel channel = getChannel(args, source, 1);
+		Channel channel = getChannel(plugin, args, source, 1);
 		checkPermission(source, "windchat.unmute." + channel.getName());
 		channel.unmute(playerName);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Unmuted player '", playerName, "' from channel '", channel.getName(), "'.");
@@ -134,7 +139,7 @@ public class ChannelCommands {
 		String playerName = args.getString(0);
 		Channel channel = null;
 		if (args.length() == 1) {
-			channel = getActiveChannel(source);
+			channel = getActiveChannel(plugin, source);
 		}
 
 		ChatArguments reason = null;
@@ -171,7 +176,7 @@ public class ChannelCommands {
 	@Command(aliases = "unban", usage = "<player> [channel]", desc = "Unban a player from a channel.", min = 1, max = 2)
 	public void unban(CommandContext args, CommandSource source) throws CommandException {
 		String playerName = args.getString(0);
-		Channel channel = getChannel(args, source, 1);
+		Channel channel = getChannel(plugin, args, source, 1);
 		checkPermission(source, "windchat.unban." + channel.getName());
 		channel.unban(playerName);
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "Player '", playerName, "' unbanned from channel '", channel.getName(), "'.");
@@ -180,10 +185,10 @@ public class ChannelCommands {
 	@Command(aliases = "kick", usage = "<player> [channel|reason] [reason]", desc = "Kick a player from a channel.", min = 1)
 	public void kick(CommandContext args, CommandSource source) throws CommandException {
 		Player player = args.getPlayer(0, false);
-		Chatter chatter = getChatter(player);
+		Chatter chatter = getChatter(plugin, player);
 		Channel channel = null;
 		if (args.length() == 1) {
-			channel = getActiveChannel(source);
+			channel = getActiveChannel(plugin, source);
 		}
 
 		ChatArguments reason = null;
@@ -219,21 +224,21 @@ public class ChannelCommands {
 
 	@Command(aliases = "invite", usage = "<player> [channel]", desc = "Invite a player to a channel.", min = 1, max = 2)
 	public void invite(CommandContext args, CommandSource source) throws CommandException {
-		Channel channel = getChannel(args, source, 1);
+		Channel channel = getChannel(plugin, args, source, 1);
 		Player player = args.getPlayer(0, false);
-		Chatter chatter = getChatter(player);
+		Chatter chatter = getChatter(plugin, player);
 		checkPermission(source, "windchat.invite." + channel.getName());
 		if (channel.isInviteOnly()) {
 			chatter.invite(channel);
 		}
 		String channelName = channel.getName();
-		player.sendMessage(ChatStyle.BRIGHT_GREEN, "You have been invited to channel '", channelName, "'. Use '/join ", channelName, "' to join.");
+		player.sendMessage(ChatStyle.BRIGHT_GREEN, "You have been invited to channel '", channelName, "'. Use '/ch join ", channelName, "' to join.");
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, "You invited player '", player.getName(), "' to join channel '", channelName, "'.");
 	}
 
 	@Command(aliases = "invite-only", usage = "<channel> <bool>", desc = "Set whether a channel is invite only", min = 2, max = 2)
 	public void inviteOnly(CommandContext args, CommandSource source) throws CommandException {
-		Channel channel = getChannel(args, 0);
+		Channel channel = getChannel(plugin, args, 0);
 		checkPermission(source, "windchat.invite-only." + channel.getName());
 		boolean value = Boolean.valueOf(args.getString(1));
 		channel.setInviteOnly(value);
@@ -247,8 +252,8 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chatter chatter = getChatter(player);
-		Channel channel = getChannel(args, 0);
+		Chatter chatter = getChatter(plugin, player);
+		Channel channel = getChannel(plugin, args, 0);
 		if (channel.equals(chatter.getActiveChannel())) {
 			throw new CommandException("You are already in " + channel.getName() + "!");
 		}
@@ -285,8 +290,8 @@ public class ChannelCommands {
 		}
 
 		Player player = (Player) source;
-		Chatter chatter = getChatter(player);
-		Channel channel = getChannel(args, 0);
+		Chatter chatter = getChatter(plugin, player);
+		Channel channel = getChannel(plugin, args, 0);
 		if (channel.equals(chatter.getActiveChannel())) {
 			throw new CommandException("You may not leave the channel you are active in!");
 		}
@@ -300,7 +305,7 @@ public class ChannelCommands {
 
 	@Command(aliases = {"who", "players", "users"}, usage = "[channel]", desc = "List all listeners in a channel", min = 0, max = 1)
 	public void who(CommandContext args, CommandSource source) throws CommandException {
-		Channel channel = getChannel(args, source, 0);
+		Channel channel = getChannel(plugin, args, source, 0);
 		checkPermission(source, "windchat.who." + channel.getName());
 		List<Chatter> listeners = new ArrayList<Chatter>(channel.getListeners());
 		ChatArguments message = new ChatArguments(ChatStyle.BRIGHT_GREEN, channel.getName(), " (", ChatStyle.BLUE, listeners.size(), ChatStyle.BRIGHT_GREEN, "): ");
@@ -319,14 +324,14 @@ public class ChannelCommands {
 		if (pass.equalsIgnoreCase("off")) {
 			pass = null;
 		}
-		Channel channel = getChannel(args, source, 1);
+		Channel channel = getChannel(plugin, args, source, 1);
 		checkPermission(source, "windchat.pass." + channel.getName());
 		channel.setPassword(pass);
 		ChatArguments message = new ChatArguments();
 		if (pass != null) {
-			message.append("Set password to '", pass, "'.");
+			message.append(ChatStyle.BRIGHT_GREEN, "Set password to '", pass, "'.");
 		} else {
-			message.append("Password toggled off.");
+			message.append(ChatStyle.BRIGHT_GREEN, "Password toggled off.");
 		}
 		source.sendMessage(message);
 	}
@@ -346,57 +351,6 @@ public class ChannelCommands {
 				return;
 			}
 			source.sendMessage(ChatStyle.BLUE, channels.get(i).getName());
-		}
-	}
-
-	private Chatter getChatter(Player player) throws CommandException {
-		Chatter chatter = plugin.getChatters().get(player.getName());
-		if (chatter == null) {
-			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
-			throw new CommandException("Error: Chatter was null!");
-		}
-		return chatter;
-	}
-
-	private Channel getChannel(CommandContext args, CommandSource source, int length) throws CommandException {
-		Channel channel = null;
-		if (args.length() == length) {
-			channel = getActiveChannel(source);
-		}
-		if (args.length() == length + 1) {
-			channel = getChannel(args, 1);
-		}
-		return channel;
-	}
-
-	private Channel getChannel(CommandContext args, int index) throws CommandException {
-		Channel channel = plugin.getChannels().get(args.getString(index));
-		if (channel == null) {
-			throw new CommandException("Channel not found!");
-		}
-		return channel;
-	}
-
-	private Channel getActiveChannel(CommandSource source) throws CommandException {
-		if (!(source instanceof Player)) {
-			throw new CommandException("Please specify a channel to mute the player in.");
-		}
-		Player p = (Player) source;
-		Chatter chatter = plugin.getChatters().get(p.getName());
-		if (chatter == null) {
-			p.kick(ChatStyle.RED, "Error: An internal error occurred.");
-			throw new CommandException("Error: Chatter was null!");
-		}
-		Channel channel = chatter.getActiveChannel();
-		if (channel == null) {
-			throw new CommandException("Channel not found!");
-		}
-		return channel;
-	}
-
-	private void checkPermission(CommandSource source, String node) throws CommandException {
-		if (!source.hasPermission(node)) {
-			throw new CommandException("You don't have permission to do that!");
 		}
 	}
 }
