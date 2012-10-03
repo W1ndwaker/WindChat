@@ -48,6 +48,12 @@
 		</developer>
 	</developers>
 
+	<!-- Continuous integration -->
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://build.spout.org/</url>
+	</ciManagement>
+
 	<!-- Repositories -->
 	<repositories>
 		<repository>
