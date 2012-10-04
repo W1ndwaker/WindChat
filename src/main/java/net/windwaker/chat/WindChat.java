@@ -76,7 +76,7 @@ public class WindChat extends CommonPlugin {
 	}
 
 	/**
-	 * Gets the collection of loaded {@link net.windwaker.chat.chan.irc.IrcBot}
+	 * Gets the collection of loaded {@link net.windwaker.chat.chan.IrcBot}
 	 * on the plugin
 	 * 
 	 * @return loaded bots

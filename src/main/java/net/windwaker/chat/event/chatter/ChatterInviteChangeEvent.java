@@ -24,15 +24,57 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package net.windwaker.chat.handler;
+package net.windwaker.chat.event.chatter;
 
-import net.windwaker.chat.chan.IrcBot;
-import org.pircbotx.hooks.ListenerAdapter;
-import org.pircbotx.hooks.events.MessageEvent;
+import net.windwaker.chat.chan.Channel;
+import net.windwaker.chat.chan.Chatter;
 
-public class IrcChatHandler extends ListenerAdapter<IrcBot> {
+import org.spout.api.event.Cancellable;
+import org.spout.api.event.HandlerList;
+
+public class ChatterInviteChangeEvent extends ChatterEvent implements Cancellable {
+	private static final HandlerList handlers = new HandlerList();
+	private boolean cancelled, invited;
+	private Channel channel;
+
+	public ChatterInviteChangeEvent(Chatter chatter, Channel channel, boolean invited) {
+		super(chatter);
+		this.channel = channel;
+		this.invited = invited;
+	}
+
+	public Channel getChannel() {
+		return channel;
+	}
+
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
+
+	public void setInvited(boolean invited) {
+		this.invited = invited;
+	}
+
+	public boolean isInvited() {
+		return invited;
+	}
+
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+
 	@Override
-	public void onMessage(MessageEvent<IrcBot> event) {
-		event.getBot().messageReceived(event.getUser().getNick(), event.getMessage());
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
 	}
 }

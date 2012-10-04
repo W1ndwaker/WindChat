@@ -22,17 +22,15 @@
 package net.windwaker.chat.io.yaml;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.chan.Channel;
 import net.windwaker.chat.chan.Chatter;
-import net.windwaker.chat.chan.irc.IrcBot;
+import net.windwaker.chat.chan.IrcBot;
 
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.exception.ConfigurationException;

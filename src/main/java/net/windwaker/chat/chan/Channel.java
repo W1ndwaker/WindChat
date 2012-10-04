@@ -27,9 +27,14 @@ import java.util.Map;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.chan.irc.IrcBot;
+import net.windwaker.chat.event.channel.ChannelBanEvent;
+import net.windwaker.chat.event.channel.ChannelBroadcastEvent;
+import net.windwaker.chat.event.channel.ChannelCensorEvent;
+import net.windwaker.chat.event.channel.ChannelMuteChangeEvent;
+import net.windwaker.chat.event.channel.ChannelUnbanEvent;
 import net.windwaker.chat.util.Placeholders;
 
+import org.spout.api.Spout;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
 import org.spout.api.util.Named;
@@ -100,9 +105,6 @@ public class Channel implements Named {
 		if (!ircEnabled) {
 			return;
 		}
-		if (this.bot != null && this.bot.isConnected()) {
-			this.bot.disconnect();
-		}
 		if (bot == null) {
 			throw new IllegalArgumentException("Cannot connect a null bot.");
 		}
@@ -172,8 +174,8 @@ public class Channel implements Named {
 	 * @param replacement
 	 */
 	public void censor(String word, String replacement) {
-		word = word.toLowerCase();
-		censoredWords.put(word, replacement);
+		ChannelCensorEvent event = Spout.getEventManager().callEvent(new ChannelCensorEvent(this, word, replacement));
+		censoredWords.put(event.getWord().toLowerCase(), event.getReplacement());
 		if (autoSave) {
 			save();
 		}
@@ -204,6 +206,12 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void mute(String name) {
+		ChannelMuteChangeEvent event = Spout.getEventManager().callEvent(new ChannelMuteChangeEvent(this, name, true));
+		name = event.getName();
+		if (!event.isMuted()) {
+			unmute(name);
+			return;
+		}
 		muted.add(name);
 		if (autoSave) {
 			save();
@@ -216,6 +224,12 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void unmute(String name) {
+		ChannelMuteChangeEvent event = Spout.getEventManager().callEvent(new ChannelMuteChangeEvent(this, name, false));
+		name = event.getName();
+		if (event.isMuted()) {
+			mute(name);
+			return;
+		}
 		muted.remove(name);
 		if (autoSave) {
 			save();
@@ -268,12 +282,17 @@ public class Channel implements Named {
 	 * @param reason for kick
 	 */
 	public void ban(String name, boolean kick, ChatArguments reason) {
-		if (kick) {
+		ChannelBanEvent event = Spout.getEventManager().callEvent(new ChannelBanEvent(this, name, kick, reason));
+		if (event.isCancelled()) {
+			return;
+		}
+		name = event.getName();
+		if (event.isKicked()) {
 			Chatter chatter = plugin.getChatters().get(name);
 			if (chatter == null) {
 				return;
 			}
-			chatter.kick(this, reason);
+			chatter.kick(this, event.getReason());
 		}
 		banned.add(name);
 		if (autoSave) {
@@ -287,7 +306,11 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void unban(String name) {
-		banned.remove(name);
+		ChannelUnbanEvent event = Spout.getEventManager().callEvent(new ChannelUnbanEvent(this, name));
+		if (event.isCancelled()) {
+			return;
+		}
+		banned.remove(event.getName());
 		if (autoSave) {
 			save();
 		}
@@ -507,6 +530,9 @@ public class Channel implements Named {
 	 * @param message
 	 */
 	public void broadcast(Chatter sender, ChatArguments message) {
+		ChannelBroadcastEvent event = Spout.getEventManager().callEvent(new ChannelBroadcastEvent(this, sender, message));
+		sender = event.getSender();
+		message = event.getMessage();
 		Placeholders.format(Placeholders.MESSAGE, format, message);
 		for (Chatter chatter : listeners) {
 			if (sender != null && !chatter.canHear(sender, this)) {

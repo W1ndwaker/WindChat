@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
-import net.windwaker.chat.chan.irc.IrcBot;
+import net.windwaker.chat.chan.IrcBot;
 
 import org.spout.api.exception.ConfigurationException;
 import org.spout.api.util.config.yaml.YamlConfiguration;

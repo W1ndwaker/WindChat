@@ -25,10 +25,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
+import net.windwaker.chat.event.chatter.ChatterChatEvent;
+import net.windwaker.chat.event.chatter.ChatterInviteChangeEvent;
+import net.windwaker.chat.event.chatter.ChatterJoinEvent;
+import net.windwaker.chat.event.chatter.ChatterKickEvent;
+import net.windwaker.chat.event.chatter.ChatterLeaveEvent;
 import net.windwaker.chat.io.yaml.ChatConfiguration;
 import net.windwaker.chat.util.Format;
 import net.windwaker.chat.util.Placeholders;
 
+import org.spout.api.Spout;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
 import org.spout.api.command.CommandSource;
@@ -167,6 +173,15 @@ public class Chatter implements Named {
 	 * @param channel
 	 */
 	public void invite(Channel channel) {
+		ChatterInviteChangeEvent event = Spout.getEventManager().callEvent(new ChatterInviteChangeEvent(this, channel, true));
+		if (event.isCancelled()) {
+			return;
+		}
+		channel = event.getChannel();
+		if (!event.isInvited()) {
+			revokeInvite(channel);
+			return;
+		}
 		invites.add(channel);
 		if (autoSave) {
 			save();
@@ -179,6 +194,15 @@ public class Chatter implements Named {
 	 * @param channel
 	 */
 	public void revokeInvite(Channel channel) {
+		ChatterInviteChangeEvent event = Spout.getEventManager().callEvent(new ChatterInviteChangeEvent(this, channel, false));
+		if (event.isCancelled()) {
+			return;
+		}
+		channel = event.getChannel();
+		if (event.isInvited()) {
+			invite(channel);
+			return;
+		}
 		invites.remove(channel);
 		if (autoSave) {
 			save();
@@ -219,6 +243,12 @@ public class Chatter implements Named {
 	 * @param message
 	 */
 	public void chat(Channel channel, ChatArguments message) {
+		ChatterChatEvent event = Spout.getEventManager().callEvent(new ChatterChatEvent(this, channel, message));
+		if (event.isCancelled()) {
+			return;
+		}
+		channel = event.getChannel();
+		message = event.getMessage();
 		if (!parent.hasPermission("windchat.chat." + activeChannel.getName())) {
 			parent.sendMessage(ChatStyle.RED, "You don't have permission to chat in this channel!");
 			return;
@@ -259,12 +289,17 @@ public class Chatter implements Named {
 	 * @param message
 	 */
 	public void join(Channel channel, ChatArguments message, boolean active) {
-		channels.add(channel);
-		channel.addListener(this);
-		if (active) {
+		ChatterJoinEvent event = Spout.getEventManager().callEvent(new ChatterJoinEvent(this, channel, message, active));
+		if (event.isCancelled()) {
+			return;
+		}
+		channel = event.getChannel();
+		if (event.isActive()) {
 			activeChannel = channel;
 		}
-		parent.sendMessage(message);
+		channels.add(channel);
+		channel.addListener(this);
+		parent.sendMessage(event.getMessage());
 		if (autoSave) {
 			save();
 		}
@@ -286,12 +321,17 @@ public class Chatter implements Named {
 	 * @param message
 	 */
 	public void leave(Channel channel, ChatArguments message) {
+		ChatterLeaveEvent event = Spout.getEventManager().callEvent(new ChatterLeaveEvent(this, channel, message));
+		if (event.isCancelled()) {
+			return;
+		}
+		channel = event.getChannel();
 		if (channel.equals(activeChannel)) {
 			throw new IllegalArgumentException("A player may not leave the channel he/she is active in.");
 		}
 		channel.removeListener(parent.getName());
 		channels.remove(channel);
-		parent.sendMessage(message);
+		parent.sendMessage(event.getMessage());
 		if (autoSave) {
 			save();
 		}
@@ -332,14 +372,16 @@ public class Chatter implements Named {
 	 * @param reason
 	 */
 	public void kick(Channel channel, ChatArguments reason) {
+		ChatterKickEvent event = Spout.getEventManager().callEvent(new ChatterKickEvent(this, channel, reason));
 		Channel def = plugin.getChannels().getDefault();
+		channel = event.getChannel();
 		if (channel.equals(def)) {
 			throw new IllegalStateException("You cannot kick a player from the default channel.");
 		}
 		if (channel.equals(activeChannel)) {
 			join(def);
 		}
-		leave(channel, new ChatArguments(ChatStyle.RED, "Kicked from ", channel.getName(), ": ", reason));
+		leave(channel, new ChatArguments(ChatStyle.RED, "Kicked from ", channel.getName(), ": ", event.getMessage()));
 	}
 
 	/**

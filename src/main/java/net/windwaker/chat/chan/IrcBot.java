@@ -19,16 +19,19 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package net.windwaker.chat.chan.irc;
+package net.windwaker.chat.chan;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import net.windwaker.chat.WindChat;
 import net.windwaker.chat.chan.Channel;
+import net.windwaker.chat.event.bot.BotConnectEvent;
+import net.windwaker.chat.event.bot.BotReceiveMessageEvent;
 import net.windwaker.chat.handler.IrcChatHandler;
 import org.pircbotx.PircBotX;
 
+import org.spout.api.Spout;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.plugin.PluginDescriptionFile;
 
@@ -50,7 +53,11 @@ public class IrcBot extends PircBotX {
 
 	public boolean connect() {
 		try {
-			connect(server);
+			BotConnectEvent event = Spout.getEventManager().callEvent(new BotConnectEvent(this, server));
+			if (event.isCancelled()) {
+				return false;
+			}
+			connect(event.getServer());
 			for (String chan : ircChannels) {
 				joinChannel(chan);
 			}
@@ -69,7 +76,13 @@ public class IrcBot extends PircBotX {
 		localChannels.remove(channel);
 	}
 
-	public void messageRecieved(String user, String message) {
+	public void messageReceived(String user, String message) {
+		BotReceiveMessageEvent event = Spout.getEventManager().callEvent(new BotReceiveMessageEvent(this, user, message));
+		if (event.isCancelled()) {
+			return;
+		}
+		user = event.getUser();
+		message = event.getMessage();
 		for (Channel chan : localChannels) {
 			chan.broadcast(new ChatArguments(user + ": " + message));
 		}
