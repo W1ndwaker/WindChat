@@ -8,7 +8,7 @@ WindChat
 
 About
 =====
-WindChat is a plugin for the Spout platform, developed by SpoutDev that provides new features to Spout's chat framework.
+WindChat is a plugin for the Spout platform that provides new features to Spout's chat framework.
 Further details can been seen [here][Home].
 Copyright (c) 2012 Walker Crouse <http://windwaker.net/>
 
