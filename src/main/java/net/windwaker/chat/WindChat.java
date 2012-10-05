@@ -35,6 +35,7 @@ import org.spout.api.Engine;
 import org.spout.api.Server;
 import org.spout.api.Spout;
 import org.spout.api.command.CommandRegistrationsFactory;
+import org.spout.api.command.RootCommand;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
 import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
@@ -48,8 +49,9 @@ import org.spout.api.plugin.Platform;
  * @author Windwaker
  */
 public class WindChat extends CommonPlugin {
-	private final DateHandler dateHandler = new DateHandler();
-	private final ChatLogger logger = new ChatLogger(this);
+	private ChatLogger logger;
+	private DateHandler dateHandler;
+	private LocalChatHandler chatHandler;
 	private ChatConfiguration config;
 	private ChatterConfiguration chatters;
 	private ChannelConfiguration channels;
@@ -108,30 +110,41 @@ public class WindChat extends CommonPlugin {
 	 * Loads all data for the plugin
 	 */
 	public void load() {
-		// Load config
+		// Create then load config
 		config = new ChatConfiguration(this);
 		config.load();
-		// Load bots
+		// Create then load bots
 		bots = new BotConfiguration(this);
 		bots.load();
-		// Load channels
+		// Create then load channels
 		channels = new ChannelConfiguration(this);
 		channels.load();
-		// Load chatters
+		// Create then load chatters
 		chatters = new ChatterConfiguration(this);
 		chatters.load();
 		// Load rest of channel data
 		channels.postLoad();
-		// Load date formats
-		dateHandler.init();
 		// Load all online players
 		Engine engine = getEngine();
 		Platform platform = engine.getPlatform();
-		if (platform == Platform.SERVER) {
+		if (platform == Platform.SERVER || platform == Platform.PROXY) {
 			for (Player player : ((Server) engine).getOnlinePlayers()) {
 				chatters.load(player);
 			}
 		}
+		// Load date formats
+		dateHandler = new DateHandler();
+		dateHandler.init();
+		// Create chat handler
+		chatHandler = new LocalChatHandler(this);
+		// Start or restart the logger
+		logger = new ChatLogger(this);
+		startLogger();
+		// De-register then register commands
+		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
+		RootCommand cmd = engine.getRootCommand();
+		cmd.removeChildren(this);
+		cmd.addSubCommands(this, ChatCommands.class, commandRegFactory);
 	}
 
 	/**
@@ -145,31 +158,39 @@ public class WindChat extends CommonPlugin {
 		chatters.save();
 	}
 
+	/**
+	 * Starts the {@link ChatLogger}.
+	 */
+	public void startLogger() {
+		if (ChatConfiguration.LOG_CHAT.getBoolean()) {
+			logger.start();
+		}
+	}
+
+	/**
+	 * Stops the chat logger
+	 */
+	public void stopLogger() {
+		logger.stop();
+	}
+
 	@Override
 	public void onReload() {
 		// Load data from disk
 		load();
-		// Restart logger
-		logger.stop();
-		if (ChatConfiguration.LOG_CHAT.getBoolean()) {
-			logger.start();
-		}
 		getLogger().info("WindChat " + getDescription().getVersion() + " reloaded.");
 	}
 
 	@Override
-	public void onEnable() {
+	public void onLoad() {
 		// Load data
 		load();
-		// Initialize chat logger
-		if (ChatConfiguration.LOG_CHAT.getBoolean()) {
-			logger.start();
-		}
+	}
+
+	@Override
+	public void onEnable() {
 		// Register events
-		Spout.getEventManager().registerEvents(new LocalChatHandler(this), this);
-		// Register commands
-		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());	
-		getEngine().getRootCommand().addSubCommands(this, ChatCommands.class, commandRegFactory);
+		Spout.getEventManager().registerEvents(chatHandler, this);
 		// Add default permissions
 		DefaultPermissionNodes nodes = new DefaultPermissionNodes();
 		for (String node : nodes.get()) {

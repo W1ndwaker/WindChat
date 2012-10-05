@@ -35,6 +35,7 @@ import org.spout.api.event.Order;
 import org.spout.api.event.player.PlayerChatEvent;
 import org.spout.api.event.player.PlayerJoinEvent;
 import org.spout.api.event.player.PlayerLeaveEvent;
+import org.spout.api.protocol.Protocol;
 
 /**
  * Handles formatting of messages from players.
@@ -66,6 +67,7 @@ public class LocalChatHandler implements Listener {
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
+		// Load player
 		Chatter chatter = plugin.getChatters().load(player);
 		if (chatter == null) {
 			player.kick(ChatStyle.RED, "Error: An internal error occurred.");
