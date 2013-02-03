@@ -194,7 +194,7 @@ public class WindChat extends CommonPlugin {
 		// Add default permissions
 		DefaultPermissionNodes nodes = new DefaultPermissionNodes();
 		for (String node : nodes.get()) {
-			DefaultPermissions.addDefaultPermission(node);
+			Spout.getEngine().getDefaultPermissions().addDefaultPermission(node);
 		}
 		getLogger().info("WindChat " + getDescription().getVersion() + " enabled!");
 	}

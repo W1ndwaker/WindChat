@@ -143,7 +143,7 @@ public class Chatter implements Named {
 			return true;
 		}
 		int radius = channel.getRadius();
-		return ((Player) parent).getTransform().getPosition().getDistance(((Player) sender.getParent()).getTransform().getPosition()) < radius || radius <= 0;
+		return ((Player) parent).getScene().getPosition().getDistance(((Player) sender.getParent()).getScene().getPosition()) < radius || radius <= 0;
 	}
 
 	/**
