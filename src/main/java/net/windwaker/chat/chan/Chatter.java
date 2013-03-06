@@ -34,7 +34,6 @@ import net.windwaker.chat.io.yaml.ChatConfiguration;
 import net.windwaker.chat.util.Format;
 import net.windwaker.chat.util.Placeholders;
 
-import org.spout.api.Spout;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
 import org.spout.api.command.CommandSource;
@@ -173,7 +172,7 @@ public class Chatter implements Named {
 	 * @param channel
 	 */
 	public void invite(Channel channel) {
-		ChatterInviteChangeEvent event = Spout.getEventManager().callEvent(new ChatterInviteChangeEvent(this, channel, true));
+		ChatterInviteChangeEvent event = plugin.getEngine().getEventManager().callEvent(new ChatterInviteChangeEvent(this, channel, true));
 		if (event.isCancelled()) {
 			return;
 		}
@@ -194,7 +193,7 @@ public class Chatter implements Named {
 	 * @param channel
 	 */
 	public void revokeInvite(Channel channel) {
-		ChatterInviteChangeEvent event = Spout.getEventManager().callEvent(new ChatterInviteChangeEvent(this, channel, false));
+		ChatterInviteChangeEvent event = plugin.getEngine().getEventManager().callEvent(new ChatterInviteChangeEvent(this, channel, false));
 		if (event.isCancelled()) {
 			return;
 		}
@@ -243,7 +242,7 @@ public class Chatter implements Named {
 	 * @param message
 	 */
 	public void chat(Channel channel, ChatArguments message) {
-		ChatterChatEvent event = Spout.getEventManager().callEvent(new ChatterChatEvent(this, channel, message));
+		ChatterChatEvent event = plugin.getEngine().getEventManager().callEvent(new ChatterChatEvent(this, channel, message));
 		if (event.isCancelled()) {
 			return;
 		}
@@ -289,7 +288,7 @@ public class Chatter implements Named {
 	 * @param message
 	 */
 	public void join(Channel channel, ChatArguments message, boolean active) {
-		ChatterJoinEvent event = Spout.getEventManager().callEvent(new ChatterJoinEvent(this, channel, message, active));
+		ChatterJoinEvent event = plugin.getEngine().getEventManager().callEvent(new ChatterJoinEvent(this, channel, message, active));
 		if (event.isCancelled()) {
 			return;
 		}
@@ -321,7 +320,7 @@ public class Chatter implements Named {
 	 * @param message
 	 */
 	public void leave(Channel channel, ChatArguments message) {
-		ChatterLeaveEvent event = Spout.getEventManager().callEvent(new ChatterLeaveEvent(this, channel, message));
+		ChatterLeaveEvent event = plugin.getEngine().getEventManager().callEvent(new ChatterLeaveEvent(this, channel, message));
 		if (event.isCancelled()) {
 			return;
 		}
@@ -372,7 +371,7 @@ public class Chatter implements Named {
 	 * @param reason
 	 */
 	public void kick(Channel channel, ChatArguments reason) {
-		ChatterKickEvent event = Spout.getEventManager().callEvent(new ChatterKickEvent(this, channel, reason));
+		ChatterKickEvent event = plugin.getEngine().getEventManager().callEvent(new ChatterKickEvent(this, channel, reason));
 		Channel def = plugin.getChannels().getDefault();
 		channel = event.getChannel();
 		if (channel.equals(def)) {

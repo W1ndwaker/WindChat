@@ -31,15 +31,16 @@ import net.windwaker.chat.event.bot.BotReceiveMessageEvent;
 import net.windwaker.chat.handler.IrcChatHandler;
 import org.pircbotx.PircBotX;
 
-import org.spout.api.Spout;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.plugin.PluginDescriptionFile;
 
 public class IrcBot extends PircBotX {
 	private final Set<Channel> localChannels = new HashSet<Channel>();
 	private final Set<String> ircChannels;
+	private final WindChat plugin;
 
 	public IrcBot(WindChat plugin, String name, boolean verbose, String server, Set<String> ircChannels) {
+		this.plugin = plugin;
 		this.ircChannels = ircChannels;
 		this.name = name;
 		this.server = server;
@@ -53,7 +54,7 @@ public class IrcBot extends PircBotX {
 
 	public boolean connect() {
 		try {
-			BotConnectEvent event = Spout.getEventManager().callEvent(new BotConnectEvent(this, server));
+			BotConnectEvent event = plugin.getEngine().getEventManager().callEvent(new BotConnectEvent(this, server));
 			if (event.isCancelled()) {
 				return false;
 			}
@@ -77,7 +78,7 @@ public class IrcBot extends PircBotX {
 	}
 
 	public void messageReceived(String user, String message) {
-		BotReceiveMessageEvent event = Spout.getEventManager().callEvent(new BotReceiveMessageEvent(this, user, message));
+		BotReceiveMessageEvent event = plugin.getEngine().getEventManager().callEvent(new BotReceiveMessageEvent(this, user, message));
 		if (event.isCancelled()) {
 			return;
 		}

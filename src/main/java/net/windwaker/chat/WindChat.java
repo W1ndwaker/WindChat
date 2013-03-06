@@ -33,16 +33,13 @@ import net.windwaker.chat.util.DefaultPermissionNodes;
 
 import org.spout.api.Engine;
 import org.spout.api.Server;
-import org.spout.api.Spout;
 import org.spout.api.command.CommandRegistrationsFactory;
 import org.spout.api.command.RootCommand;
 import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
 import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
 import org.spout.api.command.annotated.SimpleInjector;
 import org.spout.api.entity.Player;
-import org.spout.api.permissions.DefaultPermissions;
 import org.spout.api.plugin.CommonPlugin;
-import org.spout.api.plugin.Platform;
 
 /**
  * Chat plugin for the Spout platform.
@@ -126,8 +123,7 @@ public class WindChat extends CommonPlugin {
 		channels.postLoad();
 		// Load all online players
 		Engine engine = getEngine();
-		Platform platform = engine.getPlatform();
-		if (platform == Platform.SERVER || platform == Platform.PROXY) {
+		if (engine instanceof Server) {
 			for (Player player : ((Server) engine).getOnlinePlayers()) {
 				chatters.load(player);
 			}
@@ -141,7 +137,7 @@ public class WindChat extends CommonPlugin {
 		logger = new ChatLogger(this);
 		startLogger();
 		// De-register then register commands
-		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
+		CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(engine, new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
 		RootCommand cmd = engine.getRootCommand();
 		cmd.removeChildren(this);
 		cmd.addSubCommands(this, ChatCommands.class, commandRegFactory);
@@ -190,11 +186,11 @@ public class WindChat extends CommonPlugin {
 	@Override
 	public void onEnable() {
 		// Register events
-		Spout.getEventManager().registerEvents(chatHandler, this);
+		getEngine().getEventManager().registerEvents(chatHandler, this);
 		// Add default permissions
 		DefaultPermissionNodes nodes = new DefaultPermissionNodes();
 		for (String node : nodes.get()) {
-			Spout.getEngine().getDefaultPermissions().addDefaultPermission(node);
+			getEngine().getDefaultPermissions().addDefaultPermission(node);
 		}
 		getLogger().info("WindChat " + getDescription().getVersion() + " enabled!");
 	}

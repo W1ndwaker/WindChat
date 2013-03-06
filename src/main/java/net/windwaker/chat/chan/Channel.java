@@ -34,7 +34,6 @@ import net.windwaker.chat.event.channel.ChannelMuteChangeEvent;
 import net.windwaker.chat.event.channel.ChannelUnbanEvent;
 import net.windwaker.chat.util.Placeholders;
 
-import org.spout.api.Spout;
 import org.spout.api.chat.ChatArguments;
 import org.spout.api.chat.style.ChatStyle;
 import org.spout.api.util.Named;
@@ -174,7 +173,7 @@ public class Channel implements Named {
 	 * @param replacement
 	 */
 	public void censor(String word, String replacement) {
-		ChannelCensorEvent event = Spout.getEventManager().callEvent(new ChannelCensorEvent(this, word, replacement));
+		ChannelCensorEvent event = plugin.getEngine().getEventManager().callEvent(new ChannelCensorEvent(this, word, replacement));
 		censoredWords.put(event.getWord().toLowerCase(), event.getReplacement());
 		if (autoSave) {
 			save();
@@ -206,7 +205,7 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void mute(String name) {
-		ChannelMuteChangeEvent event = Spout.getEventManager().callEvent(new ChannelMuteChangeEvent(this, name, true));
+		ChannelMuteChangeEvent event = plugin.getEngine().getEventManager().callEvent(new ChannelMuteChangeEvent(this, name, true));
 		name = event.getName();
 		if (!event.isMuted()) {
 			unmute(name);
@@ -224,7 +223,7 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void unmute(String name) {
-		ChannelMuteChangeEvent event = Spout.getEventManager().callEvent(new ChannelMuteChangeEvent(this, name, false));
+		ChannelMuteChangeEvent event = plugin.getEngine().getEventManager().callEvent(new ChannelMuteChangeEvent(this, name, false));
 		name = event.getName();
 		if (event.isMuted()) {
 			mute(name);
@@ -282,7 +281,7 @@ public class Channel implements Named {
 	 * @param reason for kick
 	 */
 	public void ban(String name, boolean kick, ChatArguments reason) {
-		ChannelBanEvent event = Spout.getEventManager().callEvent(new ChannelBanEvent(this, name, kick, reason));
+		ChannelBanEvent event = plugin.getEngine().getEventManager().callEvent(new ChannelBanEvent(this, name, kick, reason));
 		if (event.isCancelled()) {
 			return;
 		}
@@ -306,7 +305,7 @@ public class Channel implements Named {
 	 * @param name
 	 */
 	public void unban(String name) {
-		ChannelUnbanEvent event = Spout.getEventManager().callEvent(new ChannelUnbanEvent(this, name));
+		ChannelUnbanEvent event = plugin.getEngine().getEventManager().callEvent(new ChannelUnbanEvent(this, name));
 		if (event.isCancelled()) {
 			return;
 		}
@@ -530,7 +529,7 @@ public class Channel implements Named {
 	 * @param message
 	 */
 	public void broadcast(Chatter sender, ChatArguments message) {
-		ChannelBroadcastEvent event = Spout.getEventManager().callEvent(new ChannelBroadcastEvent(this, sender, message));
+		ChannelBroadcastEvent event = plugin.getEngine().getEventManager().callEvent(new ChannelBroadcastEvent(this, sender, message));
 		sender = event.getSender();
 		message = event.getMessage();
 		Placeholders.format(Placeholders.MESSAGE, format, message);

@@ -184,7 +184,10 @@ public class ChannelCommands {
 
 	@Command(aliases = "kick", usage = "<player> [channel|reason] [reason]", desc = "Kick a player from a channel.", min = 1)
 	public void kick(CommandContext args, CommandSource source) throws CommandException {
-		Player player = args.getPlayer(0, false);
+		Player player = plugin.getEngine().getPlayer(args.getString(0), false);
+		if (player == null) {
+			throw new CommandException("Player not found.");
+		}
 		Chatter chatter = getChatter(plugin, player);
 		Channel channel = null;
 		if (args.length() == 1) {
@@ -225,7 +228,10 @@ public class ChannelCommands {
 	@Command(aliases = "invite", usage = "<player> [channel]", desc = "Invite a player to a channel.", min = 1, max = 2)
 	public void invite(CommandContext args, CommandSource source) throws CommandException {
 		Channel channel = getChannel(plugin, args, source, 1);
-		Player player = args.getPlayer(0, false);
+		Player player = plugin.getEngine().getPlayer(args.getString(0), false);
+		if (player == null) {
+			throw new CommandException("Player not found.");
+		}
 		Chatter chatter = getChatter(plugin, player);
 		checkPermission(source, "windchat.invite." + channel.getName());
 		if (channel.isInviteOnly()) {

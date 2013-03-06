@@ -70,7 +70,10 @@ public class ChatCommands {
 	@Command(aliases = "whois", usage = "<player>", desc = "Get more information about a player.", min = 1, max = 1)
 	@CommandPermissions("windchat.whois")
 	public void whoIs(CommandContext args, CommandSource source) throws CommandException {
-		Player player = args.getPlayer(0, false);
+		Player player = plugin.getEngine().getPlayer(args.getString(0), false);
+		if (player == null) {
+			throw new CommandException("Player not found.");
+		}
 		String playerName = player.getName();
 		source.sendMessage(ChatStyle.BRIGHT_GREEN, playerName, " is ", ChatStyle.BLUE, playerName, ChatStyle.BRIGHT_GREEN, "@", ChatStyle.BLUE, player.getAddress().getHostAddress());
 		Chatter chatter = plugin.getChatters().get(playerName);
@@ -140,7 +143,11 @@ public class ChatCommands {
 		if (!(source instanceof Player)) {
 			throw new CommandException("You must be a player to perform this command.");
 		}
-		Chatter chatter = getChatter(plugin, args.getPlayer(0, false));
+		Player player = plugin.getEngine().getPlayer(args.getString(0), false);
+		if (player == null) {
+			throw new CommandException("Player not found.");
+		}
+		Chatter chatter = getChatter(plugin, player);
 		Chatter sender = getChatter(plugin, (Player) source);
 		chatter.sendPrivateMessage(sender, new ChatArguments(args.getJoinedString(1)));
 	}
