@@ -106,7 +106,7 @@ public class WindChat extends CommonPlugin {
 	/**
 	 * Loads all data for the plugin
 	 */
-	public void load() {
+	private void load() {
 		// Create then load config
 		config = new ChatConfiguration(this);
 		config.load();
@@ -146,7 +146,7 @@ public class WindChat extends CommonPlugin {
 	/**
 	 * Saves all data for the plugin.
 	 */
-	public void save() {
+	private void save() {
 		// Save all data
 		config.save();
 		bots.save();
@@ -157,7 +157,7 @@ public class WindChat extends CommonPlugin {
 	/**
 	 * Starts the {@link ChatLogger}.
 	 */
-	public void startLogger() {
+	private void startLogger() {
 		if (ChatConfiguration.LOG_CHAT.getBoolean()) {
 			logger.start();
 		}
@@ -166,7 +166,7 @@ public class WindChat extends CommonPlugin {
 	/**
 	 * Stops the chat logger
 	 */
-	public void stopLogger() {
+	private void stopLogger() {
 		logger.stop();
 	}
 
