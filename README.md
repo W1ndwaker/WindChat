@@ -1,5 +1,8 @@
 WindChat
 ========
+
+## NOTE: WindChat is no longer being actively developed or maintained.
+
 ![Status]
 
 ![GitHub Icon] ![Jenkins Icon]
